@@ -1,0 +1,22 @@
+*
+# Allow R scripts
+!*.R
+
+# Allow specific directories
+!admin docs/
+!code/
+!fig/
+!updates/
+
+# Allow README and configuration files
+!README.md
+!.gitignore
+
+
+# Ignore temporary files
+*.tmp
+*.log
+
+# Ignore RStudio session files
+.Rhistory
+.Rproj.user/
