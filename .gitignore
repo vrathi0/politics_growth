@@ -3,7 +3,7 @@
 !*.R
 
 # Allow specific directories
-!admin docs/
+
 !code/
 !fig/
 !updates/
@@ -16,6 +16,8 @@
 # Ignore temporary files
 *.tmp
 *.log
+*.pdf
+*.zip
 
 # Ignore RStudio session files
 .Rhistory
