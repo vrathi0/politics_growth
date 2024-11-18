@@ -1,0 +1,33 @@
+---
+title: "Notes on Papers"
+format: pdf
+editor: visual
+---
+
+## Quarto
+
+Here I will keep running rough notes on the paper I am reaching related to pol_growth, broadly defined.
+
+## The Persistence of Inferior Cultural-Institutional Conventions
+
+Authors: Marianna Belloc and Samuel Bowles
+
+-   Sub optimal or inferior culture/norms can be better explained as a complementary equilibrium where each side is best responding in some sense. This can result in a stable equilibrium where is not pareto optimal.
+
+*`"This complementary provides one mechanism for the long-term persistence of particular configurations of cultures and institutions. Given the institutional relationship of serf to lord (to continue the example), adopting the culturally prescribed norms of subordination and reciprocity was a best response for individuals in the two classes, respectively. And given this culture of subordination and reciprocity, conforming to the institutional arrangements defining serf and lord was also a best response. We refer to this pair of mutual best responses as a cultural-institutional convention."`*
+
+**REFS**: A concentration of political power allows favored groups to command a larger slice by means of policies that result in a smaller pie (Sokoloff and Engerman 2000; Acemoglu 2003).
+
+-   The paper specifies a simple model along with a very simple notion of some transition dynamics. There are two eq states, one better one worse. But to transition from worse to better is the point of inquiry, given that the worse one is also stable.
+
+Four take away points:
+
+-   Cultural or institutional biased technical change can generate a shock which makes the transition easier.
+
+-   The transition relies on mistakes being made at a sufficiently large scale. In other words, a high degree of individual rationality among the population actually deters the transition as the worse equiliribum constitutes of mutual best responses. That is, deviating is irrational.
+
+-   In similar fashion, greater the cost of deviation the greater the time taken to transition. The paper posits that this might create some surprising corollary:an event such as trade liberalization within the framework of a matched eq at worse norms might increase the cost of deviation. Therefore, the paper's point is that the trade liberalization can actually deter transition. This seems like not a great claim.
+
+<!-- -->
+
+-   Given that the transition requires coordination among a large set of people. And given that the model is setup in terms of portion of population, the expected wait time is increasing in the group size.

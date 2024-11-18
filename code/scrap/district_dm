@@ -1,0 +1,30 @@
+# Import the necessary libraries
+from selenium import webdriver
+from selenium.webdriver.common.keys import Keys
+
+# Create a new instance of the Firefox driver
+driver = webdriver.Firefox()
+
+# Navigate to the website of Anantapur district administration
+driver.get("https://anantapuramu.ap.gov.in/")
+
+# Locate the menu item "District Profile" and click on it
+district_profile = driver.find_element_by_xpath("//a[contains(text(),'District Profile')]")
+district_profile.click()
+
+# From the drop-down menu, select "History"
+history = driver.find_element_by_xpath("//a[contains(text(),'History')]")
+history.click()
+
+# Scroll down to the section titled "District Collectors"
+driver.execute_script("window.scrollTo(0, document.body.scrollHeight);")
+district_collectors = driver.find_element_by_xpath("//h3[contains(text(),'District Collectors')]/following-sibling::ul")
+
+# Extract the names of all past and present district collectors
+collector_names = [name.text for name in district_collectors.find_elements_by_tag_name('li')]
+
+# Print the list of collector names
+print(collector_names)
+
+# Save the extracted data in a structured format such as CSV or JSON
+# ...

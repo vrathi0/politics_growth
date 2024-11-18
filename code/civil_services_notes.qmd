@@ -1,0 +1,1591 @@
+---
+title: "Notes on Indian Civil Services"
+format: pdf
+editor: visual
+---
+
+```{r}
+rm(list=ls())
+
+
+# Reading the imported files
+library(here)
+
+
+source(here("code/functions.R"))
+my_custom_theme <- function() {
+  theme_minimal() +
+    theme(
+      legend.title = element_blank(),
+      legend.text = element_text(size = 12),
+      legend.position = "top",
+      axis.text = element_text(face = "bold"),
+      axis.title = element_text(face = "bold", siz=8),
+      axis.text.y = element_text(size = 10)
+      # Add any other theme settings you want to reuse
+    )
+}
+
+
+extract_coeff_ci <- function(reg, var) {
+  # Extract coefficient
+  coef <- coef(summary(reg))[var, "Estimate"]
+  # Extract standard error
+  se <- coef(summary(reg))[var, "Std. Error"]
+  # Calculate confidence interval
+  ci_lower <- coef - 1.96 * se  # 95% CI lower bound
+  ci_upper <- coef + 1.96 * se  # 95% CI upper bound
+  # Return vector containing coefficient, lower CI, and upper CI
+  return(data.frame(beta=coef, 
+                    ci_lower=ci_lower, 
+                    ci_upper=ci_upper))
+}
+
+
+
+
+```
+
+This would be one document to record summary stats of the civil services data that I am compiling. 
+
+
+# Rajasthan
+
+```{r}
+qreadm(here("data/clean/RJ_CS_wpar3.qs"))
+
+qreadm(here("data/clean/UP_CS.qs"))
+#close_ele_candX=read_rds(here("data/daily_output/close_ele_candX_2004.rds"))
+close_ele_candX=read_rds(here("data/daily_output/close_elec_candX_1205.rds"))
+cand_X_tot=read_rds(here("data/daily_output/cand_X_total.rds"))
+
+cand_ele_2k17=read_rds(here("data/clean/elec_candX_inner.rds"))
+
+ele_iv_cand_x=read_rds(here("data/daily_output/ele_iv_cand_x.rds"))
+
+state_budget=qread(here("data/clean/state_budget.qs"))
+
+
+```
+
+
+I have two extracts of the data: (a) list of all officers and their posting through time, and (b) the list of all government posts and the people occupying it. It is expected that these two extracts should align with each other to a high degree. 
+
+### Statewise Trend
+
+```{r RJ_TREND_Total, include=FALSE}
+
+rj_off=off_rj_clean
+rj_post=post_rj_clean
+
+# There can be following combination of churns"
+# Using officer level: by start year or end year
+# Using Post level: by start year or end year. 
+
+# Making the churn df here again to fiddle with the 
+# start cutoff year
+
+rj_off_dchurn=rj_off %>% filter(off_start_year<=2006) %>% 
+  group_by(district_name, start_year) %>% #filter(pdistrict!="JAIPUR") %>% 
+  mutate(dist_syear_churn=n_distinct(person_post)) %>% ungroup() %>% 
+  group_by(district_name, end_year) %>% 
+  mutate(dist_eyear_churn=n_distinct(person_post)) %>% ungroup() %>% 
+  mutate(duration1=as.numeric(end_date-start_date), 
+         duration2=as.numeric(next_order_date-start_date)) %>% 
+  group_by(district_name, end_year) %>% 
+  mutate(dist_eyear_dur1=mean(duration1, na.rm=T), 
+         early_order_avg=mean(as.numeric(early_order), na.rm=T)) %>% 
+  ungroup() %>% 
+  group_by(district_name, next_order_year) %>% 
+  mutate(dist_eyear_dur2=mean(duration2)) %>% ungroup() %>% 
+  dplyr::select(pdistrict, district_name, start_year, end_year,next_order_year,
+                dist_syear_churn, 
+                dist_eyear_churn, dist_eyear_dur1, 
+                dist_eyear_dur2, early_order_avg) %>% distinct()
+# dist_eyear_dur2 has lower missing, so should use that
+
+# Posts that start on or before 2000 and end on or after 2019
+rj_post=rj_post %>% group_by(pid) %>% 
+  mutate(post_start=min(start_year)) %>% 
+  mutate(post_end=max(start_year)) %>% ungroup()
+
+rj_post_dchurn=rj_post %>% filter(post_start<=2000 & post_end>=2019) %>% 
+  group_by(district_name, start_year) %>%  
+  mutate(dist_syear_churn=n_distinct(person_post)) %>% ungroup() %>% 
+  group_by(district_name, end_year) %>% 
+  mutate(dist_eyear_churn=n_distinct(person_post)) %>% ungroup() %>% 
+  group_by(officer_name) %>% 
+  arrange(officer_name, start_date) %>% 
+  mutate(next_order_date=Lag(order_date, -1)) %>% ungroup() %>% 
+  mutate(next_order_year=year(next_order_date)) %>% 
+  mutate(early_order=next_order_date<=end_date) %>% 
+  mutate(duration1=as.numeric(end_date-start_date), 
+         duration2=as.numeric(next_order_date-start_date)) %>% 
+  group_by(district_name, end_year) %>% 
+  mutate(dist_eyear_dur1=mean(duration1, na.rm=T), 
+         early_order_avg=mean(as.numeric(early_order), na.rm=T)) %>% 
+  ungroup() %>% 
+  group_by(district_name, next_order_year) %>% 
+  mutate(dist_eyear_dur2=mean(duration2)) %>% ungroup() %>% 
+  dplyr::select(pdistrict, district_name, start_year, end_year,next_order_year,
+                dist_syear_churn, 
+                dist_eyear_churn, dist_eyear_dur1, 
+                dist_eyear_dur2, early_order_avg) %>% distinct()
+# Simlar here also, dist_e_year_dur2 has 1/3 of missing. However, beware that it
+# is somewhat consistently higher than *dur1
+
+# OFFICER LEVEL MEASURES
+rj_off_tschurn=rj_off_dchurn %>% rename(year=start_year) %>% 
+  group_by(year) %>% summarise(year_churn1=sum(dist_syear_churn), 
+                            year_dur1=mean(dist_eyear_dur2, na.rm=T)) %>% ungroup()
+
+
+rj_off_techurn=rj_off_dchurn %>% rename(year=end_year) %>% 
+  group_by(year) %>% summarise(year_churn2=sum(dist_eyear_churn),
+                            year_dur2=mean(dist_eyear_dur2, na.rm=T)) %>% ungroup()
+
+
+# POST LEVLE MEASURE
+
+rj_post_tschurn=rj_post_dchurn %>% rename(year=start_year) %>% 
+  group_by(year) %>% summarise(year_churn3=sum(dist_syear_churn), 
+                            year_dur3=mean(dist_eyear_dur2, na.rm=T)) %>% ungroup()
+
+
+rj_post_techurn=rj_post_dchurn %>% rename(year=end_year) %>% 
+  group_by(year) %>% summarise(year_churn4=sum(dist_eyear_churn),
+                            year_dur4=mean(dist_eyear_dur2, na.rm=T)) %>% ungroup()
+
+
+
+# Merging them to one DF to plot
+
+rj_plot_df=rj_off_tschurn %>% full_join(rj_off_techurn) %>% 
+  full_join(rj_post_techurn) %>% full_join(rj_post_tschurn) %>% filter(year>=2000)
+
+line_colors <- c(wes_palette("Rushmore1")[1], wes_palette("Rushmore1")[3], wes_palette("Rushmore1")[4], wes_palette("Rushmore1")[5])
+
+colors <- c("Off_start_year" = line_colors[1], 
+            "Off_end_year" = line_colors[2], 
+            "Post_start_year" = line_colors[3],
+            "Post_end_year" = line_colors[4])
+
+rj_churn_plot=ggplot(rj_plot_df, aes(x=year)) +
+  geom_line(aes(y = year_churn1, color = "Off_start_year"), linewidth=1) +
+  geom_line(aes(y = year_churn2, color = "Off_end_year"), linewidth=1) +
+  geom_line(aes(y = year_churn3, color = "Post_start_year"), linewidth=1) +
+  geom_line(aes(y = year_churn4, color = "Post_end_year"), linewidth=1) +
+  labs(x = "Year", y = "Total Churn", color="")  +
+    scale_color_manual(values = colors) +
+  geom_vline(xintercept = c(2004,2009,2014,2019,2023), linetype = "dashed", size=1,
+             color = line_colors[4])
+rj_churn_plot
+  
+
+rj_dur_plot=ggplot(rj_plot_df, aes(x=year)) +
+  geom_line(aes(y = year_dur1, color = "Off_start_year"), linewidth=2) +
+  geom_line(aes(y = year_dur2, color = "Off_end_year"), linewidth=2) +
+  geom_line(aes(y = year_dur3, color = "Post_start_year"), linewidth=2) +
+  geom_line(aes(y = year_dur4, color = "Post_end_year"), linewidth=2) +
+  labs(x = "Year", y = "Avg Dur", color="")  +
+    scale_color_manual(values = colors) +
+  geom_vline(xintercept = c(2004,2009,2014,2019,2023), linetype = "dashed", size=1,
+             color = line_colors[4])
+rj_dur_plot
+
+
+
+
+
+
+
+
+
+
+
+# 
+# 
+# 
+# up_ias_plot=ggplot(up_ias_churn, aes(x = year, y = year_churn)) +
+#   geom_line() + # Line for year_den
+#  #geom_line(aes(y = officer_count), color = "green", linetype = "dashed") +  # Line for officer_count
+#   #geom_smooth(method = "lm", se = FALSE, color = "red") +  # Fitted trend line
+#   geom_vline(xintercept = c(2002, 2007, 2012, 2017, 2022), linetype = "dashed", 
+#              color = line_colors[1])+
+#   labs(title = "UP",
+#        x = "Year",
+#        y = "# of IAS Shuffles") +
+#   theme_minimal() + my_custom_theme()+
+#   scale_x_continuous(breaks = c(2000, 2002, 2007, 2012, 2017, 2022),
+#                      labels = c("2000", "e.Year", "e.Year", "e.Year", "e.Year", "2023"))
+# 
+# 
+# plot_grid(rj_tot_plot, rj_ias_plot, up_ias_plot, nrow=3)
+
+```
+
+One problem here is that the general election are exactly the following year than RJ stat election. For eg, RJ state election are generally in December 2003,2008 etc and general elections are in April-May 2004, 2009, etc. Therefore, to see the dyamics in that election year. Lets look at the churn through at the quarter level in pooled election year sample. 
+
+```{r RJ_TREND_EL_YEAR}
+
+# ONLY LOOKING AT ELECTION YEARS: 2004,2009,2014, 2019, 2023
+
+rj_off=off_rj_clean
+rj_post=post_rj_clean
+
+# There can be following combination of churns"
+# Using officer level: by start year or end year
+# Using Post level: by start year or end year. 
+
+# Making the churn df here again to fiddle with the 
+# start cutoff year
+
+rj_off_dchurn=rj_off %>% filter(off_start_year<=2006) %>% 
+  group_by(district_name, start_year) %>% #filter(pdistrict!="JAIPUR") %>% 
+  mutate(dist_syear_churn=n_distinct(person_post)) %>% ungroup() %>% 
+  group_by(district_name, end_year) %>% 
+  mutate(dist_eyear_churn=n_distinct(person_post)) %>% ungroup() %>% 
+  mutate(duration1=as.numeric(end_date-start_date), 
+         duration2=as.numeric(next_order_date-start_date)) %>% 
+  group_by(district_name, end_year) %>% 
+  mutate(dist_eyear_dur1=mean(duration1, na.rm=T), 
+         early_order_avg=mean(as.numeric(early_order), na.rm=T)) %>% 
+  ungroup() %>% 
+  group_by(district_name, next_order_year) %>% 
+  mutate(dist_eyear_dur2=mean(duration2)) %>% ungroup() %>% 
+  dplyr::select(pdistrict, district_name, start_year, end_year,next_order_year,
+                dist_syear_churn, 
+                dist_eyear_churn, dist_eyear_dur1, 
+                dist_eyear_dur2, early_order_avg) %>% distinct()
+# dist_eyear_dur2 has lower missing, so should use that
+
+# Posts that start on or before 2000 and end on or after 2019
+# Posts that start on or before 2000 and end on or after 2019
+rj_post_plot=rj_post %>% group_by(pid) %>% 
+  mutate(post_start=min(start_year)) %>% 
+  mutate(post_end=max(start_year)) %>% ungroup()
+
+rj_post_plot$start_quarter=NA
+rj_post_plot$start_quarter[rj_post_plot$start_month %in% c(1:3)]=1
+rj_post_plot$start_quarter[rj_post_plot$start_month %in% c(4:6)]=2
+rj_post_plot$start_quarter[rj_post_plot$start_month %in% c(7:9)]=3
+rj_post_plot$start_quarter[rj_post_plot$start_month %in% c(10:12)]=4
+
+rj_post_plot$start_year[!(rj_post_plot$start_year%in% c(2004,2009,2014,2019))]=2050
+
+rj_post_qchurn=rj_post_plot %>% filter(post_start<=2000 & post_end>=2019) %>% 
+  filter(start_year %in% c(2004,2009,2014,2019, 2050)) %>% 
+  group_by(start_year,start_quarter) %>%  
+  summarise(start_q_churn=n_distinct(person_post)) %>% ungroup() %>% 
+  group_by(start_year) %>%  arrange(start_quarter) %>% 
+  mutate(start_q_churn=start_q_churn/first(start_q_churn)) %>% ungroup() %>% arrange(start_year)
+
+
+
+
+ggplot(rj_post_qchurn, aes(x = start_quarter, y = start_q_churn, group = start_year)) +
+  geom_point(size = 3, aes(shape = as.factor(start_year)))+
+  geom_line(data = rj_post_qchurn %>% filter(start_year != 2050), color = "lightgrey") +
+  geom_line(data = rj_post_qchurn %>% filter(start_year == 2050), color = "red") +
+  theme_minimal() +
+  labs(x = "", y = "", title = "")+
+    scale_x_continuous(breaks = 1:4, labels = c("Q1", "Q2", "Q3", "Q4"))+
+  my_custom_theme()+theme(legend.position = "none")
+
+
+
+
+```
+
+For each churn, we also have the direction of the movement in three categories: up, lateral, or down. We can see the pattern at quarter level. That is the share of up or down across time and specially around or after elections. 
+
+```{r RJ_TREND_EL_YEAR}
+
+df=post_rj_clean
+
+df=df %>% group_by(pid) %>% 
+  mutate(post_start=min(start_year)) %>% 
+  mutate(post_end=max(start_year)) %>% ungroup() %>% 
+  filter(post_start<=2000 & post_end>=2019) %>% 
+  filter(start_year>=2000)
+  
+
+
+df$start_quarter=NA
+df$start_quarter[df$start_month %in% c(1:3)]=1
+df$start_quarter[df$start_month %in% c(4:6)]=2
+df$start_quarter[df$start_month %in% c(7:9)]=3
+df$start_quarter[df$start_month %in% c(10:12)]=4
+
+yq_shift=df %>% group_by(start_year) %>% 
+  summarise(shift_up=sum(shift_indc==1, na.rm=T), 
+         shift_down=sum(shift_indc==-1, na.rm=T),
+         shift_lat=sum(shift_indc==0, na.rm=T),
+         total=sum(!is.na(shift_indc))) %>% 
+  mutate(total1=shift_up+shift_down+shift_lat)%>% ungroup() %>% 
+  mutate(shift_up=shift_up/total, 
+         shift_down=shift_down/total, 
+         shift_lat=shift_lat/total)
+
+
+# yq_shift_plot <- yq_shift %>%
+#   mutate(year_quarter = paste(start_year, "Q", start_quarter, sep=""))
+
+# Convert data to long format for easier plotting with ggplot2
+yq_shift_plot <- yq_shift %>%
+  gather(key = "variable", value = "value", shift_up, shift_down, shift_lat)
+
+# Create the line plot
+quartz(width = 10, height = 5)
+p=ggplot(yq_shift_plot, aes(x = start_year, y = value, color = variable, group = variable)) +
+  geom_line() +
+  theme_minimal() +
+  labs(x = "Year", y = "Value", title = "Shift Up and Shift Down Over Time") +
+  theme(legend.position = "none")+
+    geom_vline(xintercept = c(2004,2009,2014,2019,2023), linetype = "dashed", size=1)
+  # Ensure the quarters are in order
+
+p
+
+
+
+```
+
+I also want to see what are the designations that are out of Jaipur or Lucknow. 
+
+```{r non-Capital-Designation}
+df=post_rj_clean
+
+df1=df %>% filter(!(district_name %in% "JAIPUR"))
+
+length(unique(df$designation));length(unique(df1$designation))
+
+desig_df=df1 %>% group_by(designation) %>% 
+  summarise(count=n(),                                                      dist_count=n_distinct(district_name)) %>% 
+  arrange(-count)
+
+
+
+```
+
+
+
+```{r RJ_TREND_IAS, include=FALSE}
+
+# ITS THE SAME PATTERN AS TOTAL
+rj_off=off_rj_clean
+rj_post=post_rj_clean
+
+# There can be following combination of churns"
+# Using officer level: by start year or end year
+# Using Post level: by start year or end year. 
+
+# Making the churn df here again to fiddle with the 
+# start cutoff year
+
+rj_off_dchurn_ias=rj_off %>% filter(off_start_year<=2006) %>% filter(grepl("^I", service_type)) %>% 
+  group_by(district_name, start_year) %>% #filter(pdistrict!="JAIPUR") %>% 
+  mutate(dist_syear_churn=n_distinct(person_post)) %>% ungroup() %>% 
+  group_by(district_name, end_year) %>% 
+  mutate(dist_eyear_churn=n_distinct(person_post)) %>% ungroup() %>% 
+  mutate(duration1=as.numeric(end_date-start_date), 
+         duration2=as.numeric(next_order_date-start_date)) %>% 
+  group_by(district_name, end_year) %>% 
+  mutate(dist_eyear_dur1=mean(duration1, na.rm=T), 
+         early_order_avg=mean(as.numeric(early_order), na.rm=T)) %>% 
+  ungroup() %>% 
+  group_by(district_name, next_order_year) %>% 
+  mutate(dist_eyear_dur2=mean(duration2)) %>% ungroup() %>% 
+  dplyr::select(pdistrict, district_name, start_year, end_year,next_order_year,
+                dist_syear_churn, 
+                dist_eyear_churn, dist_eyear_dur1, 
+                dist_eyear_dur2, early_order_avg) %>% distinct()
+# dist_eyear_dur2 has lower missing, so should use that
+
+# Posts that start on or before 2000 and end on or after 2019
+rj_post=rj_post %>% group_by(pid) %>% 
+  mutate(post_start=min(start_year)) %>% 
+  mutate(post_end=max(start_year)) %>% ungroup()
+
+rj_post_dchurn_ias=rj_post %>% filter(post_start<=2000 & post_end>=2019) %>% 
+  filter(grepl("^I", service_type)) %>% 
+  group_by(district_name, start_year) %>%  
+  mutate(dist_syear_churn=n_distinct(person_post)) %>% ungroup() %>% 
+  group_by(district_name, end_year) %>% 
+  mutate(dist_eyear_churn=n_distinct(person_post)) %>% ungroup() %>% 
+  group_by(officer_name) %>% 
+  arrange(officer_name, start_date) %>% 
+  mutate(next_order_date=Lag(order_date, -1)) %>% ungroup() %>% 
+  mutate(next_order_year=year(next_order_date)) %>% 
+  mutate(early_order=next_order_date<=end_date) %>% 
+  mutate(duration1=as.numeric(end_date-start_date), 
+         duration2=as.numeric(next_order_date-start_date)) %>% 
+  group_by(district_name, end_year) %>% 
+  mutate(dist_eyear_dur1=mean(duration1, na.rm=T), 
+         early_order_avg=mean(as.numeric(early_order), na.rm=T)) %>% 
+  ungroup() %>% 
+  group_by(district_name, next_order_year) %>% 
+  mutate(dist_eyear_dur2=mean(duration2)) %>% ungroup() %>% 
+  dplyr::select(pdistrict, district_name, start_year, end_year,next_order_year,
+                dist_syear_churn, 
+                dist_eyear_churn, dist_eyear_dur1, 
+                dist_eyear_dur2, early_order_avg) %>% distinct()
+# Simlar here also, dist_e_year_dur2 has 1/3 of missing. However, beware that it
+# is somewhat consistently higher than *dur1
+
+# OFFICER LEVEL MEASURES
+rj_off_tschurn=rj_off_dchurn_ias %>% rename(year=start_year) %>% 
+  group_by(year) %>% summarise(year_churn1=sum(dist_syear_churn), 
+                            year_dur1=mean(dist_eyear_dur2, na.rm=T)) %>% ungroup()
+
+
+rj_off_techurn=rj_off_dchurn_ias %>% rename(year=end_year) %>% 
+  group_by(year) %>% summarise(year_churn2=sum(dist_eyear_churn),
+                            year_dur2=mean(dist_eyear_dur2, na.rm=T)) %>% ungroup()
+
+
+# POST LEVLE MEASURE
+
+rj_post_tschurn=rj_post_dchurn_ias %>% rename(year=start_year) %>% 
+  group_by(year) %>% summarise(year_churn3=sum(dist_syear_churn), 
+                            year_dur3=mean(dist_eyear_dur2, na.rm=T)) %>% ungroup()
+
+
+rj_post_techurn=rj_post_dchurn_ias %>% rename(year=end_year) %>% 
+  group_by(year) %>% summarise(year_churn4=sum(dist_eyear_churn),
+                            year_dur4=mean(dist_eyear_dur2, na.rm=T)) %>% ungroup()
+
+
+
+# Merging them to one DF to plot
+
+rj_plot_df=rj_off_tschurn %>% full_join(rj_off_techurn) %>% 
+  full_join(rj_post_techurn) %>% full_join(rj_post_tschurn) %>% filter(year>=2000)
+
+line_colors <- c(wes_palette("Rushmore1")[1], wes_palette("Rushmore1")[3], wes_palette("Rushmore1")[4], wes_palette("Rushmore1")[5])
+
+colors <- c("Off_start_year" = line_colors[1], 
+            "Off_end_year" = line_colors[2], 
+            "Post_start_year" = line_colors[3],
+            "Post_end_year" = line_colors[4])
+
+rj_churn_plot=ggplot(rj_plot_df, aes(x=year)) +
+  geom_line(aes(y = year_churn1, color = "Off_start_year"), linewidth=2) +
+  geom_line(aes(y = year_churn2, color = "Off_end_year"), linewidth=2) +
+  geom_line(aes(y = year_churn3, color = "Post_start_year"), linewidth=2) +
+  geom_line(aes(y = year_churn4, color = "Post_end_year"), linewidth=2) +
+  labs(x = "Year", y = "Total Churn", color="")  +
+    scale_color_manual(values = colors) +
+  geom_vline(xintercept = c(2004,2009,2014,2019,2023), linetype = "dashed", size=1,
+             color = line_colors[4])
+rj_churn_plot
+  
+
+rj_dur_plot=ggplot(rj_plot_df, aes(x=year)) +
+  geom_line(aes(y = year_dur1, color = "Off_start_year"), linewidth=2) +
+  geom_line(aes(y = year_dur2, color = "Off_end_year"), linewidth=2) +
+  geom_line(aes(y = year_dur3, color = "Post_start_year"), linewidth=2) +
+  geom_line(aes(y = year_dur4, color = "Post_end_year"), linewidth=2) +
+  labs(x = "Year", y = "Avg Dur", color="")  +
+    scale_color_manual(values = colors) +
+  geom_vline(xintercept = c(2004,2009,2014,2019,2023), linetype = "dashed", size=1,
+             color = line_colors[4])
+rj_dur_plot
+
+
+```
+
+
+
+
+```{r UP_TREND_IAS, include=FALSE}
+
+up_df1=up_posting
+
+
+
+
+
+```
+
+```{r dept_desig_lvl}
+rj_post=post_rj_clean
+
+dept_post=rj_post %>% #filter(grepl("^I", service_type)) %>%
+  dplyr::select(designation, department, district_name) %>% distinct() %>% group_by(department) %>% 
+  summarise(dist_count=n_distinct(district_name), desig_count=n_distinct(designation)) %>% ungroup()
+
+ias_dept_post=rj_post %>% filter(grepl("^I", service_type)) %>%
+  dplyr::select(designation, department, district_name) %>% distinct() %>% group_by(department) %>% 
+  summarise(dist_count=n_distinct(district_name), desig_count=n_distinct(designation)) %>% ungroup()
+
+desig_post=rj_post %>% #filter(grepl("^I", service_type)) %>%
+  dplyr::select(designation, department, district_name) %>% distinct() %>% group_by(designation) %>% 
+  summarise(dist_count=n_distinct(district_name), dep_count=n_distinct(department)) %>% ungroup() %>% arrange(-dep_count)
+
+
+ias_desig_post=rj_post %>% filter(grepl("^IAS", service_type)) %>%
+  dplyr::select(designation, department, district_name) %>% distinct() %>% group_by(designation) %>% 
+  summarise(dist_count=n_distinct(district_name), dep_count=n_distinct(department)) %>% ungroup() %>% arrange(-dep_count)
+
+desig_time_df=rj_post 
+
+
+View(rj_post %>% filter(grepl("^IAS", service_type)) %>%
+  dplyr::select(designation, department, district_name) %>% distinct() %>% filter(designation=="PRINCIPAL SECRETARY TO GOVERNMENT"))
+
+ias_desig_dept=rj_post %>% filter(service_type=="IAS") %>% 
+  dplyr::select(designation, department, district_name) %>% distinct() %>% 
+  mutate(designation=str_trim(designation))
+
+ias_desig=rj_post %>% filter(service_type=="IAS") %>% 
+  group_by(designation) %>% summarise(desig_count=n()) %>% ungroup() %>% 
+  arrange(-desig_count)
+
+# Defining the bureaucratic ladder
+
+blvl=as.data.frame(rbind(c("Secretary",1),c("Additional Secretary",2), 
+           c("Joint Secretary", 3),c("Director",4), c("Deupty Secreatary",4),
+           c("Under Secretary",5), c("COLLECTOR",6),
+           c("Section Officer",6), c("Assistant Section Officer",7),
+           c("Upper Division Clerk",8), c("Lower Division Clerk", 9)))
+names(blvl)=c("rank", "rank_no")
+blvl=blvl %>% mutate(rank=toupper(rank))
+
+matches <- sapply(as.list(blvl[[1]]), 
+                  function(dept) ias_desig_dept$designation==dept)
+
+mlist <- apply(matches, 1, which)
+
+
+
+
+```
+
+# Candidate Charactersitics
+
+```{r cand_X}
+dt=cand_ele_2k17
+
+plot_dt=dt %>% 
+  dplyr::select(sh_election_id, tcpd_year,position, assets,
+                         liabilities) %>% distinct() %>% 
+  filter(!is.na(assets) & !(is.na(liabilities))) %>% 
+  mutate(net_assets=assets-liabilities) %>% 
+  mutate(top3=if_else(position<3,if_else(position==1,1,2),3)) %>% 
+  group_by( tcpd_year, top3) %>% 
+  summarise(mean_net_assets=mean(net_assets, na.rm=T)) %>% ungroup() %>% 
+  mutate(top3=as.factor(top3)) %>% 
+  mutate(mean_net_assets=mean_net_assets/1e6) %>% ungroup()
+ # mutate(assembly_no=as.numeric(assembly_no))
+
+# Custom legend labels
+legend_labels <- c("Winner  ", "Runner-up  ", "Rest")
+
+# Change line colors
+line_colors <- c(wes_palette("Rushmore1")[5], wes_palette("Rushmore1")[1], wes_palette("Rushmore1")[4])
+
+# Your original data manipulation code (plot_dt)
+
+lvl_plot=ggplot(plot_dt, aes(x = tcpd_year, y = (mean_net_assets), 
+                             group = top3, color = as.factor(top3))) +
+  geom_line(linewidth=1, lty=2) +
+  scale_color_manual(values = line_colors, labels = legend_labels) +  # Set custom line colors and labels
+  labs(x = "Year", y = "Mean Assets ( in million INR)", title = "") +
+ my_custom_theme()  +  # Move legend to the top
+  guides(color = guide_legend(title = "Position",  # Custom legend title
+                              override.aes = list(size = 3))) +  # Adjust legend symbol size
+  scale_x_continuous(limits = c(min(plot_dt$tcpd_year), max(plot_dt$tcpd_year)))+
+  scale_linetype_manual(values = c("Winner" = 1, "Two runner ups" = 2,"Candidates"=3))# Set x-axis range
+
+lvl_plot
+```
+
+
+# Politics and Churn
+
+Merging CS data with state election data. 
+
+```{r post_elec_merge}
+
+rj_post=post_rj_clean
+up_post=up_posting
+#rj_off_dchurn_ias : IAS officer level district-year churn
+#rj_post_dchurn_ias: IAS post level district-year churn
+
+# Since UP CS data is officer level, its more natural 
+# to use similar for RJ also. 
+up_dist_churn=up_post %>% filter(end_year>=2000) %>% 
+   group_by(district_name, end_year) %>% 
+          summarise(year_churn=n(), 
+                    year_up=sum(shift_indc==1, na.rm=T), 
+                    year_down=sum(shift_indc==-1, na.rm=T),
+                    year_lat=sum(shift_indc==0, na.rm = T),
+                    year_duration=as.numeric(mean(duration, na.rm=T))) %>%   
+  rename(year=end_year) %>% ungroup() %>% 
+  mutate(state="uttar_pradesh") 
+
+rj_post_plot=rj_post %>% group_by(pid) %>% 
+  mutate(post_start=min(start_year)) %>% 
+  mutate(post_end=max(start_year)) %>% ungroup()
+
+rj_dist_churn=rj_post_plot %>% filter(post_start<=2000 & post_end>=2019) %>% 
+   group_by(end_year,district_name) %>%  
+  summarise(year_churn=n_distinct(person_post),
+            year_up=sum(shift_indc==1, na.rm=T), 
+                    year_down=sum(shift_indc==-1, na.rm=T),
+                    year_lat=sum(shift_indc==0, na.rm = T),
+            year_duration=as.numeric(mean(duration, na.rm=T))) %>% ungroup() %>% 
+  mutate(state="rajasthan") %>% rename(year=end_year)
+
+
+# cs_dt1=rj_off_churn %>%  bind_rows(up_dist_churn) %>% 
+#   mutate(district_name=tolower(district_name))
+cs_dt2=rj_dist_churn %>%  bind_rows(up_dist_churn) %>% 
+  mutate(district_name=tolower(district_name))
+
+
+
+dist_elec_close=close_ele_candX %>% rename(district_name=adr_district_name) %>% 
+   mutate(district_name=tolower(district_name)) %>% filter(winner==1) %>% 
+  dplyr::select(-winner) %>% distinct()
+  
+rj_full=expand.grid(state = "rajasthan",
+                   district_name = unique(dist_elec_close$district_name[dist_elec_close$state=="rajasthan"]),
+                   year = 2008:2020)
+up_full=expand.grid(state = "uttar_pradesh",
+              district_name = unique(dist_elec_close$district_name[dist_elec_close$state=="uttar_pradesh"]),
+                   year = 2007:2020)
+
+full_df=rj_full %>%  bind_rows(up_full)
+
+dist_celec_full=full_df %>%  left_join(dist_elec_close)
+dist_celec_full=dist_celec_full %>%   fill(c(assembly_no), .direction = "down") %>% 
+  group_by(district_name, assembly_no) %>% 
+  mutate(eyear=year-min(year)+1) %>% ungroup() %>% 
+  mutate(eyear_fct=if_else(eyear %in% c(1,2,5),1,0)) #%>% 
+ # filter(eyear<=5)
+#Joining, by = c("state", "district", "year")
+
+# We can already fill the variables at assembly level
+
+dist_celec_full=dist_celec_full %>% group_by(state, district_name, assembly_no) %>% 
+  arrange(state, district_name, assembly_no, year) %>% 
+  fill(c(acst_algn_dum,  ac_st_align_ndist,
+         w_net_asset, w_ed,net_asset_diff, w_totcrime_major,
+         bus_idx), .direction = "downup") %>% 
+  ungroup()
+
+elec_cs_post=cs_dt2 %>% left_join(dist_celec_full) %>% distinct()
+#Joining, by = c("state", "district_name", "year")
+
+
+churn_asset_post=elec_cs_post %>% 
+  group_by(eyear_fct, assembly_no,state, district_name) %>% 
+  mutate(y1_total=sum(year_churn), 
+         y2_total=mean(year_duration, na.rm=T), 
+         y3_total=sum(year_up, na.rm=T), 
+         y4_total=sum(year_down, na.rm=T), 
+         y5_total=sum(year_lat, na.rm=T)) %>% ungroup() %>% 
+  dplyr::select(eyear_fct, state, district_name, 
+                y1_total,y2_total, acst_algn_dum,  ac_st_align_ndist,y3_total, y4_total, y5_total,
+                w_net_asset,w_ed,w_totcrime_major,net_asset_diff,assembly_no,bus_idx) %>% 
+  distinct()%>% 
+  filter(district_name!="jaipur") %>% 
+  filter(district_name!="lucknow")
+
+# churn_asset_post=elec_cs_post %>% group_by(eyear_fct, state, district_name) %>% 
+#   mutate(y1_total=sum(year_churn), 
+#          
+#          y2_total=mean(year_duration, na.rm=T)) %>% ungroup() %>% 
+#   dplyr::select(eyear_fct, state, district_name, 
+#                 y1_total,y2_total, st_align_cwinshare,st_align_cwin,
+#                 w_net_asset,w_ed,w_totcrime_major) %>% 
+#   distinct()%>% 
+#   filter(district_name!="jaipur") %>% 
+#   filter(district_name!="lucknow")
+
+```
+
+
+```{r post_elec_reg1}
+reg_list=list()
+
+fml1=as.formula(paste0("y1_total~   w_net_asset+acst_algn_dum+ eyear_fct+ w_totcrime_major |state"))
+reg_list[[1]]=felm(fml1, churn_asset_post)# ROUGH
+
+fml1=as.formula(paste0("y2_total~   acst_algn_dum + eyear_fct+ w_totcrime_major+w_net_asset|state"))
+reg_list[[2]]=felm(fml1, churn_asset_post)# ROUGH
+
+
+fml1=as.formula(paste0("y3_total~   w_net_asset+acst_algn_dum + eyear_fct+ w_totcrime_major|state"))
+reg_list[[3]]=felm(fml1, churn_asset_post)# ROUGH
+
+
+fml1=as.formula(paste0("y4_total~   w_net_asset+acst_algn_dum + eyear_fct+ w_totcrime_major|state"))
+reg_list[[4]]=felm(fml1, churn_asset_post)# ROUGH
+
+
+fml1=as.formula(paste0("y5_total~   w_net_asset+acst_algn_dum + eyear_fct+ w_totcrime_major|state"))
+reg_list[[5]]=felm(fml1, churn_asset_post)# ROUGH
+
+```
+
+```{r netasset_plot}
+
+plot_df=lapply(reg_list, extract_coeff_ci, var="w_net_asset")
+plot_df=plot_df %>% bind_rows()
+
+response_df=data.frame(X=churn_asset_post$w_net_asset, 
+                       Y_1=plot_df$beta[1]*churn_asset_post$w_net_asset/mean(churn_asset_post$y1_total, na.rm=T),
+                       Yhigh_1=plot_df$ci_upper[1]*churn_asset_post$w_net_asset/mean(churn_asset_post$y1_total, na.rm=T), 
+                       Ylow_1=plot_df$ci_lower[1]*churn_asset_post$w_net_asset/mean(churn_asset_post$y1_total, na.rm=T),
+                       Y_2=plot_df$beta[2]*churn_asset_post$w_net_asset/mean(churn_asset_post$y2_total, na.rm=T),
+                       Yhigh_2=plot_df$ci_upper[2]*churn_asset_post$w_net_asset/mean(churn_asset_post$y2_total, na.rm=T), 
+                       Ylow_2=plot_df$ci_lower[2]*churn_asset_post$w_net_asset/mean(churn_asset_post$y2_total, na.rm=T),
+                       Y_3=plot_df$beta[3]*churn_asset_post$w_net_asset/mean(churn_asset_post$y3_total, na.rm=T),
+                       Yhigh_3=plot_df$ci_upper[3]*churn_asset_post$w_net_asset/mean(churn_asset_post$y3_total, na.rm=T), 
+                       Ylow_3=plot_df$ci_lower[3]*churn_asset_post$w_net_asset/mean(churn_asset_post$y3_total, na.rm=T),
+                       Y_4=plot_df$beta[4]*churn_asset_post$w_net_asset/mean(churn_asset_post$y4_total, na.rm=T),
+                       Yhigh_4=plot_df$ci_upper[4]*churn_asset_post$w_net_asset/mean(churn_asset_post$y4_total, na.rm=T), 
+                       Ylow_4=plot_df$ci_lower[4]*churn_asset_post$w_net_asset/mean(churn_asset_post$y4_total, na.rm=T),
+                       Y_5=plot_df$beta[5]*churn_asset_post$w_net_asset/mean(churn_asset_post$y5_total, na.rm=T),
+                       Yhigh_5=plot_df$ci_upper[5]*churn_asset_post$w_net_asset/mean(churn_asset_post$y5_total, na.rm=T), 
+                       Ylow_5=plot_df$ci_lower[5]*churn_asset_post$w_net_asset/mean(churn_asset_post$y5_total, na.rm=T))
+
+response_df=response_df %>% filter(!is.na(X)) %>% 
+  mutate(X=clipp(X, 0, 0.90))
+
+
+model_numbers <- unique(as.integer(gsub("\\D", "", grep("^Y\\d+", names(response_df), value = TRUE))))
+
+# Reshape the dataframe
+df <- response_df %>%
+  pivot_longer(cols = -X, 
+               names_to = "variable", 
+               values_to = "value") %>%
+  separate(variable, into = c("Y", "metric"), sep = "_") %>% 
+   pivot_wider(names_from = Y, values_from = value) 
+
+df$Y <- sapply(df$Y, function(x) x[1])
+df$Yhigh <- sapply(df$Yhigh, function(x) x[1])
+df$Ylow <- sapply(df$Ylow, function(x) x[1])
+
+response_long=df
+response_long$metric[response_long$metric==1]="1-Total Churn"
+response_long$metric[response_long$metric==2]="2-Duration"
+response_long$metric[response_long$metric==3]="3-Move up"
+response_long$metric[response_long$metric==4]="4-Move Down"
+response_long$metric[response_long$metric==5]="5-Lateral"
+
+ggplot(response_long, aes(x = X/1e6, y = Y, group = metric)) +
+  geom_line(lty=20, color="red") +
+  geom_ribbon(aes(ymin = Ylow, ymax = Yhigh), alpha = 0.3) +
+  geom_hline(yintercept = 0,  color = "black") + 
+  labs(x = "w_net_asset", y = "Response") +
+  facet_wrap(~metric, nrow=2) +
+  coord_cartesian(ylim = c(-0.1, 0.3))+
+  theme_minimal()+
+  xlab("Net Assets (in million INR)")+ylab("Response (% of mean)")
+
+
+```
+
+```{r align_plot}
+
+# NO EFFECT
+
+```
+
+
+
+```{r post_elec_reg1}
+reg_list1=list()
+
+fml1=as.formula(paste0("y1_total~   net_asset_diff+acst_algn_dum+ eyear_fct+ w_totcrime_major |state"))
+reg_list1[[1]]=felm(fml1, churn_asset_post)# ROUGH
+
+fml1=as.formula(paste0("y2_total~   acst_algn_dum + eyear_fct+ w_totcrime_major+net_asset_diff|state"))
+reg_list1[[2]]=felm(fml1, churn_asset_post)# ROUGH
+
+
+fml1=as.formula(paste0("y3_total~   net_asset_diff+acst_algn_dum + eyear_fct+ w_totcrime_major|state"))
+reg_list1[[3]]=felm(fml1, churn_asset_post)# ROUGH
+
+
+fml1=as.formula(paste0("y4_total~   net_asset_diff+acst_algn_dum + eyear_fct+ w_totcrime_major|state"))
+reg_list1[[4]]=felm(fml1, churn_asset_post)# ROUGH
+
+
+fml1=as.formula(paste0("y5_total~   net_asset_diff+acst_algn_dum + eyear_fct+ w_totcrime_major|state"))
+reg_list1[[5]]=felm(fml1, churn_asset_post)# ROUGH
+```
+
+```{r asset_diff_plot}
+plot_df=lapply(reg_list1, extract_coeff_ci, var="net_asset_diff")
+plot_df=plot_df %>% bind_rows()
+
+response_df=data.frame(X=churn_asset_post$net_asset_diff, 
+                       Y_1=plot_df$beta[1]*churn_asset_post$net_asset_diff/mean(churn_asset_post$y1_total, na.rm=T),
+                       Yhigh_1=plot_df$ci_upper[1]*churn_asset_post$net_asset_diff/mean(churn_asset_post$y1_total, na.rm=T), 
+                       Ylow_1=plot_df$ci_lower[1]*churn_asset_post$net_asset_diff/mean(churn_asset_post$y1_total, na.rm=T),
+                       Y_2=plot_df$beta[2]*churn_asset_post$net_asset_diff/mean(churn_asset_post$y2_total, na.rm=T),
+                       Yhigh_2=plot_df$ci_upper[2]*churn_asset_post$net_asset_diff/mean(churn_asset_post$y2_total, na.rm=T), 
+                       Ylow_2=plot_df$ci_lower[2]*churn_asset_post$net_asset_diff/mean(churn_asset_post$y2_total, na.rm=T),
+                       Y_3=plot_df$beta[3]*churn_asset_post$net_asset_diff/mean(churn_asset_post$y3_total, na.rm=T),
+                       Yhigh_3=plot_df$ci_upper[3]*churn_asset_post$net_asset_diff/mean(churn_asset_post$y3_total, na.rm=T), 
+                       Ylow_3=plot_df$ci_lower[3]*churn_asset_post$net_asset_diff/mean(churn_asset_post$y3_total, na.rm=T),
+                       Y_4=plot_df$beta[4]*churn_asset_post$net_asset_diff/mean(churn_asset_post$y4_total, na.rm=T),
+                       Yhigh_4=plot_df$ci_upper[4]*churn_asset_post$net_asset_diff/mean(churn_asset_post$y4_total, na.rm=T), 
+                       Ylow_4=plot_df$ci_lower[4]*churn_asset_post$net_asset_diff/mean(churn_asset_post$y4_total, na.rm=T),
+                       Y_5=plot_df$beta[5]*churn_asset_post$net_asset_diff/mean(churn_asset_post$y5_total, na.rm=T),
+                       Yhigh_5=plot_df$ci_upper[5]*churn_asset_post$net_asset_diff/mean(churn_asset_post$y5_total, na.rm=T), 
+                       Ylow_5=plot_df$ci_lower[5]*churn_asset_post$net_asset_diff/mean(churn_asset_post$y5_total, na.rm=T))
+
+response_df=response_df %>% filter(!is.na(X)) %>% 
+  mutate(X=clipp(X, 0, 0.99))
+
+
+model_numbers <- unique(as.integer(gsub("\\D", "", grep("^Y\\d+", names(response_df), value = TRUE))))
+
+# Reshape the dataframe
+df <- response_df %>%
+  pivot_longer(cols = -X, 
+               names_to = "variable", 
+               values_to = "value") %>%
+  separate(variable, into = c("Y", "metric"), sep = "_") %>% 
+   pivot_wider(names_from = Y, values_from = value) 
+
+df$Y <- sapply(df$Y, function(x) x[1])
+df$Yhigh <- sapply(df$Yhigh, function(x) x[1])
+df$Ylow <- sapply(df$Ylow, function(x) x[1])
+
+response_long=df
+response_long$metric[response_long$metric==1]="1-Total Churn"
+response_long$metric[response_long$metric==2]="2-Duration"
+response_long$metric[response_long$metric==3]="3-Move up"
+response_long$metric[response_long$metric==4]="4-Move Down"
+response_long$metric[response_long$metric==5]="5-Lateral"
+
+ggplot(response_long, aes(x = X/1e6, y = Y, group = metric)) +
+  geom_line(lty=20, color="red") +
+  geom_ribbon(aes(ymin = Ylow, ymax = Yhigh), alpha = 0.3) +
+  geom_hline(yintercept = 0,  color = "black") + 
+  labs(x = "w_net_asset", y = "Response") +
+  facet_wrap(~metric, nrow=2) +
+  coord_cartesian(ylim = c(-0.5, 0.5))+
+  theme_minimal()+
+  xlab("Asset Difference (in million INR)")+ylab("Response (% of mean)")
+```
+
+
+## IV REGRESSION
+
+Now the idea is to use incidences of close regression as an instrument for asset levels of politician. This is one way to control of endogeneity of asset levels. Current (above) regression is reduced form. The relevent vector is: $\{Y,A,Z\}$ where $A$ is asset levels and $Z$ is incidence of close election that should move the asset level (FS). 
+
+```{r iv_panel}
+
+rj_post=post_rj_clean
+up_post=up_posting
+#rj_off_dchurn_ias : IAS officer level district-year churn
+#rj_post_dchurn_ias: IAS post level district-year churn
+
+# Since UP CS data is officer level, its more natural 
+# to use similar for RJ also. 
+up_dist_churn=up_post %>% filter(end_year>=2000) %>% 
+   group_by(district_name, end_year) %>% 
+          summarise(year_churn=n(), 
+                    year_up=sum(shift_indc==1, na.rm=T), 
+                    year_down=sum(shift_indc==-1, na.rm=T),
+                    year_lat=sum(shift_indc==0, na.rm = T),
+                    year_duration=as.numeric(mean(duration, na.rm=T))) %>%   
+  rename(year=end_year) %>% ungroup() %>% 
+  mutate(state="uttar_pradesh") 
+
+rj_post_plot=rj_post %>% group_by(pid) %>% 
+  mutate(post_start=min(start_year)) %>% 
+  mutate(post_end=max(start_year)) %>% ungroup()
+
+rj_dist_churn=rj_post_plot %>% filter(post_start<=2000 & post_end>=2019) %>% 
+   group_by(end_year,district_name) %>%  
+  summarise(year_churn=n_distinct(person_post),
+            year_up=sum(shift_indc==1, na.rm=T), 
+                    year_down=sum(shift_indc==-1, na.rm=T),
+                    year_lat=sum(shift_indc==0, na.rm = T),
+            year_duration=as.numeric(mean(duration, na.rm=T))) %>% ungroup() %>% 
+  mutate(state="rajasthan") %>% rename(year=end_year)
+
+
+# cs_dt1=rj_off_churn %>%  bind_rows(up_dist_churn) %>% 
+#   mutate(district_name=tolower(district_name))
+cs_dt2=rj_dist_churn %>%  bind_rows(up_dist_churn) %>% 
+  mutate(district_name=tolower(district_name))
+
+
+
+dist_elec_close=ele_iv_cand_x %>% 
+  rename(district_name=adr_district_name) %>% 
+   mutate(district_name=tolower(district_name)) %>% filter(winner==1) %>% 
+  dplyr::select(-winner) %>% distinct()
+  
+rj_full=expand.grid(state = "rajasthan",
+                   district_name = unique(dist_elec_close$district_name[dist_elec_close$state=="rajasthan"]),
+                   year = 2008:2020)
+up_full=expand.grid(state = "uttar_pradesh",
+              district_name = unique(dist_elec_close$district_name[dist_elec_close$state=="uttar_pradesh"]),
+                   year = 2007:2020)
+
+full_df=rj_full %>%  bind_rows(up_full)
+
+dist_celec_full=full_df %>%  left_join(dist_elec_close)
+dist_celec_full=dist_celec_full %>%   fill(c(assembly_no), .direction = "down") %>% 
+  group_by(district_name, assembly_no) %>% 
+  mutate(eyear=year-min(year)+1) %>% ungroup() %>% 
+  mutate(eyear_fct=if_else(eyear %in% c(1,2,5),1,0)) #%>% 
+ # filter(eyear<=5)
+#Joining, by = c("state", "district", "year")
+
+# We can already fill the variables at assembly level
+
+dist_celec_full=dist_celec_full %>% group_by(state, district_name, assembly_no) %>% 
+  arrange(state, district_name, assembly_no, year) %>% 
+  fill(c( w_net_asset, w_ed,net_asset_diff, w_totcrime_major,cls_ele_count_iv,margin_iv,cls_ele_shr_iv,
+         bus_idx), .direction = "downup") %>% 
+  ungroup()
+
+elec_cs_post=cs_dt2 %>% left_join(dist_celec_full) %>% distinct()
+#Joining, by = c("state", "district_name", "year")
+
+
+churn_asset_post=elec_cs_post %>% 
+  group_by(eyear_fct, assembly_no,state, district_name) %>% 
+  mutate(y1_total=sum(year_churn), 
+         y2_total=mean(year_duration, na.rm=T), 
+         y3_total=sum(year_up, na.rm=T), 
+         y4_total=sum(year_down, na.rm=T), 
+         y5_total=sum(year_lat, na.rm=T)) %>% ungroup() %>% 
+  dplyr::select(eyear_fct, state, district_name, 
+                y1_total,y2_total, y3_total, y4_total, y5_total,
+                w_net_asset,w_ed,w_totcrime_major,net_asset_diff,
+                assembly_no,bus_idx,cls_ele_shr_iv,
+                cls_ele_count_iv,margin_iv) %>% 
+  distinct()%>% 
+  filter(district_name!="jaipur") %>% 
+  filter(district_name!="lucknow")
+
+```
+```{r iv_reg}
+
+
+df=churn_asset_post %>% 
+  filter(complete.cases(w_net_asset,cls_ele_count_iv ,
+                        eyear_fct,cls_ele_shr_iv)) %>% mutate(w_net_asset=w_net_asset/1e6)
+
+# FIRST STAGE
+
+fs_fml=as.formula(paste0("cls_ele_shr_iv ~ w_net_asset +w_totcrime_major   |state"))
+fs_reg=fixest::feols(fs_fml, df)
+#iv_reg=felm(fs_fml, df);summary(iv_reg)
+
+df$wnet_hat=predict(iv_reg)
+
+
+rf_fml=as.formula(paste0("y1_total~   cls_ele_shr_iv+ eyear_fct  |state"))
+
+rf_reg=felm(rf_fml, df);summary(rf_reg)
+
+ss_fml=as.formula(paste0("y1_total~   wnet_hat+ eyear_fct |state"))
+
+ss_reg=felm(ss_fml, df);summary(ss_reg)
+
+
+```
+
+## CS + State Budget
+
+In this section, I will try to merge departments with state budget line items
+
+```{r CS_Budget_1}
+
+rj_post=post_rj_clean
+up_post=up_posting
+sfin_df=state_budget
+
+dept_person=rj_post %>% #filter(grepl("^I", service_type)) %>%
+  group_by(department, start_year) %>% 
+  summarise(person_count=n()) %>% ungroup()
+
+dept_post=rj_post %>% #filter(grepl("^I", service_type)) %>%
+  dplyr::select(designation, department, district_name) %>% distinct() %>% group_by(department) %>% 
+  summarise(dist_count=n_distinct(district_name), desig_count=n_distinct(designation)) %>% ungroup()
+
+write.xlsx(dept_post, here("data/interm/dept_list.xlsx"))
+
+```
+
+
+
+
+
+
+
+
+
+## OLD STUFF
+
+
+
+
+
+## Officer level data
+
+Looking at similar object now using officer level data
+PENDING AS UP ONLY HAS POSTING LEVEL DATA. DEFERRED TO LATER TIME
+
+```{r off_elec_merge}
+
+
+rj_off=off_rj_clean
+
+#rj_off_dchurn_ias : IAS officer level district-year churn
+#rj_post_dchurn_ias: IAS post level district-year churn
+
+# Since UP CS data is officer level, its more natural 
+# to use similar for RJ also. 
+up_dist_churn=up_post %>% filter(end_year>=2000) %>% 
+   group_by(district_name, end_year) %>% 
+          summarise(year_churn=n(), 
+                    year_up=sum(shift_indc==1, na.rm=T), 
+                    year_down=sum(shift_indc==-1, na.rm=T),
+                    year_lat=sum(shift_indc==0, na.rm = T),
+                    year_duration=as.numeric(mean(duration, na.rm=T))) %>%   
+  rename(year=end_year) %>% ungroup() %>% 
+  mutate(state="uttar_pradesh") 
+
+rj_post_plot=rj_post %>% group_by(pid) %>% 
+  mutate(post_start=min(start_year)) %>% 
+  mutate(post_end=max(start_year)) %>% ungroup()
+
+rj_dist_churn=rj_post_plot %>% filter(post_start<=2000 & post_end>=2019) %>% 
+   group_by(end_year,district_name) %>%  
+  summarise(year_churn=n_distinct(person_post),
+            year_up=sum(shift_indc==1, na.rm=T), 
+                    year_down=sum(shift_indc==-1, na.rm=T),
+                    year_lat=sum(shift_indc==0, na.rm = T),
+            year_duration=as.numeric(mean(duration, na.rm=T))) %>% ungroup() %>% 
+  mutate(state="rajasthan") %>% rename(year=end_year)
+
+
+# cs_dt1=rj_off_churn %>%  bind_rows(up_dist_churn) %>% 
+#   mutate(district_name=tolower(district_name))
+cs_dt2=rj_dist_churn %>%  bind_rows(up_dist_churn) %>% 
+  mutate(district_name=tolower(district_name))
+
+
+dist_elec_close=close_ele_candX %>% rename(district_name=adr_district_name) %>% 
+   mutate(district_name=tolower(district_name)) %>% filter(winner==1) %>% 
+  dplyr::select(-winner) %>% distinct()
+  
+rj_full=expand.grid(state = "rajasthan",
+                   district_name = unique(dist_elec_close$district_name[dist_elec_close$state=="rajasthan"]),
+                   year = 2008:2020)
+up_full=expand.grid(state = "uttar_pradesh",
+              district_name = unique(dist_elec_close$district_name[dist_elec_close$state=="uttar_pradesh"]),
+                   year = 2007:2020)
+
+full_df=rj_full %>%  bind_rows(up_full)
+
+dist_celec_full=full_df %>%  left_join(dist_elec_close)
+dist_celec_full=dist_celec_full %>%   fill(c(assembly_no), .direction = "down") %>% 
+  group_by(district_name, assembly_no) %>% 
+  mutate(eyear=year-min(year)+1) %>% ungroup() %>% 
+  mutate(eyear_fct=if_else(eyear %in% c(1,2,5),1,0)) #%>% 
+ # filter(eyear<=5)
+#Joining, by = c("state", "district", "year")
+
+# We can already fill the variables at assembly level
+
+dist_celec_full=dist_celec_full %>% group_by(state, district_name, assembly_no) %>% 
+  arrange(state, district_name, assembly_no, year) %>% 
+  fill(c(st_align_mean,  
+         w_net_asset, w_ed,net_asset_diff, w_totcrime_major), .direction = "downup") %>% 
+  ungroup()
+
+elec_cs_post=cs_dt2 %>% left_join(dist_celec_full) %>% distinct()
+#Joining, by = c("state", "district_name", "year")
+
+
+churn_asset_post=elec_cs_post %>% group_by(eyear_fct, assembly_no,state, district_name) %>% 
+  mutate(y1_total=sum(year_churn), 
+         y2_total=mean(year_duration, na.rm=T), 
+         y3_total=sum(year_up, na.rm=T), 
+         y4_total=sum(year_down, na.rm=T), 
+         y5_total=sum(year_lat, na.rm=T)) %>% ungroup() %>% 
+  dplyr::select(eyear_fct, state, district_name, 
+                y1_total,y2_total, st_align_mean,y3_total, y4_total, y5_total,
+                w_net_asset,w_ed,w_totcrime_major,net_asset_diff,assembly_no) %>% 
+  distinct()%>% 
+  filter(district_name!="jaipur") %>% 
+  filter(district_name!="lucknow")
+  
+
+```
+
+```{r RJ_DEPT}
+
+dt=post_rj_clipped
+
+dlist=unique(dt$department); ylist=c(1995:2023)
+dy_count=expand_grid(department=dlist, year=ylist, dept_size=NA_integer_)
+
+
+
+
+dept_year_churn=dt %>% group_by(department, start_year) %>% 
+  summarise(dy_churn=n_distinct(pid)) %>% arrange(start_year, -dy_churn) %>% ungroup()
+
+
+# %>% 
+#   group_by(start_year) %>% mutate(rank=row_number()) %>% filter(start_year>=2000 & rank<=20) %>% group_by(department) %>% summarise(count_in20=n()) %>% arrange(-count_in20)
+
+
+post_count_rj=dt %>% group_by(department, designation, post_city) %>%
+  summarise(post_year1=min(start_year), post_year2=max(start_year)) %>% ungroup() %>% 
+  mutate(post_year2=if_else(post_year2>=2018, 2030, post_year2))
+
+  mutate(start_count=n()) %>% group_by(department, end_year) %>% 
+  mutate(end_count=n()) %>% ungroup() %>% mutate(size_t=start_count-end_count) %>% 
+  dplyr::select(pid, department, start_year, start_count, end_year, end_count, size_t) %>% distinct() %>% arrange(pid, department, start_year)
+  
+
+
+# Create an empty data frame to store results
+
+
+# Loop through each department and year
+for (d in dlist) {
+  for (y in ylist) {
+    # Filter positions for the current department and year
+    filtered_positions <- post_count_rj %>%
+      filter(department == d, post_year1 <= y, post_year2 >= y)
+    
+    # Count the number of active positions
+    num_active_positions <- nrow(filtered_positions)
+    
+    # Append results to the data frame
+    # active_positions <- rbind(active_positions, data.frame(department = dept, year = year, count = num_active_positions))
+    
+    dy_count=dy_count %>%  mutate(dept_size=if_else(department==d & year==y, 
+                                                    num_active_positions, 
+                                                    dept_size))
+    
+  }
+}
+
+
+dept_level_df=dy_count %>% left_join(dept_year_churn, by=c("department", "year"="start_year"))
+dept_level_df$dy_churn[is.na(dept_level_df$dy_churn)]=0
+dept_level_df=dept_level_df  %>% mutate(frac=dy_churn/dept_size)
+
+
+dept_level_df=dept_level_df %>% group_by(department) %>% 
+  mutate(dept_size_avg=mean(dept_size, na.rm=T)) %>% ungroup() %>% arrange(-dept_size_avg)
+
+```
+
+
+```{r UP_POSTING}
+# UP election years: 96,02,07,12,17,22
+
+dt=up_posting
+
+up_dist_year_den=dt %>% group_by( district, end_year) %>% 
+  summarise(start_count=n(), 
+            officer_count=n_distinct(id_no)) %>% ungroup() 
+  
+year_collapse_den=up_dist_year_den %>% group_by(end_year) %>% 
+      summarise(year_den=sum(start_count), 
+                officer_count=sum(officer_count)) %>% ungroup()
+
+# data density is quite low before 2000, dropping before that
+
+up_year_den=year_collapse_den %>% filter(end_year>=2000 & end_year<=2023)
+
+# Create the plot
+ggplot(up_year_den, aes(x = end_year)) +
+  geom_line(aes(y = year_den), color = "blue", linetype = "solid") +  # Line for year_den
+  geom_line(aes(y = officer_count), color = "green", linetype = "dashed") +  # Line for officer_count
+  geom_vline(xintercept = c(2002, 2007, 2012, 2017, 2022), linetype = "dashed", color = "red") +
+  labs(title = "Job Shuffle Time Series",
+       x = "Year",
+       y = "# of Job Shuffles") +
+  theme_minimal() +
+  scale_x_continuous(breaks = c(2000, 2002, 2007, 2012, 2017, 2022),
+                     labels = c("2000", "e.Year", "e.Year", "e.Year", "e.Year", "2023"))
+```
+
+
+ I am merging this with the AC level election data. The idea is to see any correlation between number of bureaucratic orders generated and the governing MLA characteristics. 
+ 
+```{r}
+# Reading in the AC level election data, that I had previously prepared ( from TCPD)
+
+election_df=read_rds(here("data/clean/elec_candX_inner.rds"))
+
+rj_election_winner=election_df %>% filter(position==1 & state_name=="Rajasthan") %>% 
+      dplyr::select(state_name, ac_no, tcpd_year, assembly_no,
+                    month, sex, tcpd_age, constituency_name, 
+                    district_name, win_margin, 
+                    incumbent,assets, num_crim, crime_major, ed ) %>% distinct() %>% 
+  group_by(district_name, tcpd_year) %>% 
+  summarise(assets=sum(assets), 
+            num_crim=sum(num_crim), 
+            ed=mean(ed), incumbent=sum(incumbent)) %>% ungroup() %>% 
+  rename(district=district_name, year=tcpd_year)
+
+
+up_election_winner=election_df %>% filter(position==1 & state_name=="Uttar_Pradesh") %>% 
+  dplyr::select(state_name, ac_no, tcpd_year, assembly_no,
+                month, sex, tcpd_age, constituency_name, 
+                district_name, win_margin, adr_district_name,
+                incumbent,assets, num_crim, crime_major, ed ) %>% distinct() %>% 
+  mutate(district=if_else(is.na(district_name), toupper(adr_district_name), district_name)) %>% 
+  group_by(district, tcpd_year) %>% 
+  summarise(assets=sum(assets), 
+            num_crim=sum(num_crim), 
+            ed=mean(ed), incumbent=sum(incumbent) ) %>% ungroup() %>% 
+  rename(year=tcpd_year) %>% ungroup()
+
+
+```
+
+
+
+```{r Spec1_RJ}
+
+## TOTAL AFFECT OVER 5 YEAR. 
+## transfers~ assets | district FE
+
+# Summing the posting data across years in one assembly
+
+rj_dist_year_den=rj_dist_year_den %>% filter(start_year>=2003)
+rj_dist_year_den$year=NA
+rj_dist_year_den$year[rj_dist_year_den$start_year %in% c(2003:2007)]=2003
+rj_dist_year_den$year[rj_dist_year_den$start_year %in% c(2008:2012)]=2008
+rj_dist_year_den$year[rj_dist_year_den$start_year %in% c(2013:2018)]=2013
+
+# Constructing y vars: average and lagged
+
+dist_el_den = rj_dist_year_den %>% group_by(district, year) %>% 
+  mutate(y_total=sum(dist_year_den)) %>% ungroup() %>% 
+  group_by(district, year) %>%  arrange(district, year) %>% 
+   mutate(y_lag0=Lag(dist_year_den, 0)) %>% 
+  mutate(y_lag1=Lag(dist_year_den, -1)) %>% 
+  mutate(y_lag2=Lag(dist_year_den, -2)) %>% 
+  mutate(y_lag3=Lag(dist_year_den, -3)) %>% 
+  mutate(y_lag4=Lag(dist_year_den, -4)) %>% 
+  ungroup()
+  
+dist_el_den=dist_el_den %>%  filter(start_year==year)
+
+
+dt=dist_el_den %>% inner_join(rj_election_winner) %>% mutate(assets=assets/1e6) %>% 
+  mutate(asset2=assets^2) %>% filter(!is.na(district))
+
+
+
+# Clipping away the outlier assets
+dt=dt %>% mutate(assets=clipp(assets, 0.0, 0.95)) %>% filter(!is.na(assets)) %>% 
+  filter(district!="JAIPUR")
+
+# Total Effect
+fml=as.formula(paste0("y_total~ assets +incumbent +assets*incumbent | district"))
+reg_total=felm(fml, dt); summary(reg_total)
+
+fml=as.formula(paste0("y_lag0~ assets   | district"))
+reg_lag0=felm(fml, dt); summary(reg_lag0)
+
+fml=as.formula(paste0("y_lag1~ assets   | district"))
+reg_lag1=felm(fml, dt); summary(reg_lag1)
+
+fml=as.formula(paste0("y_lag2~ assets   | district"))
+reg_lag2=felm(fml, dt); summary(reg_lag2)
+
+fml=as.formula(paste0("y_lag3~ assets   | district"))
+reg_lag3=felm(fml, dt); summary(reg_lag3)
+
+fml=as.formula(paste0("y_lag4~ assets   | district"))
+reg_lag4=felm(fml, dt); summary(reg_lag4)
+
+
+plot_df=data.frame(x1=dt$assets, 
+                   yhat_total=as.numeric(reg_total$c.fitted.values),
+                   yhat_lag0=as.numeric(reg_lag0$c.fitted.values),
+                   yhat_lag1=as.numeric(reg_lag1$c.fitted.values),
+                   yhat_lag2=as.numeric(reg_lag2$c.fitted.values),
+                   yhat_lag3=as.numeric(reg_lag3$c.fitted.values),
+                   yhat_lag4=as.numeric(reg_lag4$c.fitted.values))
+
+
+p_total=ggplot(plot_df, aes(x = x1, y = yhat_total)) +
+  #geom_point(alpha = 0.4) +
+  stat_summary_bin(fun.y='mean', bins=30,
+                   color='orange', size=1.5, geom='point')+
+  geom_smooth()+ geom_rug(sides="b",length = unit(0.05, "npc")) +
+ xlab(NULL) + ylab(NULL) +
+  labs(title="Total ME over 5 years")+
+  theme(axis.text.x = element_text(face = "bold", size = 10),
+        axis.text.y = element_text(face = "bold", size = 10),
+        plot.title = element_text(face = "bold", size = 10)) + ylim(-50,50)
+
+p_lag0=ggplot(plot_df, aes(x = x1, y = yhat_lag0)) +
+  #geom_point(alpha = 0.4) +
+  stat_summary_bin(fun.y='mean', bins=30,
+                   color='orange', size=1.5, geom='point')+
+  geom_smooth()+ geom_rug(sides="b",length = unit(0.05, "npc")) +
+ xlab(NULL) + ylab(NULL) +
+ labs(title="Current Year")+
+  theme(axis.text.x = element_text(face = "bold", size = 10),
+        axis.text.y = element_text(face = "bold", size = 10),
+        plot.title = element_text(face = "bold", size = 10)) + ylim(-50,50)
+
+p_lag1=ggplot(plot_df, aes(x = x1, y = yhat_lag1)) +
+  #geom_point(alpha = 0.4) +
+  stat_summary_bin(fun.y='mean', bins=30,
+                   color='orange', size=1.5, geom='point')+
+  geom_smooth()+ geom_rug(sides="b",length = unit(0.05, "npc")) +
+ xlab(NULL) + ylab(NULL) +
+  labs(title="After 1 yr")+
+  theme(axis.text.x = element_text(face = "bold", size = 10),
+        axis.text.y = element_text(face = "bold", size = 10),
+        plot.title = element_text(face = "bold", size = 10)) + ylim(-50,50)
+
+p_lag2=ggplot(plot_df, aes(x = x1, y = yhat_lag2)) +
+  #geom_point(alpha = 0.4) +
+  stat_summary_bin(fun.y='mean', bins=30,
+                   color='orange', size=1.5, geom='point')+
+  geom_smooth()+ geom_rug(sides="b",length = unit(0.05, "npc")) +
+ xlab(NULL)+ ylab(NULL) +
+  labs(title="After 2 yr")+
+  theme(axis.text.x = element_text(face = "bold", size = 10),
+        axis.text.y = element_text(face = "bold", size = 10),
+        plot.title = element_text(face = "bold", size = 10)) + ylim(-50,50)
+
+p_lag3=ggplot(plot_df, aes(x = x1, y = yhat_lag3)) +
+  #geom_point(alpha = 0.4) +
+  stat_summary_bin(fun.y='mean', bins=30,
+                   color='orange', size=1.5, geom='point')+
+  geom_smooth()+ geom_rug(sides="b",length = unit(0.05, "npc")) +
+ xlab(NULL) + ylab(NULL) +
+  labs(title="After 3 yr")+
+  theme(axis.text.x = element_text(face = "bold", size = 10),
+        axis.text.y = element_text(face = "bold", size = 10),
+        plot.title = element_text(face = "bold", size = 10)) + ylim(-50,50)
+
+p_lag4=ggplot(plot_df, aes(x = x1, y = yhat_lag4)) +
+  #geom_point(alpha = 0.4) +
+  stat_summary_bin(fun.y='mean', bins=30,
+                   color='orange', size=1.5, geom='point')+
+  geom_smooth()+ geom_rug(sides="b",length = unit(0.05, "npc")) +
+ xlab(NULL) + ylab(NULL) +
+  labs(title="After 4 yr")+
+  theme(axis.text.x = element_text(face = "bold", size = 10),
+        axis.text.y = element_text(face = "bold", size = 10),
+        plot.title = element_text(face = "bold", size = 10)) + ylim(-50,50)
+                  
+grid.arrange(p_total, p_lag0,
+             p_lag1, p_lag2,
+             p_lag3, p_lag4, ncol = 2, 
+             bottom="Assets ( in million INR)")
+
+```
+ 
+
+
+```{r Spec2}
+
+## TOTAL AFFECT OVER 5 YEAR. 
+## transfers~ assets + asset2 | district FE
+
+dist_el_den=dist_year_den %>% filter(start_year>=2003)
+dist_el_den$year=NA
+dist_el_den$year[dist_el_den$start_year %in% c(2003:2007)]=2003
+dist_el_den$year[dist_el_den$start_year %in% c(2008:2012)]=2008
+dist_el_den$year[dist_el_den$start_year %in% c(2013:2018)]=2013
+
+# Constructing y vars: average and lagged
+
+dist_el_den = dist_el_den %>% group_by(district, year) %>% 
+  mutate(y_total=sum(dist_year_den)) %>% ungroup() %>% 
+  group_by(district, year) %>%  arrange(district, year) %>% 
+   mutate(y_lag0=Lag(dist_year_den, 0)) %>% 
+  mutate(y_lag1=Lag(dist_year_den, -1)) %>% 
+  mutate(y_lag2=Lag(dist_year_den, -2)) %>% 
+  mutate(y_lag3=Lag(dist_year_den, -3)) %>% 
+  mutate(y_lag4=Lag(dist_year_den, -4)) %>% 
+  ungroup()
+  
+dist_el_den=dist_el_den %>%  filter(start_year==year)
+
+
+dt=dist_el_den %>% inner_join(rj_election_winner) %>% mutate(assets=assets/1e6) %>% 
+  mutate(asset2=assets^2) %>% filter(!is.na(district))
+
+
+
+# Clipping away the outlier assets
+dt=dt %>% mutate(assets=clipp(assets, 0.0, 0.95)) %>% filter(!is.na(assets)) %>% 
+  filter(district!="JAIPUR")
+
+# Total Effect
+fml=as.formula(paste0("y_total~ assets + asset2   | district"))
+reg_total=felm(fml, dt); summary(reg_total)
+
+fml=as.formula(paste0("y_lag0~  assets + asset2    | district"))
+reg_lag0=felm(fml, dt); summary(reg_lag0)
+
+fml=as.formula(paste0("y_lag1~  assets + asset2    | district"))
+reg_lag1=felm(fml, dt); summary(reg_lag1)
+
+fml=as.formula(paste0("y_lag2~  assets + asset2    | district"))
+reg_lag2=felm(fml, dt); summary(reg_lag2)
+
+fml=as.formula(paste0("y_lag3~  assets + asset2   | district"))
+reg_lag3=felm(fml, dt); summary(reg_lag3)
+
+fml=as.formula(paste0("y_lag4~  assets + asset2   | district"))
+reg_lag4=felm(fml, dt); summary(reg_lag4)
+
+
+plot_df=data.frame(x1=dt$assets, 
+                   yhat_total=as.numeric(reg_total$c.fitted.values),
+                   yhat_lag0=as.numeric(reg_lag0$c.fitted.values),
+                   yhat_lag1=as.numeric(reg_lag1$c.fitted.values),
+                   yhat_lag2=as.numeric(reg_lag2$c.fitted.values),
+                   yhat_lag3=as.numeric(reg_lag3$c.fitted.values),
+                   yhat_lag4=as.numeric(reg_lag4$c.fitted.values))
+
+
+p_total=ggplot(plot_df, aes(x = x1, y = yhat_total)) +
+  #geom_point(alpha = 0.4) +
+  stat_summary_bin(fun.y='mean', bins=30,
+                   color='orange', size=1.5, geom='point')+
+  geom_smooth()+ geom_rug(sides="b",length = unit(0.05, "npc")) +
+ xlab(NULL) + ylab(NULL) +
+  labs(title="Total ME over 5 years")+
+  theme(axis.text.x = element_text(face = "bold", size = 10),
+        axis.text.y = element_text(face = "bold", size = 10),
+        plot.title = element_text(face = "bold", size = 10)) + ylim(-50,50)
+
+p_lag0=ggplot(plot_df, aes(x = x1, y = yhat_lag0)) +
+  #geom_point(alpha = 0.4) +
+  stat_summary_bin(fun.y='mean', bins=30,
+                   color='orange', size=1.5, geom='point')+
+  geom_smooth()+ geom_rug(sides="b",length = unit(0.05, "npc")) +
+ xlab(NULL) + ylab(NULL) +
+ labs(title="Current Year")+
+  theme(axis.text.x = element_text(face = "bold", size = 10),
+        axis.text.y = element_text(face = "bold", size = 10),
+        plot.title = element_text(face = "bold", size = 10)) + ylim(-50,50)
+
+p_lag1=ggplot(plot_df, aes(x = x1, y = yhat_lag1)) +
+  #geom_point(alpha = 0.4) +
+  stat_summary_bin(fun.y='mean', bins=30,
+                   color='orange', size=1.5, geom='point')+
+  geom_smooth()+ geom_rug(sides="b",length = unit(0.05, "npc")) +
+ xlab(NULL) + ylab(NULL) +
+  labs(title="After 1 yr")+
+  theme(axis.text.x = element_text(face = "bold", size = 10),
+        axis.text.y = element_text(face = "bold", size = 10),
+        plot.title = element_text(face = "bold", size = 10)) + ylim(-50,50)
+
+p_lag2=ggplot(plot_df, aes(x = x1, y = yhat_lag2)) +
+  #geom_point(alpha = 0.4) +
+  stat_summary_bin(fun.y='mean', bins=30,
+                   color='orange', size=1.5, geom='point')+
+  geom_smooth()+ geom_rug(sides="b",length = unit(0.05, "npc")) +
+ xlab(NULL)+ ylab(NULL) +
+  labs(title="After 2 yr")+
+  theme(axis.text.x = element_text(face = "bold", size = 10),
+        axis.text.y = element_text(face = "bold", size = 10),
+        plot.title = element_text(face = "bold", size = 10)) + ylim(-50,50)
+
+p_lag3=ggplot(plot_df, aes(x = x1, y = yhat_lag3)) +
+  #geom_point(alpha = 0.4) +
+  stat_summary_bin(fun.y='mean', bins=30,
+                   color='orange', size=1.5, geom='point')+
+  geom_smooth()+ geom_rug(sides="b",length = unit(0.05, "npc")) +
+ xlab(NULL) + ylab(NULL) +
+  labs(title="After 3 yr")+
+  theme(axis.text.x = element_text(face = "bold", size = 10),
+        axis.text.y = element_text(face = "bold", size = 10),
+        plot.title = element_text(face = "bold", size = 10)) + ylim(-50,50)
+
+p_lag4=ggplot(plot_df, aes(x = x1, y = yhat_lag4)) +
+  #geom_point(alpha = 0.4) +
+  stat_summary_bin(fun.y='mean', bins=30,
+                   color='orange', size=1.5, geom='point')+
+  geom_smooth()+ geom_rug(sides="b",length = unit(0.05, "npc")) +
+ xlab(NULL) + ylab(NULL) +
+  labs(title="After 4 yr")+
+  theme(axis.text.x = element_text(face = "bold", size = 10),
+        axis.text.y = element_text(face = "bold", size = 10),
+        plot.title = element_text(face = "bold", size = 10)) + ylim(-50,50)
+                  
+grid.arrange(p_total, p_lag0,
+             p_lag1, p_lag2,
+             p_lag3, p_lag4, ncol = 2, 
+             bottom="Assets ( in million INR)")
+
+
+
+
+```
+
+
+
+
+```{r Spec1_UP}
+
+up_dist_el_den=up_dist_year_den %>% filter(end_year>=2007)
+up_dist_el_den$year=NA
+up_dist_el_den$year[up_dist_el_den$end_year %in% c(2007:2011)]=2007
+up_dist_el_den$year[up_dist_el_den$end_year %in% c(2012:2016)]=2012
+up_dist_el_den$year[up_dist_el_den$end_year %in% c(2017:2021)]=2017
+
+# Constructing y vars: average and lagged
+
+dist_el_den = up_dist_el_den %>% group_by(district, year) %>% 
+  mutate(y_total=sum(start_count)) %>% ungroup() %>% 
+  group_by(district, year) %>%  arrange(district, year) %>% 
+   mutate(y_lag0=Lag(start_count, 0)) %>% 
+  mutate(y_lag1=Lag(start_count, -1)) %>% 
+  mutate(y_lag2=Lag(start_count, -2)) %>% 
+  mutate(y_lag3=Lag(start_count, -3)) %>% 
+  mutate(y_lag4=Lag(start_count, -4)) %>% 
+  ungroup()
+  
+dist_el_den=dist_el_den %>%  filter(end_year==year)
+
+
+dt=dist_el_den %>% inner_join(up_election_winner) %>% mutate(assets=assets/1e6) %>% 
+  mutate(asset2=assets^2) %>% filter(!is.na(district))
+
+
+
+# Clipping away the outlier assets
+dt=dt %>% mutate(assets=clipp(assets, 0.0, 0.95)) %>% filter(!is.na(assets)) %>% 
+  filter(district!="LUCKNOW")
+
+# Total Effect
+fml=as.formula(paste0("y_total~ assets +incumbent  | district"))
+reg_total=felm(fml, dt); summary(reg_total)
+
+
+
+
+
+
+
+```
+

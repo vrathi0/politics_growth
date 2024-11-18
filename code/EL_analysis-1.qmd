@@ -1,0 +1,492 @@
+---
+title: "Election data Analysis"
+author: "vaibhav"
+format: html
+editor: visual
+---
+
+```{r}
+#install.packages("here")
+library(here)
+here::set_here("../")
+here()
+```
+
+## Contents
+
+list all the intended goals here.
+
+1.  Generating AC level covariates such as asset growth rate.
+
+```{r READING}
+election_df=read_rds(here("data/clean/elec_candX_inner.rds"))
+nat_party=read_csv(here("data/national_party.csv")) %>% dplyr::select(name, code)
+st_party=read_csv(here("data/state_party.csv")) %>%  dplyr::select(name, code)
+ac_election=read_rds(here("data/clean/ac_election.rds"))
+
+
+tr_cand=read_dta(here("../Data/SHRUG/ELECTION/shrug-triv-cand-dta/trivedi_candidates_clean.dta"))
+
+
+tr_codes= tr_cand %>% 
+  dplyr::select( sh_election_id, sh_cand_id, 
+                 pc01_state_id, pc01_district_id,ac_id,
+                 tr_ac_id) %>%  distinct() %>% 
+  mutate(tr_ac_id=as.numeric(tr_ac_id)) %>% 
+  mutate(tr_ac_id=padzero(tr_ac_id, 3))
+tr_codes1=tr_codes %>% dplyr::select(sh_election_id, ac_id) %>% 
+  distinct()
+
+
+```
+
+```{r ADDING_AC_COVAR}
+dt=election_df # Initializing the working dt
+
+# CODEBOOK:
+# lg_asset: log of disclosed asset in that particular election
+# won_count= mean number of election the candidate have won including the current one
+# st_win_party: leading party at state level for that election ( likely to be part of winning coallition)
+# win_party_dum: if the candidate is the part of leading party at state level. 
+# ac_won_count: This is for winners. Avg number of won_count for winners for that AC across time
+# ac_win_margin: Average win margin for the AC across time. 
+# lg_win_asset_qtile: This is the baseline qtile position an AC occupies in a state level baseline distribution. 
+#.                    That is, how rich candidates are wrt to other candidates within that state at the start of data
+
+dt= dt %>% ungroup() %>% #group_by(sh_election_id) %>% 
+  mutate(lg_asset=log(assets+1), 
+         lg_net_asset=log(net_asset+1),
+         lg_winner_asset=if_else(win==T, lg_asset, NA_real_))  %>%
+  group_by(sh_election_id) %>% 
+         mutate(won_count=mean(pid_won_count), 
+                winner_won_count=if_else(win==T, pid_won_count, NA_real_)) %>% ungroup()
+
+st_party=dt %>% filter(win==T) %>%  
+  group_by(state_id, assembly_no) %>% 
+  mutate(st_win_party=names((which.max(table(party))))) %>% 
+  dplyr::select(state_id, assembly_no, st_win_party) %>% distinct() %>% 
+  ungroup()
+
+dt= dt %>%  inner_join(st_party) %>% 
+  ungroup() %>% 
+  mutate(win_party_dum=if_else(party==st_win_party, 1, 0))
+
+# Tagging a 1 dummy to all the pid that won the first election in their AC
+pid_winner = dt %>% #filter(!is.na(ac08_id)) %>%
+  group_by(ac_id) %>%
+  filter(win==T & assembly_no==min(assembly_no)) %>%
+  group_by(state_id) %>%
+  mutate(lg_win_asset_qtile=cut(lg_asset, breaks=4, label=F)) %>%
+  ungroup() %>% mutate(early_winner=1) %>% 
+  dplyr::select(lg_win_asset_qtile, pid, early_winner) %>%
+  distinct()
+
+dt= dt %>% left_join(pid_winner, by="pid")
+
+
+subdt= dt %>% 
+  filter(position<=2) %>% 
+  group_by(sh_election_id) %>% 
+  arrange(-position) %>% 
+  mutate(lg_asset_top2=mean(lg_asset, na.rm=T),
+    lg_asset_margin=lg_asset-Lag(lg_asset),
+         lg_net_asset_margin=lg_net_asset-Lag(lg_net_asset), 
+         cc=n_distinct(win)) %>% 
+  ungroup() %>% 
+  dplyr::select(sh_election_id, position, lg_asset_margin, lg_asset_top2,
+                lg_net_asset_margin,cc) %>% 
+  distinct()
+
+ac_x1=dt %>% 
+ filter(win==T) %>% 
+  group_by(state_id, ac_id) %>% 
+  summarise(ac_won_count=mean(pid_won_count, na.rm=T), 
+            ac_win_margin=mean(margin_percentage, na.rm=T)) %>% 
+  ungroup()
+
+ac_x2=dt %>% 
+  group_by(state_id, ac_id) %>% 
+  mutate(p_cand_change=sum(incumbent==T & win==F)/n_distinct(sh_election_id)) %>%
+  dplyr::select(state_id, ac_id, p_cand_change) %>% 
+  ungroup() %>% 
+  arrange(-p_cand_change, state_id, ac_id) %>% distinct()
+
+ac_x=ac_x1 %>% inner_join(ac_x2)
+
+
+# pid_winner = dt %>% #filter(!is.na(ac08_id)) %>% 
+#   group_by(ac_id) %>% 
+#   filter(win==T & assembly_no==min(assembly_no)) %>% ungroup() %>% 
+#   group_by()
+#   dplyr::select(pid) %>% distinct() %>% 
+#   mutate(early_winner=1)
+# 
+# dt= dt %>% left_join(pid_winner, by="pid")
+
+# dt_pid_winner=dt %>%  inner_join(pid_winner, by="pid") %>% 
+#   group_by(pid) %>% summarise(ecount=n_distinct(sh_election_id))
+
+#. Joining, by = c("state_id", "ac_id")Joining, by = c("state_id", "ac_id")
+
+elec_ac_dt=dt %>% left_join(ac_x) %>% 
+  left_join(subdt) 
+
+# Joining, by = c("position", "sh_election_id")Joining, by = c("state_id", "ac_id")
+# This is Elec-AC level characteristics that includes election outcome details. 
+
+
+
+
+```
+
+```{r saving_ac_level_data}
+
+# SAVING an AC level ( time aggregated) version of the above data
+dt=elec_ac_dt
+
+ac_data= dt %>% group_by(state_id, ac_id) %>% 
+  mutate(lg_asset=mean(lg_asset, na.rm=T), 
+         lg_asset_top2=mean(lg_asset_top2, na.rm=T),
+         lg_net_asset=mean(lg_net_asset, na.rm=T),
+         lg_winner_asset=mean(lg_winner_asset, na.rm=T),
+         won_count=mean(won_count, na.rm=T),
+         ac_won_count=ac_won_count,
+         ac_win_margin=ac_win_margin,
+         p_cand_change=p_cand_change,
+         win_party_dum=mean(win_party_dum, na.rm=T),
+         lg_asset_margin=mean(lg_asset_margin,na.rm=T),
+         lg_win_asset_qtile=lg_win_asset_qtile) %>% 
+  dplyr::select(state_id, ac_id, pc01_district_id, ac_no,
+                lg_asset, lg_net_asset, lg_winner_asset, 
+                won_count, 
+                ac_won_count, ac_win_margin, 
+                p_cand_change, 
+                win_party_dum, 
+                lg_asset_margin, 
+                lg_win_asset_qtile) %>% 
+  distinct()
+
+
+write_rds(ac_data,
+          here("data/clean/AE_ac_level.rds"), 
+          compress = "gz")
+
+
+```
+
+```{r asset_growth_fixed_sample}
+
+dt=elec_ac_dt
+
+
+dt1=dt %>% group_by(state_id, ac_id) %>% 
+  mutate(i_election_id=if_else(assembly_no==min(assembly_no), sh_election_id, NA_character_)) %>% 
+  filter(sh_election_id==i_election_id) %>% 
+  filter(position<=3) %>% 
+  group_by(pid) %>%
+  mutate(contest_count=n_distinct(sh_election_id),
+          i_position=if_else(assembly_no==min(assembly_no), position, NA_real_), 
+         i_win_party_dum=if_else(assembly_no==min(assembly_no), win_party_dum, NA_real_)) %>% ungroup() %>% 
+  filter(contest_count>=2) %>% 
+  group_by(pid) %>%
+  fill(i_position,.direction="downup") %>% 
+  fill(i_win_party_dum,.direction="downup") %>% group_by(pid) %>% 
+  arrange(assembly_no) %>% 
+  mutate(e_no= cumsum(c(TRUE, assembly_no[-1] != assembly_no[-length(assembly_no)]))) %>% 
+ungroup() %>% arrange(i_election_id, pid) %>% filter(i_position==1)
+  
+  
+
+pid_df =dt %>% ungroup() %>% 
+  dplyr::select(pid, ac_id, position, 
+                             assembly_no, 
+                state_id, lg_asset, sh_election_id, win_party_dum) %>% 
+  distinct() %>% group_by(pid) %>% 
+  mutate(contest_count=n_distinct(sh_election_id), 
+         ac_count=n_distinct(ac_id),
+         i_position=if_else(assembly_no==min(assembly_no), position, NA_real_), 
+         i_election_id=if_else(assembly_no==min(assembly_no), sh_election_id, NA_character_)) %>% 
+  ungroup() %>% group_by(pid) %>% 
+  fill(i_position,.direction="downup") %>% 
+  fill(i_election_id,.direction="downup") %>% 
+  arrange(assembly_no) %>% 
+  mutate(e_no= cumsum(c(TRUE, assembly_no[-1] != assembly_no[-length(assembly_no)]))) %>% 
+ungroup() %>% arrange(i_election_id, pid)
+
+top3_pid_df= pid_df %>% filter(i_position<=2 & contest_count>=3)
+
+# top3_pid_df= pid_df %>% filter(i_position==3 & contest_count>=3) %>% group_by(i_election_id) %>% 
+#   mutate(cand_count=n_distinct(pid)) %>% ungroup() %>%  filter(cand_count>=2) %>% 
+#   distinct() %>%  arrange( i_election_id)
+
+fml=as.formula(paste0("lg_asset~e_no +i_win_party_dum |state_id"))
+reg=felm(fml, dt1); summary(reg)
+
+top3_pid_df$fitted_lg=fitted(reg)
+
+e_no_val <- seq(min(top3_pid_df$e_no), max(top3_pid_df$e_no))
+predicted_df <- expand.grid(e_no = e_no_val, i_position = 1:3)
+
+# predicted_df=predicted_df %>%  dummy_cols("i_position", remove_first_dummy = T, 
+#                                           remove_selected_columns = T)
+
+cfvec=as.numeric(reg$coefficients)
+
+my_expression <- function(dt,cf) {
+eno=dt[1]
+ipos=dt[2]
+   cf[1]*eno + cf[2]*I(ipos == 2) + cf[3]*I(ipos == 3) + cf[4]*eno * I(ipos == 2) + cf[5]*eno * I(ipos == 3)
+}
+
+predicted_df$lg_asset=unlist(sapply(split(predicted_df, seq(nrow(predicted_df))),my_expression, cf=cfvec) )
+
+# ggplot(top3_pid_df, aes(x = e_no, y = fitted_lg, group = as.factor(i_position), color = as.factor(i_position))) +
+#   geom_point() +  # Scatter plot of the data points
+#   geom_smooth(method = "lm", formula = y ~ x, se = TRUE, color = as.factor(i_position)))
+#   
+#   labs(title = "Asset Growth | Fixed Sample",
+#        x = "election number",
+#        y = "lg_asset",
+#        color = "initial_position")
+
+ggplot(top3_pid_df, aes(x = e_no, y = fitted_lg, group = as.factor(i_position))) +
+  #geom_point(size=.1) +  # Scatter plot of the data points
+  geom_smooth(method = "lm", formula = y ~ x, se = TRUE, aes(color = as.factor(i_position)))+
+  scale_x_continuous(breaks = 1:3) +  # Set x-axis ticks
+  scale_y_continuous(limits = c(15, 17))+
+  labs(title = "Asset Growth | Fixed Sample",
+       x = "election number",
+       y = "lg_asset",
+       color = "initial_position")
+  
+
+
+
+
+```
+
+```{r mobility_matrix_pid}
+# Survival rate of different kind of candidate
+# Intended output: perhpas a matrix where y-axis has position in election e and x-axis has candidate running/winning status in election e+1. 
+# e can be any election, we will collapse the data in two time period. 
+
+dt=ac_election %>% filter(tcpd_year>=1990) %>% 
+  mutate(decade = ((tcpd_year) %/% 10) ) %>% 
+  inner_join(tr_codes1)  #Joining, by = "sh_election_id"
+
+dt_delim_list=split(dt, dt$delim_id)
+
+pid_pos=dt %>%  filter(delim_id==4) %>% 
+  group_by(state_id) %>% 
+  mutate(last_assembly=max(assembly_no, na.rm=T)) %>% 
+  ungroup() %>% 
+  group_by(pid) %>% 
+  arrange(assembly_no) %>% 
+  mutate(e_no= cumsum(c(TRUE, assembly_no[-1] != assembly_no[-length(assembly_no)]))) %>% 
+  #filter(e_no<=2) %>% 
+  group_by(pid) %>% mutate(ac_count=n_distinct(state_id, ac_id)) %>% 
+  arrange(pid, e_no) %>% 
+  mutate(position_next=if_else(assembly_no==last_assembly,-100, Lag(position, -1)), 
+         contest_count=n_distinct(e_no),
+         i_position=if_else(e_no==min(e_no), position, NA_real_)) %>% 
+  group_by(pid) %>% 
+  fill(i_position,.direction="downup") %>% ungroup()
+
+
+pid_new=pid_pos %>% 
+    filter(e_no==1 & position<=7) %>% 
+  mutate( position_next=if_else(is.na(position_next),
+                               -99, position_next),
+        position_next=if_else(position_next>=7,7, position_next)) %>% 
+    dplyr::select(pid, e_no, position, position_next) %>% distinct() 
+pid_new$position_next[pid_new$position_next==-100]=NA
+newcan_mobility=table(pid_new$position, pid_new$position_next)
+row_sums <- rowSums(newcan_mobility, na.rm = TRUE)
+newcan_mobility1=newcan_mobility/row_sums
+newcan_mobility1=round(newcan_mobility1, 2)*100
+
+
+
+pid_incum=pid_pos %>% 
+  filter(e_no==2 & i_position==1 & position<=7) %>% 
+  mutate( position_next=if_else(is.na(position_next),
+                               -99, position_next),
+        position_next=if_else(position_next>=7,7, position_next)) %>% 
+    dplyr::select(pid, e_no, position, position_next) %>% distinct() 
+pid_incum$position_next[pid_incum$position_next==-100]=NA
+incum_mobility=table(pid_incum$position, pid_incum$position_next)
+row_sums <- rowSums(incum_mobility, na.rm = TRUE)
+incum_mobility1=incum_mobility/row_sums
+incum_mobility1=round(incum_mobility1, 2)*100
+  
+
+north_india_states=unlist(lapply(c(3:10), padzero, 2))
+south_india_state=c("28","29","32","33")
+
+pid_new_north=pid_pos %>% filter(state_id %in% south_india_state) %>% 
+    filter(e_no==1 & position<=7) %>% 
+  mutate( position_next=if_else(is.na(position_next),
+                               -99, position_next),
+        position_next=if_else(position_next>=7,7, position_next)) %>% 
+    dplyr::select(pid, e_no, position, position_next) %>% distinct() 
+
+pid_new_north$position_next[pid_new_north$position_next==-100]=NA
+north_newcan_mobility=table(pid_new_north$position, pid_new_north$position_next)
+row_sums <- rowSums(north_newcan_mobility, na.rm = TRUE)
+north_newcan_mobility1=north_newcan_mobility/row_sums
+north_newcan_mobility1=round(north_newcan_mobility1, 2)*100
+
+
+
+pid_incum=pid_pos %>% filter(state_id %in% north_india_states) %>% 
+  filter(e_no==2 & i_position==1 & position<=7) %>% 
+  mutate( position_next=if_else(is.na(position_next),
+                               -99, position_next),
+        position_next=if_else(position_next>=7,7, position_next)) %>% 
+    dplyr::select(pid, e_no, position, position_next) %>% distinct() 
+pid_incum$position_next[pid_incum$position_next==-100]=NA
+incum_mobility=table(pid_incum$position, pid_incum$position_next)
+row_sums <- rowSums(incum_mobility, na.rm = TRUE)
+incum_mobility1=incum_mobility/row_sums
+incum_mobility1=round(incum_mobility1, 2)*100
+
+
+  
+
+```
+
+```{r mobility_matrix_party}
+dt=ac_election %>% filter(tcpd_year>=1990) %>% 
+  mutate(decade = ((tcpd_year) %/% 10) ) %>% 
+  inner_join(tr_codes1)  #Joining, by = "sh_election_id"
+
+# selecting top parties ( with top 7 total win)
+
+party_top10=dt %>% filter(delim_id==4 ) %>% 
+  group_by(party_id) %>% 
+  mutate(total_win=sum(position==1, na.rm=T)) %>% 
+  dplyr::select(party_id, total_win) %>% distinct() %>% ungroup() %>% 
+  arrange(desc(total_win)) %>%
+  slice(1:10) %>% dplyr::pull(party_id)
+  
+
+party_pos=dt %>% filter(delim_id==4) %>% 
+  filter(party_id %in% party_top10) %>% 
+  dplyr::select(party_id, assembly_no,state_id, ac_id,
+                position, delim_id) %>% distinct() %>% 
+        filter(delim_id==4) %>% 
+  group_by(state_id) %>% 
+  mutate(last_assembly=max(assembly_no, na.rm=T)) %>% 
+  ungroup() %>% 
+  group_by(party_id, ac_id) %>% 
+  arrange(party_id, ac_id, assembly_no) %>% 
+  mutate(e_no= cumsum(c(TRUE, assembly_no[-1] != assembly_no[-length(assembly_no)]))) %>% 
+  arrange(party_id, e_no) %>% 
+  mutate(position_next=if_else(assembly_no==last_assembly,-100, Lag(position, -1)))
+
+
+  
+## RESULT:
+# sum(party_pos$position_next==1 & party_pos$position==1,na.rm=T)/sum(party_pos$position==1, na.rm=T)
+# [1] 0.3193388
+  
+## If a party win in a AC, the chances of winning again in the next election in the same AC are 
+# only 32%
+
+```
+
+```{r AE_SUMSTATS}
+# SUM STATS ---------------------------------------------------------------
+
+# 1. Trend ( statewise?) in lg wealth of winner and lg wealth margin
+
+dt=elec_ac_dt %>% 
+  filter(!is.na(lg_asset)) %>% 
+  filter(!is.na(ac08_id)) #%>% # Initializing with only post 2008 ACs
+  #filter(!is.na(lg_win_asset_qtile))  # rtemoving 377 ac08 here as somehow they dont have any win perhaps ( comes from all the states)
+# These 377 are not part of ac_x above, 
+
+# LG_ASSET TREND AT THE AC LEVEL
+
+#ROUGH
+st=dt %>% group_by(state_id) %>% 
+  summarise(el_count=n_distinct(assembly_no))
+
+st_ac=dt %>% group_by(state_id, ac08_id) %>% 
+  summarise(el_count=n_distinct(assembly_no)) %>% 
+  dplyr::select(state_id, el_count) %>% distinct()
+#ROUGH
+
+
+
+# LG_ASSET TREND AT THE STATE LEVEL
+
+state_lv_asset =dt %>% ungroup() %>% 
+  group_by(state_id, assembly_no, win_party_dum) %>% 
+  mutate(sd_lg_asset=sd(lg_asset, na.rm=T),
+         sd_lg_winner_asset=sd(lg_winner_asset, na.rm=T),
+        # sd_asset_marg=sd(lg_asset_margin, na.rm=T),
+         lg_asset=mean(lg_asset, na.rm=T),
+         lg_asset_top2=mean(lg_asset_top2, na.rm=T),
+        lg_winner_asset=mean(lg_winner_asset, na.rm=T),
+         lg_asset_margin=mean(lg_asset_margin, na.rm=T),
+         lg_net_asset=mean(lg_net_asset, na.rm=T), 
+         ac_won_count=mean(ac_won_count, na.rm=T)) %>% 
+  ungroup() %>% 
+  dplyr::select(state_id, assembly_no, sd_lg_asset, win_party_dum,
+                sd_lg_winner_asset, lg_winner_asset,
+                lg_asset, 
+                #lg_asset_qt,
+                lg_asset_top2,
+                lg_asset_margin, 
+                lg_net_asset, 
+                ac_won_count) %>% 
+  distinct() %>% 
+  group_by(state_id) %>% arrange(state_id,assembly_no) %>% 
+  mutate(ecount=n_distinct(assembly_no)) %>%  #filter(ecount>=3) %>% 
+  distinct() %>%  mutate(e_no= cumsum(c(TRUE, assembly_no[-1] != assembly_no[-length(assembly_no)])))
+# 
+# state_lv_df=state_lv_asset_q %>%  
+#   dplyr::select(-c(lg_win_asset_qtile,lg_asset_qt)) %>% 
+#   distinct() 
+
+early_winner_df=dt %>% filter(early_winner==1) 
+
+ac_dt= dt %>% group_by(state_id, ac_no, assembly_no) %>% 
+  mutate(lg_asset_top2=mean(lg_asset_top2, na.rm=T)) %>% 
+  group_by(state_id, ac_no) %>% 
+  arrange(state_id, ac_no, assembly_no) %>% 
+  mutate(e_no= cumsum(c(TRUE, assembly_no[-1] != assembly_no[-length(assembly_no)]))) %>% ungroup() %>% 
+  dplyr::select(lg_asset_top2, e_no, state_id, ac_no) %>% 
+  distinct()
+
+fml=as.formula(paste0("lg_asset_top2~e_no"))
+reg=felm(fml, ac_dt); summary(reg)
+```
+
+```{r graphs}
+
+
+ggplot(state_lv_asset, aes(x = e_no, y = lg_asset_top2)) +
+  geom_point() +  # Scatter plot of the data points
+  geom_smooth(method = "lm", formula = y ~ x, se = TRUE, color = "red") +  # Regression line without confidence interval
+  labs(title = "Asset Growth", x = "election_number", y = "log_asset")  # Add titles and labels
+
+
+
+ggplot(state_lv_asset_q, aes(x = e_no, y = lg_asset_qt, color = as.factor(lg_win_asset_qtile))) +
+  geom_point() +  # Scatter plot of the data points
+  geom_smooth(method = "lm", formula = y ~ poly(x, 1), se = FALSE) +  # Smoothed regression lines
+  labs(title = "Regression Plot", x = "Time", y = "Y") +  # Add titles and labels
+  scale_color_manual(values = c("red", "blue", "green", "purple"))  # Custom line colors
+
+```
+
+You can add options to executable code like this
+
+```{r}
+#| echo: false
+2 * 2
+```
+
+The `echo: false` option disables the printing of code (only output is displayed).

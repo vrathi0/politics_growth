@@ -1,0 +1,915 @@
+---
+title: "Update Document"
+format: pdf
+editor: visual
+---
+
+```{r, include=FALSE}
+rm(list=ls())
+
+
+# Reading the imported files
+library(here)
+
+source(here("code/functions.R"))
+
+my_custom_theme <- function() {
+  theme_minimal() +
+    theme(
+      legend.title = element_blank(),
+      legend.text = element_text(size = 12),
+      legend.position = "top",
+      axis.text = element_text(face = "bold"),
+      axis.title = element_text(face = "bold", siz=8),
+      axis.text.y = element_text(size = 10)
+      # Add any other theme settings you want to reuse
+    )
+}
+
+
+```
+
+```{r READ, include=FALSE}
+
+elec_cand_2k17=read_rds(here("data/clean/elec_candX_inner.rds"))
+acyear_winner_asset=read_rds(here("data/clean/acyear_cand_asset.rds"))
+close_ele_candX=read_rds(here("data/daily_output/close_ele_candX_2004.rds"))
+
+qreadm(here("data/clean/RJ_CS.qs"))
+qreadm(here("data/clean/UP_CS.qs"))
+
+cci_monthly=read_rds(here("data/clean/cci_total.rds"))
+cci_monthly=cci_monthly  %>%  arrange(city, year, month) %>% 
+  mutate(date=as.Date(paste(year, month, "01", sep = "-"))) %>% 
+  mutate_at(vars(building:maintenance), as.numeric)
+
+
+```
+
+
+<!-- notes:  -->
+
+<!-- 1. We have this notion of firm-politician link and the value of that connection to the firm. Two specific papers that we can think about here is for eg Rozas paper and Ufuk's paper, in both they have some measure of connection and they estimate what does it do to the firm. Now I totally believe that such a thing might happen but I am less convinced about the mechanism because its not clear how does this effect even scale? As we get into things like Politician's span of control/attention ..and then do we think that firms are competiting for politician's attention also and how does that work? Further, in most places with a working beurocracy, politicians have limited executive power to begin with ..so its not clear that is the extent of intervention politicians can even do.  -->
+
+<!-- 2. Second thing is career concerns of beurocrats and ability/skill being substitutatble with political connection. In other words, politicians does have an effect on bureaucracy that is under them. The idea is that there should be some link between candidate's type and the state of the beurocracy  -->
+
+<!-- 3. Candidate characteristics can change the state of the bureaucracy under them -->
+
+
+# Motivation and Research Question
+
+-   Local Politicians expect private gains from their political tenure and they also can change the state of the government bureaucracy depending on their characteristics/objective function. Prior evidence (Iyer and Mani, 2012) does suggest bureaucrats consider relationship with politicians as a substitute to investing in their own skill.
+
+-   Under oversize licensing and permit regulations, firms are often throttled by bureaucrats. One plausible reason here is that bureaucrats can and often do extract rents from firms in exchange of relaxing regulations (well understood channel).
+
+-   The research question is to investigate the general effect on firm dynamics that is through politicians influence on bureaucracy. This is to be noted that I consider this different from previous research that focuses on effects arising from direct firm-politicians linkage.
+
+## Summary:
+
+1.  **Fact 1**: Asset value of electoral candidates is growing monotonically at a rate much higher than the aggregate growth rate.
+2.   **Fact 2**: Holding the number of positions constant, evidence from two states suggest that there is a secular positive trend in bureaucratic churn.
+3.   **Fact 3**: For two states, higher asset level of elected candidates are correlated with a higher bureaucratic churn.
+4.  Potential drivers of candidate selection. 
+<!-- For all India select city sample: one sd increase in construction cost index seems to be correlated with around 17-23% increase in assets of political candidates ( after taking out unit level FE). -->
+<!-- 5.  \[On Going\] For RJ and UP: potential correlation between CCI shock and bureaucratic churn through political assets? -->
+
+## Political assets
+
+Trend in Political assets. ( Using SHRUG data that covers years till 2017)
+
+Using publicly available asset disclosure data for each contesting candidates, we can track the trend in assets. Following figure plots the trend over available time period which is from 2003 to 2017. A few salient points from the figure:
+
+1.  Over the sample period, asset level of all contesting candidates are monotonically increasing. On an average, each election cycle the running candidates are 2.6x wealthier than previous set of candidates.
+2.  Top 3 candidates ( in terms of votes) are consistently wealthier than rest of the candidates.
+3.  Average asset level of a top 3 running candidates in 2003-2005 is \~7.75 million INR (\~ 93k USD), and the same figure in 2016-2017 is 43 million INR (\~ 518k USD).
+
+```{r pol_asset_trend, echo=FALSE}
+
+dt=elec_cand_2k17
+
+plot_dt=dt %>% 
+  dplyr::select(sh_election_id, tcpd_year,position, assets,
+                         liabilities) %>% distinct() %>% 
+  filter(!is.na(assets) & !(is.na(liabilities))) %>% 
+  mutate(net_assets=assets-liabilities) %>% 
+  mutate(top3=if_else(position<=3,if_else(position==1,1,2),3)) %>% 
+  group_by( tcpd_year, top3) %>% 
+  summarise(mean_net_assets=mean(net_assets, na.rm=T)) %>% ungroup() %>% 
+  mutate(top3=as.factor(top3)) %>% 
+  mutate(mean_net_assets=mean_net_assets/1e6)
+ # mutate(assembly_no=as.numeric(assembly_no))
+
+growth_dt=dt %>% dplyr::select(state_id, assembly_no, 
+                               assets, liabilities, position) %>% 
+   filter(!is.na(assets) & !(is.na(liabilities))) %>% 
+  mutate(net_assets=assets-liabilities) %>% 
+  mutate(top3=if_else(position<=3,if_else(position==1,1,2),3)) %>% 
+  group_by( state_id, assembly_no,  top3) %>% 
+  summarise(mean_net_assets=mean(net_assets, na.rm=T)) %>% ungroup() %>% 
+  mutate(top3=as.factor(top3)) %>% 
+  mutate(mean_net_assets=mean_net_assets/1e6) %>% 
+  group_by(state_id, top3) %>%  arrange(state_id, top3, assembly_no) %>% 
+  mutate(lag_asset=Lag(mean_net_assets)) %>% mutate(g=(mean_net_assets/lag_asset)-1) %>% 
+  mutate(g=g*100) %>% ungroup() %>% mutate(g=g/5) %>% mutate(g=if_else(g>100,100,g))
+
+gplot=ggplot(growth_dt, aes(x = g, color=top3)) +
+  geom_density(alpha = 0.7) +xlab("Yearly growth rate")+ my_custom_theme()+
+  theme(legend.position = "none")+annotate("text", x= 100, y=0.02,label="Mean: 30% yoy",hjust=1) 
+
+# d1 <- plot_dt %>%
+#   group_by(state) %>%
+#   summarise(min_ass = min(assembly_no)) %>% ungroup()
+
+# Merge the minimum time values back to the original dataframe
+# plot_dt <- plot_dt %>%
+#   left_join(d1, by = "state") %>%
+#   mutate(recode_assembly = assembly_no - min_ass + 1) %>% 
+#   group_by(recode_assembly, top3) %>% 
+#   summarise(mean_net_assets=mean(mean_net_assets, na.rm=T)) %>% ungroup() %>% 
+#   mutate(mean_net_assets=mean_net_assets/1e6)
+
+
+
+# Custom legend labels
+legend_labels <- c("Winner  ", "Two runner ups  ", "Candidates")
+
+# Change line colors
+line_colors <- c(wes_palette("Rushmore1")[5], wes_palette("Rushmore1")[1], wes_palette("Rushmore1")[4])
+
+# Your original data manipulation code (plot_dt)
+
+lvl_plot=ggplot(plot_dt, aes(x = tcpd_year, y = (mean_net_assets), color = top3)) +
+  geom_line(linewidth=1, lty=2) +
+  scale_color_manual(values = line_colors, labels = legend_labels) +  # Set custom line colors and labels
+  labs(x = "Year", y = "Mean Assets ( in million INR)", title = "") +
+ my_custom_theme()  +  # Move legend to the top
+  guides(color = guide_legend(title = "Position",  # Custom legend title
+                              override.aes = list(size = 3))) +  # Adjust legend symbol size
+  scale_x_continuous(limits = c(min(plot_dt$tcpd_year), max(plot_dt$tcpd_year)))+
+  scale_linetype_manual(values = c("Winner" = 1, "Two runner ups" = 2,"Candidates"=3))# Set x-axis range
+
+lvl_plot
+
+#gplot
+
+
+```
+
+<!-- I am not computing the yoy growth rate of asset levels atm. I think the yoy gr is falling, but I dont have any way to use that narrative in the following sections. So I am just going to skip that for now.  -->
+
+```{r pol_asset_trend2, eval=FALSE, include=FALSE}
+
+# dt=elec_cand_2k17
+# 
+# plot_dt=dt  %>% dplyr::select(sh_election_id, assembly_no, tcpd_year,position, assets,state,
+#                          liabilities) %>% distinct() %>% filter(!is.na(assets) & !(is.na(liabilities))) %>% 
+#   mutate(net_assets=assets-liabilities) %>% 
+#   mutate(top3=if_else(position<=3,if_else(position==1,1,2),3)) %>% 
+#   group_by( state,assembly_no, top3) %>% 
+#   summarise(mean_net_assets=mean(net_assets, na.rm=T)) %>% ungroup() %>% 
+#   mutate(top3=as.factor(top3)) %>% 
+#   mutate(assembly_no=as.numeric(assembly_no))
+# 
+# d1 <- plot_dt %>%
+#   group_by(state) %>%
+#   summarise(min_ass = min(assembly_no)) %>% ungroup()
+# 
+# # Merge the minimum time values back to the original dataframe
+# plot_dt1 <- plot_dt %>%
+#   left_join(d1, by = "state") %>%
+#   mutate(recode_assembly = assembly_no - min_ass + 1) %>% 
+#   group_by(recode_assembly, top3) %>% 
+#   summarise(mean_net_assets=mean(mean_net_assets, na.rm=T)) %>% ungroup() %>% 
+#   mutate(mean_net_assets=mean_net_assets/1e6) %>% 
+#   group_by(top3) %>% arrange(top3, recode_assembly) %>% 
+#   mutate(lag_asset=Lag(mean_net_assets)) %>% ungroup() %>% 
+#   mutate(gr=(mean_net_assets/lag_asset)-1)
+
+
+
+
+
+```
+
+# Bureaucratic Churn Trend
+
+Data from two Indian states with either officer level ( all postings) or bureaucratic post level data. Currently, I am mostly focussing on churn per year.
+
+1.  Bureaucratic churn as measured by raw number of transfers made. It seems to be monotonically increasing. The following figures illustrates the trend while holding the total posts constant.
+2.  In most states, right after election the bureaucratic churn is 43% higher than trend line, the election effect is remarkably similar in both states.
+
+```{r br_churn1, echo=FALSE}
+rj_dt=off_rj; rj_post=post_rj_clipped
+
+rj_ias=rj_dt %>% 
+  filter(off_start_year<=2000 ) %>% 
+   filter(service_type=="IAS")
+
+rj_total=rj_dt %>% 
+  filter(off_start_year<=2000 ) 
+
+up_ias=up_posting %>% filter(end_year>=2000)
+
+rj_ias_churn=rj_ias %>% group_by(start_year) %>% 
+  summarise(year_churn=n()) %>% rename(year=start_year)
+
+rj_total_churn=rj_total %>% group_by(start_year) %>% 
+  summarise(year_churn=n()) %>% rename(year=start_year)
+
+up_ias_churn=up_ias %>% group_by(end_year) %>% 
+          summarise(year_churn=n()) %>%   rename(year=end_year)
+
+
+line_colors <- c(wes_palette("Rushmore1")[5], wes_palette("Rushmore1")[1], wes_palette("Rushmore1")[4])
+
+rj_ias_plot=ggplot(rj_ias_churn, aes(x = year, y = year_churn)) +
+  geom_line() +
+  geom_vline(xintercept = c(2004,2009,2014,2019,2023), linetype = "dashed", 
+             color = line_colors[1])+
+  labs(title = "",
+       x = "",
+       y = "# of IAS shuffles") +
+  theme_minimal() + my_custom_theme()+
+  scale_x_continuous(breaks=c(2000,2004,2009,2014,2019,2023),
+        labels=c("2000","e.Year","e.Year","e.Year","e.Year","2023"))
+
+rj_tot_plot=ggplot(rj_total_churn, aes(x = year, y = year_churn)) +
+  geom_line() +
+   geom_vline(xintercept = c(2004,2009,2014,2019,2023), linetype = "dashed", 
+             color = line_colors[1])+
+  labs(title = "Rajasthan",
+       x = "",
+       y = "# of Tot shuffles") +
+  theme_minimal() + my_custom_theme()+
+  scale_x_continuous(breaks=c(2000,2004,2009,2014,2019,2023),
+        labels=c("2000","e.Year","e.Year","e.Year","e.Year","2023"))
+
+
+
+up_ias_plot=ggplot(up_ias_churn, aes(x = year, y = year_churn)) +
+  geom_line() + # Line for year_den
+ #geom_line(aes(y = officer_count), color = "green", linetype = "dashed") +  # Line for officer_count
+  #geom_smooth(method = "lm", se = FALSE, color = "red") +  # Fitted trend line
+  geom_vline(xintercept = c(2002, 2007, 2012, 2017, 2022), linetype = "dashed", 
+             color = line_colors[1])+
+  labs(title = "UP",
+       x = "Year",
+       y = "# of IAS Shuffles") +
+  theme_minimal() + my_custom_theme()+
+  scale_x_continuous(breaks = c(2000, 2002, 2007, 2012, 2017, 2022),
+                     labels = c("2000", "e.Year", "e.Year", "e.Year", "e.Year", "2023"))
+
+
+plot_grid(rj_tot_plot, rj_ias_plot, up_ias_plot, nrow=3)
+
+
+# USING POST DATA TO GENERATE MEASURE
+
+rj_post=post_rj_clipped
+
+rj_post_churn=rj_post %>% filter(start_year>=2000 & start_year<2020) %>% 
+  group_by(designation, start_year) %>% 
+  summarise(dy_churn=n()) %>%  group_by(designation) %>% 
+  mutate(dcount=n(), ymin=min(start_year)) %>%  ungroup() %>%  filter(dcount>5) %>% 
+  mutate(year=start_year-ymin +1)
+# Estimating yearly trend at desig level
+dlist=unique(rj_post_churn$designation)
+beta_list=c();rj_post_churn$trend_b=NA_real_
+for(i in 1:length(dlist)){
+  
+  dt=rj_post_churn %>%  filter(designation==dlist[i])
+  
+  fml=as.formula(paste0("dy_churn~as.numeric(year)"))
+  reg=felm(fml, dt)
+  
+  beta_list[i]=reg$coefficients[2,1]
+  rj_post_churn=rj_post_churn %>% mutate(trend_b=if_else(designation==dlist[i], beta_list[i],
+                                                         trend_b))
+  
+}
+
+rj_post_churn=rj_post_churn %>%  arrange(-trend_b)
+```
+\newpage
+
+## Elections and Churn
+
+Election year see around 43% increased churn compared to trend line in both states.
+
+```{r churn_elec1, include=F}
+
+# Gonna try three things: 
+# 1. state-year panel, take out year trend and then see coefficient of election dummy. 
+# 2. state-year panel, compute yoy change and then see the coffeicnet on election dummy
+# 3. state-year panel, asign 1 to election year and 0 to pre/post year and NA to all of the other. Just compare election to pre and post election
+# 4. Total churn ( not just IAS)
+
+# 1.
+dt=rj_dt %>% filter(off_start_year<=2000 )
+rj_churn=dt %>% mutate(state="rj") %>% 
+  mutate(ics=if_else(grepl("^I", service_type),1,0)) %>% 
+  group_by(ics,state,start_year) %>% 
+  summarise(ics_year_churn=n()) %>% rename(year=start_year) %>% ungroup() %>% 
+  group_by(year, state) %>% 
+  mutate(year_churn=sum(ics_year_churn)) %>% ungroup() %>% 
+  mutate(election=if_else(year%in%c("2004","2009",
+                                    "2014","2019"),1,0))
+
+rj_churn1=rj_churn %>% group_by(state) %>% 
+  mutate(min_year=min(year, na.rm=T)) %>% 
+  mutate(recode_year=year-min_year+1)
+
+dt=rj_churn %>% filter(ics==0)
+fml=as.formula(paste0("year_churn~as.numeric(recode_year) + election"))
+reg=felm(fml, rj_churn1);summary(reg)
+
+# Effect size for election for total posts: > 156/587
+#[1] 0.2657581
+
+
+
+# RUNNING SIMILAR REGRESSION BUT AT DEPARTMENT LEVEL. 
+dt=top_dept_churn
+
+dt=dt %>% mutate(election=if_else(year%in%c("1999","2004","2009",
+                                    "2014","2019"),1,0)) %>% 
+  mutate(churn_frac=churn_frac*100)
+
+dlist=unique(dt$department)
+
+cf_list=list()
+
+for(d in 1:length(dlist)){
+  
+  df=dt %>% filter(department==dlist[d])
+  fml=as.formula(paste0("churn_frac~ as.numeric(year)+ election|0"))
+  reg=felm(fml, df)#;summary(reg)
+  
+  cf_list[[d]]=summary(reg)$coefficients[3,]
+  cf_list[[d]]$department=dlist[d]
+  
+}
+
+cf_df=cf_list %>% bind_rows() %>% clean_names() %>% arrange(-estimate)
+
+# fml=as.formula(paste0("churn_frac~ as.numeric(year)+ department*election|0"))
+# reg=felm(fml, dt);summary(reg)
+# 
+# cf_df=summary(reg)$coefficients
+# row_lgl=grepl(pattern = "election$",rownames(cf_df))
+# cf_df1 =cf_df[row_lgl,]
+# cf_df1=as.data.frame(cf_df1) %>% clean_names()
+# cf_df1=cf_df1 %>% arrange(-estimate)
+
+
+
+
+# Same for UP
+
+up_ias=up_posting %>% filter(end_year>=2000) %>% mutate(state="UP")
+up_ias_churn=up_ias %>% group_by(state,end_year) %>% 
+          summarise(year_churn=n()) %>%   
+          rename(year=end_year) %>% 
+    mutate(election=if_else(year%in%c("2007","2012",
+                                    "2017","2022"),1,0)) %>% 
+  group_by(state) %>% 
+  mutate(min_year=min(year, na.rm=T)) %>% 
+  mutate(recode_year=year-min_year+1) %>% ungroup()
+        
+fml=as.formula(paste0("year_churn~as.numeric(recode_year) + election"))
+reg=felm(fml, up_ias_churn);summary(reg)
+
+
+
+
+
+
+```
+
+## Political assets and Bureaucratic churn
+
+We can also look at whether characteristics of elected representatives have any influence over how local bureaucracy behave, specifically bureaucratic churn in this case.
+
+Using assembly constituency level data on elected representatives, we can aggregate it to district level to match the bureaucracy data. To start, we take net asset level of elected representatives and look at the effect of asset level on bureaucratic churn.
+
+For each district, we have the average asset level over all assembly constituencies in the district and we have the total number of transfers made during the assembly term.
+
+$$TotChurn_{dsa}=a + (\beta_1Asset_{dsa} + \bar{\beta_2Incumbency}_{dsa} + \beta_3\bar{Aligned}_{dsa}) $$
+
+```{r Churn_assets, echo=FALSE, message=FALSE, warning=FALSE}
+# Merging election asset data with CS data
+
+# 1. District level asset ~ total number of transfers during the assembly period. 
+dt=off_rj %>% filter(off_start_year<=2000 ) %>% 
+  filter(!is.na(district))
+
+rj_dist_churn=dt %>% 
+  mutate(ics=if_else(grepl("^I", service_type),1,0)) %>% 
+  #filter(post_start_year>=2000 & (post_end_year==-Inf| post_end_year>=2016)) %>%
+  mutate(state="rajasthan") %>% 
+  group_by(ics, state, district,start_year) %>% 
+  summarise(ics_year_churn=n(), ics_year_duration=mean(duration, na.rm=T)) %>% 
+  rename(year=start_year) %>% ungroup() %>% 
+  mutate(district=tolower(district)) 
+
+
+rj_ias_churn=rj_dist_churn %>% filter(ics==1) %>% 
+  group_by(district,year) %>% 
+  mutate(year_churn=sum(ics_year_churn), 
+         year_duration=mean(ics_year_duration, na.rm=T)) %>% ungroup() %>% 
+  dplyr::select(state, district, year, year_churn, year_duration) %>% distinct() 
+
+# rj_dist_churn$eyear=NA
+# rj_dist_churn$eyear[rj_dist_churn$year %in% c(2003:2007)]=2003
+# rj_dist_churn$eyear[rj_dist_churn$year %in% c(2008:2012)]=2008
+# rj_dist_churn$eyear[rj_dist_churn$year %in% c(2013:2017)]=2013
+# rj_dist_churn$eyear[rj_dist_churn$year %in% c(2018:2023)]=2018
+
+
+
+up_dist_churn=up_posting %>% filter(end_year>=2000) %>% 
+  #filter(off_start_year<=2005) %>% 
+  group_by(district, end_year) %>% 
+          summarise(year_churn=n(), 
+                    year_duration=as.numeric(mean(duration, na.rm=T))) %>%   
+  rename(year=end_year) %>% ungroup() %>% 
+  mutate(state="uttar_pradesh") #%>% mutate(ics=1)
+
+# up_dist_churn$eyear=NA
+# up_dist_churn$eyear[up_dist_churn$year %in% c(2007:2011)]=2007
+# up_dist_churn$eyear[up_dist_churn$year %in% c(2012:2016)]=2012
+# up_dist_churn$eyear[up_dist_churn$year %in% c(2017:2021)]=2017
+# up_dist_churn$eyear[up_dist_churn$year %in% c(2022:2023)]=2022
+
+cs_dt=rj_ias_churn %>%  bind_rows(up_dist_churn) %>% 
+  mutate(district=tolower(district))
+
+cs_dt=rj_post_churn %>%  bind_rows(up_posting_churn) %>% 
+  mutate(pdistrict=tolower(pdistrict)) %>% rename(district=pdistrict)
+
+cs_dt_syear=cs_dt %>% dplyr::select(district, start_year, 
+                                    dist_syear_churn, 
+                                    dist_eyear_dur1, 
+                                    dist_eyear_dur2, early_order_avg) %>% 
+  distinct() %>% rename(year=start_year)
+
+cs_dt_eyear=cs_dt %>% dplyr::select(district, end_year, 
+                                    dist_eyear_churn, 
+                                    dist_eyear_dur1, 
+                                    dist_eyear_dur2, early_order_avg) %>% 
+  distinct() %>% rename(year=end_year)
+
+cs_dt_bind=cs_dt_syear %>% left_join(cs_dt_eyear, by=c("district", 
+                                                       "start_year"="end_year", 
+                                                       "dist_eyear_dur1",
+                                                       "dist_eyear_dur2",
+                                                       "early_order_avg")) %>% distinct()
+
+# %>% 
+#   mutate(election=if_else(year==eyear,1,0))
+
+
+dist_elec_close=acyear_winner_asset %>% 
+  filter(state %in% c("rajasthan","uttar_pradesh")) %>% 
+  filter(as.numeric(win_margin_p)<=2) %>% 
+  mutate(incumbent=as.numeric(as.logical(incumbent)), 
+         ac_st_align=as.numeric(ac_st_align)) %>% 
+  group_by(state,adr_district_name, year,assembly_no) %>% 
+  summarise(mean_net_asset=mean(mean_all_net_asset, na.rm=T),
+            mean_winner_asset=mean(winner_net_asset, na.rm=T),
+            inc_share=mean(incumbent), 
+            align_share=mean(ac_st_align),
+            mean_margin=mean(win_margin_p, na.rm=T)) %>% ungroup() %>% 
+  rename(district=adr_district_name) 
+
+dist_elec_close=close_ele_candX %>% rename(district=adr_district_name) %>% 
+   mutate(district=tolower(district)) %>% filter(winner==1) %>% 
+  dplyr::select(-winner) %>% distinct()
+  
+
+
+rj_full=expand.grid(state = "rajasthan",
+                   district = unique(dist_elec_close$district[dist_elec_close$state=="rajasthan"]),
+                   year = 2003:2020)
+up_full=expand.grid(state = "uttar_pradesh",
+              district = unique(dist_elec_close$district[dist_elec_close$state=="uttar_pradesh"]),
+                   year = 2003:2020)
+
+full_df=rj_full %>%  bind_rows(up_full)
+
+dist_celec_full=full_df %>%  left_join(dist_elec_close)
+dist_celec_full=dist_celec_full %>%   fill(c(assembly_no))
+#Joining, by = c("state", "district", "year")
+
+# We can already fill the variables at assembly level
+
+dist_celec_full=dist_celec_full %>% group_by(state, district, assembly_no) %>% 
+  arrange(state, district, assembly_no, year) %>% 
+  fill(c(st_align_cwin, st_align_cwinshare, 
+         w_net_asset, w_ed, w_totcrime_major), .direction = "downup") %>% 
+  ungroup()
+
+
+elec_cs_syear=cs_dt_syear %>% left_join(dist_celec_full) %>% distinct()
+
+elec_cs_eyear=cs_dt_eyear %>% left_join(dist_celec_full) %>% distinct()
+
+#Joining, by = c("state", "district", "year")
+
+# # Getting election dummy
+# elec_cs=elec_cs %>%
+#   mutate(election=if_else(is.na(assembly_no),0,1))
+
+# 
+# elec_cs=elec_cs %>% group_by(state, district) %>%  
+#   arrange(state, district, year) %>% 
+#   fill(c(assembly_no, align_share,z_dum), # mean_net_asset, inc_share, align_share,
+#         # mean_winner_asset,mean_margin),
+#        .direction = "down") %>% ungroup()
+
+
+# elec_cs=elec_cs %>% group_by(state, district) %>% arrange(state, district, year) %>% 
+#   mutate(lag_ass=Lag(assembly_no)) %>% ungroup() %>% 
+#   mutate(election=0) %>% 
+#   mutate(election=if_else((state=="rajasthan" & !is.na(lag_ass)),1,election)) %>% 
+#    mutate(election=if_else(state=="uttar_pradesh" & !is.na(assembly_no),1,election)) %>% 
+#   group_by(state, district) %>%  arrange(state, district, year) %>% 
+#   fill(assembly_no, .direction = "down") %>% ungroup()
+
+# 
+# state_elec_cs=elec_cs %>% group_by(state,assembly_no, election) %>% 
+#   mutate(state_year_churn=mean(year_churn)) %>% ungroup() %>% 
+#   dplyr::select(state, assembly_no, state_year_churn, election) %>% distinct()
+# 
+# 
+# fml=as.formula(paste0("state_year_churn~election|state"))
+# reg=felm(fml, state_elec_cs); summary(reg)
+
+churn_asset_syear=elec_cs_syear %>% group_by(assembly_no, state, district) %>% 
+  mutate(y1_total=sum(dist_syear_churn), 
+         y2_total=mean(dist_eyear_dur1, na.rm=T),
+         y3_total=mean(dist_eyear_dur2, na.rm=T)) %>% 
+  dplyr::select(assembly_no, state, district, 
+                y1_total,y2_total, y3_total, st_align_cwinshare,st_align_cwin,
+                w_net_asset,w_ed,w_totcrime_major) %>% 
+  distinct()%>% 
+  filter(district!="jaipur") %>% 
+  filter(district!="lucknow")
+
+churn_asset_eyear=elec_cs_eyear %>% group_by(assembly_no, state, district) %>% 
+  mutate(y1_total=sum(dist_eyear_churn), 
+         y2_total=mean(dist_eyear_dur1, na.rm=T),
+         y3_total=mean(dist_eyear_dur2, na.rm=T)) %>% 
+  dplyr::select(assembly_no, state, district, 
+                y1_total,y2_total, y3_total, st_align_cwinshare,st_align_cwin,
+                w_net_asset,w_ed,w_totcrime_major) %>% 
+  distinct()%>% 
+  filter(district!="jaipur") %>% 
+  filter(district!="lucknow")
+
+# churn_asset=elec_cs %>% group_by(assembly_no, state, district) %>% 
+#   mutate(y1_total=sum(year_churn), 
+#          y2_total=mean(year_duration, na.rm=T)) %>% 
+#          dplyr::select(assembly_no, state, district, mean_net_asset,mean_winner_asset,mean_margin,
+#                        y1_total,y2_total, inc_share, align_share) %>% distinct() %>% filter(!is.na(mean_net_asset)) %>% filter(!is.na(mean_winner_asset)) %>% 
+#   ungroup() %>% filter(district!="jaipur") %>% 
+#   filter(district!="lucknow") %>% 
+#   mutate(mean_net_asset=clipp(mean_net_asset, 0.0, 0.99),
+#          mean_winner_asset=clipp(mean_winner_asset, 0, 0.99)) %>% 
+#   mutate(mean_net_asset=mean_net_asset/1e6,
+#          mean_winner_asset=mean_winner_asset/1e6) %>% 
+#  filter(!is.na(mean_net_asset))
+
+rj=churn_asset %>% filter(state=="rajasthan")
+fml1=as.formula(paste0("y2_total~  as.numeric(assembly_no) +( st_align_cwin + w_net_asset + w_totcrime_major)| 0"))
+fml2=as.formula(paste0("y1_total~  as.numeric(assembly_no)+(mean_winner_asset+inc_share+ align_share)| 0"))
+fml3=as.formula(paste0("y1_total~  as.numeric(assembly_no)+(mean_winner_asset+inc_share+ align_share)| state"))
+
+reg_list=lapply(list(fml1, fml2, fml3), 
+                felm, data=churn_asset)
+
+
+fml1=as.formula(paste0("y2_total~ as.numeric(assembly_no)+ ( st_align_cwin + w_net_asset + w_totcrime_major)| state"))
+rr=felm(fml1, churn_asset_eyear);summary(rr)# ROUGH
+
+getci_vec=function(r,var,y, dt){
+  
+  sr=summary(r)
+  beta=sr$coefficients[var,1]
+  se=sr$coefficients[var,2]
+  
+  eff=beta*sd(dt[[var]], na.rm=T)/sd(dt[[y]], na.rm=T)
+  ul=(beta+1.96*se)*sd(dt[[var]], na.rm=T)/sd(dt[[y]], na.rm=T)
+  ll=(beta-1.96*se)*sd(dt[[var]], na.rm=T)/sd(dt[[y]], na.rm=T)
+  
+  data.frame(eff=eff, 
+             ul=ul, 
+             ll=ll)
+  
+}
+
+asst_eff_list=lapply(reg_list, getci_vec, var="mean_winner_asset",
+           y="y1_total", 
+           dt=churn_asset)
+asset_eff=asst_eff_list %>% bind_rows() %>% mutate(model=as.factor(row_number()))
+
+
+inc_eff_list=lapply(reg_list, getci_vec, var="inc_share",
+           y="y1_total", 
+           dt=churn_asset)
+inc_eff=inc_eff_list %>% bind_rows() %>% mutate(model=as.factor(row_number()))
+
+
+
+# Plotting asset effects:
+
+asset_eff_plot=ggplot(asset_eff, aes(x = model)) +
+  geom_errorbar(aes(ymin = ll, ymax = ul), width = 0.1, linewidth=2,
+                color = wes_palette("Rushmore1")[5]) +
+  geom_point(aes(y = eff), size = 3, color = wes_palette("Rushmore1")[4]) +
+   geom_hline(yintercept = 0)+
+  labs(x = "Model", y = "SD units (total churn)", title = "SD change from one SD change in winners_wealth ") +
+  theme_minimal() +
+  coord_cartesian(ylim = c(-0.1, 0.6)) +
+  theme(panel.grid.major.y = element_blank(),
+        panel.grid.minor.y = element_blank())+
+  annotate("text", x = 3, y = 0.55, label = c("1:Baseline", "\n \n 2:1+time trend",
+                                              "\n \n \n \n 3: 2+State FE"), 
+           size = 3, fontface="bold")
+
+
+
+# PLOTTING INC SHARE EFFECTS
+
+inc_eff_plot=ggplot(inc_eff, aes(x = model)) +
+  geom_errorbar(aes(ymin = ll, ymax = ul), width = 0.1, linewidth=2,
+                color = wes_palette("Rushmore1")[5]) +
+  geom_point(aes(y = eff), size = 3, color = wes_palette("Rushmore1")[4]) +
+   geom_hline(yintercept = 0)+
+  labs(x = "Model", y = "SD units (total churn)", title = "SD change from one SD change in incumbency at district level ") +
+  theme_minimal() +
+  coord_cartesian(ylim = c(-0.1, 0.6)) +
+  theme(panel.grid.major.y = element_blank(),
+        panel.grid.minor.y = element_blank())
+
+
+
+
+# TEST
+# fml=as.formula(paste0("mean_net_asset~as.numeric(assembly_no)|state"))
+# reg=felm(fml, churn_asset);summary(reg)
+
+
+
+
+
+
+```
+
+```{r ROUGH, include=F, eval=FALSE}
+# TEST
+
+
+# fml=as.formula((paste0("y1_total~y2_total + as.numeric(assembly_no)")))
+# reg=felm(fml, churn_asset); summary(reg)
+# mean duration doesnt seem to move the needle in any way, also its not correlated with churn either
+# WHY? What is the explanation? ^
+  
+plot_asset_df=data.frame(x1=churn_asset$mean_net_asset, 
+                   state=churn_asset$state,
+                   yhat_total=as.numeric(reg$c.fitted.values))
+
+plot_asset <- ggplot(plot_asset_df, aes(x = x1, y = yhat_total, color = state)) +
+  stat_summary_bin(fun = 'mean', bins = 30, size = 1.5, geom = 'point') +
+  geom_smooth(method = "lm", se = FALSE) +  # Add smooth lines for each state
+  #geom_rug(sides = "b", length = unit(0.05, "npc")) +
+  labs(title = "B. Churn | Total ME over 5 years", x = " Asset level (in million INR)", y = NULL) +
+  theme_minimal() +
+  theme(
+    axis.text.x = element_text(face = "bold", size = 10),
+    axis.text.y = element_text(face = "bold", size = 10),
+    plot.title = element_text(face = "bold", size = 10)
+  ) +  ylim(0, 52)
+
+plot_incshare_df=data.frame(x1=churn_asset$inc_share, 
+                   state=churn_asset$state,
+                   yhat_total=as.numeric(reg$c.fitted.values))
+
+plot_incshare <- ggplot(plot_incshare_df, aes(x = x1, y = yhat_total, color = state)) +
+  stat_summary_bin(fun.y = 'mean', bins = 30, size = 1.5, geom = 'point') +
+  geom_smooth(method = "lm", se = FALSE) +  # Add smooth lines for each state
+  #geom_rug(sides = "b", length = unit(0.05, "npc")) +
+  labs(title = "", x = "% Incumbents", y = NULL) +
+  theme_minimal() +
+  theme(
+    axis.text.x = element_text(face = "bold", size = 10),
+    axis.text.y = element_text(face = "bold", size = 10),
+    plot.title = element_text(face = "bold", size = 10)
+  ) 
+
+#plot_incshare
+
+plot_alnshare_df=data.frame(x1=churn_asset$align_share, 
+                   state=churn_asset$state,
+                   yhat_total=as.numeric(reg$c.fitted.values))
+
+plot_alnshare <- ggplot(plot_alnshare_df, aes(x = x1, y = yhat_total, color = state)) +
+  stat_summary_bin(fun.y = 'mean', bins = 30, size = 1.5, geom = 'point') +
+  geom_smooth(method = "lm", se = FALSE) +  # Add smooth lines for each state
+  #geom_rug(sides = "b", length = unit(0.05, "npc")) +
+  labs(title = "", x = "% Aligned with ruling party", y = NULL) +
+  theme_minimal() +
+  theme(
+    axis.text.x = element_text(face = "bold", size = 10),
+    axis.text.y = element_text(face = "bold", size = 10),
+    plot.title = element_text(face = "bold", size = 10)
+  ) 
+
+#plot_alnshare
+
+#plot_grid(plot_asset, plot_incshare, plot_alnshare, nrow=3)
+```
+
+### B.Churn\~ Asset Level
+
+```{r}
+asset_eff_plot
+```
+
+### B.Churn\~ Incumbent Share
+
+```{r}
+inc_eff_plot
+```
+
+I also look at share of candidates aligned with state ruling party but surprisingly, I find zero effect for that across all the specifications. 
+
+## What drives selection of candidates?
+
+Here I am going to take an external measure which is Cost of Construction index across 47 cities and see if local demand shocks are correlated with candidate selection. There are a few assumptions here:
+
+1.  I am assuming the shocks in CCI are due to demand shocks.
+2.  I am assuming that these demand shocks imply that there is a growth spurt in local construction sector.
+
+```{r CCI_Election, echo=FALSE, message=FALSE, warning=FALSE}
+
+
+# Creating a summed index that is just rowsum of all the indices
+cci_aggr <- cci_monthly %>%
+  mutate(agg_index =rowSums(across(building:maintenance), na.rm = TRUE),
+         agg_index1 =rowSums(across(building:maintenance), na.rm = TRUE)) %>%
+  dplyr::select(city, year, month, agg_index) %>% distinct() %>% 
+  group_by(city,year) %>%
+  arrange(city,year, month) %>%
+  mutate_at(vars(agg_index), ~ . - first(.)) %>%
+  group_by(city, year) %>%
+  mutate(index_yr_mean=mean(agg_index, na.rm=T), 
+         index_yr_max=max(agg_index, na.rm=T)) %>%
+  ungroup() %>% arrange(city, year) 
+
+cci_agg_year=cci_aggr %>% dplyr::select(city, year, 
+                                        index_yr_mean, index_yr_max) %>%
+  distinct() %>% mutate(year=as.numeric(year)) %>% 
+  filter(year>=2014)
+
+# %>% 
+#   group_by(city) %>%  arrange(city, year) %>% 
+#   mutate(lag_index=Lag(index_yr_mean, 1)) %>%  ungroup() %>% 
+#   mutate(fd_index=index_yr_mean-lag_index) %>% 
+#   mutate(fd_index=if_else(fd_index>42, NA_real_, fd_index))
+
+
+new_row <- data.frame(city = unique(cci_agg_year$city), year = 2011, yearly_agg_index=100)  
+
+# Append the new row to each city's data
+# cci_agg_year=cci_agg_year %>% bind_rows(new_row) %>% 
+#   arrange(city, year)
+
+city_state_df <- data.frame(
+  city = unique(cci_agg_year$city),
+  state = c(
+    "Maharashtra", "Tripura", "Uttar Pradesh", "Gujarat", "Mizoram", "Rajasthan", "Uttar Pradesh",
+    "Haryana", "Punjab", "Gujarat", "Gujarat", "West Bengal", "Karnataka", "Madhya Pradesh",
+    "Odisha", "Bihar", "Chandigarh", "Tamil Nadu", "Kerala", "Tamil Nadu", "Delhi", "Jharkhand",
+    "Haryana", "Sikkim", "Assam", "Uttarakhand", "Telangana", "Manipur", "Madhya Pradesh",
+    "Arunachal Pradesh", "Madhya Pradesh", "Rajasthan", "Punjab", "Punjab", "Jammu and Kashmir",
+    "Jharkhand", "Rajasthan", "Assam", "Uttar Pradesh", "Nagaland", "West Bengal", "Uttar Pradesh",
+    "Punjab", "Tamil Nadu", "Uttar Pradesh", "Uttar Pradesh", "Gujarat", "Maharashtra",
+    "Karnataka", "Maharashtra", "Uttarakhand","Maharashtra","Maharashtra","Maharashtra",NA, "Assam", "Goa", "Bihar", "Puducherry",
+    "Andaman and Nicobar Islands", "Maharashtra", "Odisha", "Chhattisgarh", "Maharashtra",
+    "Chhattisgarh", "Andhra Pradesh", "Gujarat", "Jharkhand", "Uttarakhand", "Meghalaya",
+    "Himachal Pradesh", "Assam", "Jammu and Kashmir", "Gujarat", "Kerala", "Madhya Pradesh","Gujarat",
+    "Uttar Pradesh", "Goa", "Andhra Pradesh", "Andhra Pradesh","Andhra Pradesh"
+  )
+)
+
+city_state_df=city_state_df %>% 
+  mutate(state=gsub(" ", "_", state))
+
+cci_agg_styear=cci_agg_year %>% inner_join(city_state_df) %>% 
+  filter(!is.na(state)) %>% mutate(state=tolower(state))
+
+
+state_eyear=acyear_winner_asset %>% dplyr::select(state,year) %>%  distinct() %>% 
+   mutate(election=1)
+
+
+cci_agg_st_eyear=cci_agg_styear %>% left_join(state_eyear)
+cci_agg_st_eyear$election[is.na(cci_agg_st_eyear$election)]=0
+
+cci_agg_st_eyear=cci_agg_st_eyear %>% mutate(city=tolower(city))
+
+asset_city_df=acyear_winner_asset %>% 
+  mutate(incumbent=as.numeric(as.logical(incumbent)), 
+         ac_st_align=as.numeric(ac_st_align)) %>% 
+  group_by(state,adr_district_name, year,assembly_no) %>% 
+  summarise(mean_net_asset=mean(mean_all_net_asset, na.rm=T),
+            mean_winner_asset=mean(winner_net_asset, na.rm=T),
+            inc_share=mean(incumbent), 
+            align_share=mean(ac_st_align),
+            mean_win_margin=mean(as.numeric(win_margin_p), na.rm=T)) %>%
+  ungroup() %>% 
+  rename(city=adr_district_name) 
+# asset_city_df=acyear_winner_asset %>% 
+#   rename( city=adr_district_name) %>% 
+#   group_by(state, city, assembly_no, year) %>% 
+#   summarise(winner_net_asset=mean(winner_net_asset, na.rm=T), 
+#             winner_asset_cdf=mean(winner_asset_cdf, na.rm=T),
+#             winner_net_asset_cdf=mean(winner_net_asset_cdf, na.rm=T),
+#          num_crim=sum(mean_all_num_crim, na.rm=T), 
+#          rich=mean(rich, na.rm=T), 
+#          mean_all_asset=mean(mean_all_asset, na.rm=T), 
+#          mean_all_net_asset=mean(mean_all_net_asset, na.rm=T)) %>% 
+#   ungroup() 
+
+elec_cci0=cci_agg_st_eyear %>% 
+  full_join(asset_city_df, by= c("state","city", "year")) %>% 
+  group_by(state, city) %>% 
+  arrange(state, city, year) %>% 
+  mutate(assembly_no=as.numeric(assembly_no)) %>% 
+  mutate(lead_assembly=Lag(assembly_no, -1)) %>% 
+  ungroup() %>% 
+  mutate(assembly_no=if_else(is.na(assembly_no), 
+                             as.numeric(lead_assembly)-1, assembly_no))
+
+
+# elec_cci1=elec_cci0 %>% group_by(state, city) %>%
+#   arrange(state, city, year) %>%
+#   fill(c(assembly_no, winner_net_asset, winner_net_asset_cdf,rich,
+#          mean_all_asset,mean_all_net_asset,
+#                              num_crim), .direction = "down") %>%
+#   fill(assembly_no, .direction = "up")
+
+elec_cci1=elec_cci0 %>% group_by(state, city) %>%
+  arrange(state, city, year) %>%
+  fill(c(assembly_no, mean_net_asset,mean_winner_asset,mean_win_margin), .direction = "down") %>%
+  fill(assembly_no, .direction = "up")
+
+dd=elec_cci1 %>% group_by(assembly_no, election, city) %>%
+         mutate(index=sum(index_yr_max, na.rm=T)) %>% ungroup()
+
+
+# dd=elec_cci1 %>% group_by(assembly_no, election, city) %>%
+#         mutate(index=sum(index_yr_max, na.rm=T)) %>%
+#   ungroup() %>%
+#   group_by(state, city) %>%
+#   arrange(state, city, year) %>%
+#   mutate(lag_index=Lag(index_mean, 1),
+#          lead_index=Lag(index_mean, -1)) %>%
+#   ungroup() %>%
+#   mutate(winner_net_asset=winner_net_asset/1e6,
+#          mean_all_net_asset=mean_all_net_asset/1e6)
+
+elec_cci=dd %>%  filter(election==1) %>% 
+    mutate(mean_net_asset=mean_net_asset/1e6, 
+           mean_winner_asset=mean_winner_asset/1e6) %>% 
+  dplyr::select(-lead_assembly) %>% 
+  group_by(state, city, assembly_no, year) %>% 
+  mutate(all_mean_net_asset=mean(mean_net_asset, na.rm=T), 
+         mean_winner_asset=mean(mean_winner_asset, na.rm=T))
+
+# svars=c("year","all_mean_net_asset","assembly_no","index_yr_max")
+regdt=elec_cci %>%
+  filter(!is.na(mean_winner_asset)) %>% 
+  filter(election==1) %>% group_by(state) %>% 
+  mutate(min_year=min(year, na.rm = T)) %>% 
+  mutate(year_n=year-min_year+1) %>% 
+  filter(!is.na(all_mean_net_asset)) %>% 
+  filter(!is.na(mean_winner_asset))
+
+fml=as.formula(paste0("mean_win_margin~index +as.numeric(year)  |state"))
+reg=felm(fml, elec_cci); summary(reg)
+
+
+
+```
+
+
+## Ongoing/next steps
+
+
+1. Getting better data that might be useful to create shocks for candidate selection. The idea is that candidate make a decision to contest based on the expected value of the prize. So for eg, there are some big projects that are exogenous to any local decision but would generate local rents. It might affect candidates decision to run or not. 
+
+2. Better government data. 
+
+3. Finally the black box of firm dynamics. 

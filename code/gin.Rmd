@@ -1,0 +1,41 @@
+---
+title: "Gin Review Summary"
+output: html_document
+---
+
+```{r, echo=FALSE, message=FALSE}
+library(knitr)
+library(dplyr)
+
+# Data for each gin with specific review links
+gin_data <- data.frame(
+  Gin_Name = c("Citadelle Gin Original", "Roku Gin", "Qvänum Gin", "Skog Gin", "Wet City Spirits Gin", 
+               "Citadelle Reserve", "Ninkasi Gin", "Generous Gin", "BeGin Copenhagen Espresso-Orange Gin", 
+               "BeGin Copenhagen Pepper & Bay Leaf", "Bloom Premium London Dry Gin", "Bols Genever 21"),
+  ABV = c("44%", "43%", "47%", "40%", "45%", "45.2%", "46%", "44%", "43%", "43%", "40%", "42%"),
+  Origin = c("France", "Japan", "Sweden", "Sweden", "Sweden", "France", "France", "France", "Denmark", "Denmark", "United Kingdom", "Netherlands"),
+  Key_Botanicals = c("Juniper, citrus, spices", "Sakura flower, yuzu, tea", "Juniper, local botanicals", "Forest-inspired, juniper", 
+                     "Mixed botanicals", "Oak-aged botanicals", "Juniper, local spices", "Citrus, red peppercorn", 
+                     "Juniper, espresso, orange", "Juniper, pepper, bay leaf", "Chamomile, honeysuckle", "Malt spirit, juniper"),
+  Flavor_Profile = c("Fresh, floral, herbal", "Balanced, floral, complex", "Crisp, slightly earthy", "Fresh, piney, earthy", 
+                     "Herbaceous, slightly spicy", "Smooth, slightly woody", "Strong, spicy, floral", "Fresh, slightly spicy", 
+                     "Rich, coffee-infused, citrusy", "Spicy, herbal, aromatic", "Light, floral, smooth", "Malty, full-bodied, classic genever"),
+  Review_Links = c(
+    "[Citadelle Gin Original - The Gin Guide](https://www.theginguide.com/citadelle-gin-review.html)",
+    "[Roku Gin - The Gin Is In](https://theginisin.com/gin-reviews/roku-gin/)",
+    "[Qvänum Gin - Swedish Gin Reviews](https://ginjournal.se/qvanum-gin/)",
+    "[Skog Gin - Swedish Gin Reviews](https://ginjournal.se/skog-gin/)",
+    "[Wet City Spirits Gin - Swedish Gin Reviews](https://ginjournal.se/wet-city-spirits-gin/)",
+    "[Citadelle Reserve - The Gin Guide](https://www.theginguide.com/citadelle-gin-review.html)",
+    "[Ninkasi Gin - French Gin Reviews](https://ginreviews.fr/ninkasi-gin/)",
+    "[Generous Gin - The Gin Is In](https://theginisin.com/gin-reviews/generous-gin/)",
+    "[BeGin Copenhagen Espresso-Orange Gin - Danish Gin Reviews](https://ginreviews.dk/begin-copenhagen-espresso-orange/)",
+    "[BeGin Copenhagen Pepper & Bay Leaf - Danish Gin Reviews](https://ginreviews.dk/begin-copenhagen-pepper-bay-leaf/)",
+    "[Bloom Gin - The Gin Guide](https://www.theginguide.com/bloom-gin-review.html)",
+    "[Bols Genever - The Gin Is In](https://theginisin.com/gin-reviews/bols-genever/)"
+  ),
+  Ratings = c("4.5/5", "4.5/5", "4/5", "4/5", "3.5/5", "4.5/5", "4/5", "4/5", "4/5", "4/5", "4.5/5", "4.5/5")
+)
+
+# Create table
+kable(gin_data, caption = "Summary of Selected Gins with Reviews and Ratings")

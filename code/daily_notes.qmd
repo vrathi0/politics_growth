@@ -1,0 +1,205 @@
+---
+title: "politics_growth_notes"
+format: html
+editor: visual
+---
+
+## Daily Notes for politics_growth
+
+Codes: #FLASH: Can be potentially useful for something #LOOKMORE: Look for a better solution #FIGUREOUT: A problem that needs to be solved. #DONTKNOW: Something weird in the data, I dont know why is that happening
+
+## Sept 24, 2024
+
+1.  **IAS_Budget_Merge**. I am limiting merging state budget to officers who are in the state and not with central deputation. Central deputation here is defined as JS and above and with centre. 
+2.  **IAS_Budget_Merge**. First pass I am only merging along time+sector. Including line_item would lead to around 10k more merge fails (denominator: 76k).
+
+## August 24, 2024
+
+1.  I have made some changes in lvl assignment and tried to reconstruct the mobility_matrix. I think I have good confidence in the new lvl assignment, but the mobility matrix seems more or less flat. What that means is that, the ranking at one level does not seem to influence the ranking at next level. Even when I restrict the lvl to be between 11 to 14.
+
+2.  Either it means that there is no quality discovery, which seem unlikely. But perhaps it is correct since you are looking at the range where promotions happen automatically according to years served.
+
+3.  The right margin to look for should be something else, perhaps the good post bad post angle.
+
+## August 22, 2024
+
+1.  In the TCPD IAS data, I have tagged the jnr and us level postings. Now a potential next step is looking how does it predict some later outcome.
+
+2.  Next, I can do somethign similar for lvl="11" and use that too.
+
+3.  PROBLEM: I think I have made the following problem. When I am categorizing level_eq along the hierarchy and assigning them numbers (lvl). The lvl I am using comes from recent post 2017 classification and I am using them to classify everything retrospectively. This results in Director with 14 years and center deputation to given same lvl number as another Director with state cadre and much earlier in the career trajectory. This is simply because I am only using one criteria (level_eq) to classify which may mean differently in different decades.
+
+## May 20, 2023
+
+1.  #ISSUE in EC2013. The variable 'in_hh' is somehow 0 for almost all obs, even after filtering for total hired to be greater than 9 and select broad activities.
+
+## May 23, 2023
+
+1.  EC2005 does not have broad category variable. It has NIC 2004 codes that are fairly grnular. So probably just use non-agri business code across survey rounds?
+
+## 1_Merge.R ( combining election with SE covariates )
+
+### July 8, 2023
+
+1.  Currently working with three data sources: a: Lokdhaba data from trivedi website (https://tcpd.ashoka.edu.in/lok-dhaba/). This has candidate level election info like votes, cand characteristics, etc, for all AC/GE elections. b: Next I use candidate personal characteristics ( like education, criminal statues, assets, etc) from ADR candidate affidevit data from SHRUG (shrug-adr-elections-cand-dta/affidavits_clean.dta). c: Next I plan to use constituency level SE covariates, from some appt shrug data.
+
+The goal right now is to merge all of these and see how to patterns in political outcome ( incumbent hot roll, candidate asset growth, etc) correlate with the constituency SE characteristics. But above all, also to establish basic facts about political process ( its outcome)
+
+2.  In the Lokdhaba (ac_election) data, around 1.7% of the observations dont have pid ( unique candidate id across elections). All of these observations are for NOTA. That is, this is the entry for counting votes for NOTA option in the election.
+
+3.  #FLASH The delim variable has information about various delimination. There have been 4 delimitations in India post-Independence - 1952, 1962, 1976 and 2008. In the data, this variable has the following values \[1, 2, 3, 4\] which correspond to the following years \[(1962-1963), (1964-1972), (1973-2007), (2008-current)\] There are some observations that have bleeded out values like delimID=3 for year 2008 and 2009. ( not idea if it means anything)
+
+4.  #FIGUREOUT #LOOKMORE So, constituency_no var in TCPD data ( var comes from ECI) is not consistent across years. That means, one constituency can have multiple code.... making it more or less useless. Creating a new code which is simple text concat of state name and constituency name. This is already a problem as constituency names are also not consistent across time, sometimes. For eg, look for constituency name for pid=="AEJK103314". Potential solution: list all the constituencies collapse across time and then create a crosswalk between name changes. ( someone prolly has done it before)
+
+5 #TODO: In ele_cand_x; there are many observations ( for ex state_id=="29" ), that doesnt have either of ac07_id or ac08_id, that means the ac_id field is entirely missing. But since these are consistent over time, even if one constitunecy_name observation has any ac07/08_id, we can fill up the others. This can be done, but would require some manhandeling. This should atleast partially take care of the kinda bad merge with EC data. ( as that merge is by ac_id)
+
+6.  #DONTKNOW In EC data from SHRUG, unique ac_id for 98, 05 and 13 are: 4298;6757;6867. That means, year 98 just had lesser ac07_id/ac08_id ( ie geog delinieated units). I dont know why is this, ideally the number of units should be constant across time even if they have 0 firms.
+
+7.  Just so that there is no more confusion. Election data such as adr_cand_x have ac07_id if the election was held before 2008 delim, and have ac08_id if election was held after delim. Remember that this is election data, so need a geographic election district ( which is AC itself). therefore it doesnt make sense for it to have any duplicates. ac_id is the geographical unit here.
+
+8.  In the end, I have decided that the following merge is okay: ele_ec=ele_cand_x %\>% full_join(ec_all, by="ac_id") EC likely double counts the same units between ac07 and ac08 codes, but its okay as they are being merged to different observations.
+
+9.  #FIGUREOUT It seems like ac_id is not even consistent across year for same state_name+constituency_name. Confusing, as it was its one purpose. state="Andhra_Pradesh", constituency=="AMADALAVALASA"
+
+## ASI NOTES
+
+1.  Useful info starting page 17 in ASI Instruction Manual ( 2019-20)
+
+2, Still from 2019-20, a measure of unit level absenteism can come from no of total work days, and number of mandays worked. One is probably the number of days factory is operational, while the second is intensive measure of labour unit utilized. This is a bit shaky .. and needs work.
+
+3.  All_about_ASI.pdf has sampleing details. At a first glance, To just measure density at strata level( statexdistrictxsectorxNIC 4 digit), I can just multiple the sampled scheme entry by its weight.
+
+4.  For 2007, you can find the Instrument here: Data/ASI/ASI_2007-08_Detailed_new format/ASI_2007-08_Detailed_new format/survey0/data/DOCUMENTATION/Questionaire.pdf
+
+See page 4. This would give you idea about the data structure. For eg, S_no in the data is basically the row number from this table. The dataextract is also structured corresponding to this table format. Therefore, to get contract worker count, you can see for count but there is also an average variable. Perhaps the average variable is available in most years, that might explain why I only find average contract count in the clean panel in Fiona's folder (specifically this file: "data/1CLEAN/asi_plant_panel1998-2016_cleanset.dta"). Therefore, I am taking average contract and totemployees var. In the above data, its not clear what is totpersons?
+
+## EC (SHRUG) NOTES ec_shrug_raw.R
+
+1.  Using the EC SHRUG data, it shows that the growth from 2005 to 2013 is within the range of 17% to 26 % ( 10p to 90p) over 7 years. That translates to 2.5% to 3.7% per year. This is at once good and consistent across space.
+
+TO DO: Need to update candidate characteristics, they are only till 2017
+
+## MCA NOTES
+
+1.  So we have address string in registered company data. Around 60% string have zip code that is pretty precise location information. For rest, I am just running a geocode canned function that spits out lat/long.
+
+2.  Now there are a few things that I can do to situate the firms in broader geography. There are several levels: AC; District; PC; State. It might be interesting to see if there any boundary effect ( at any of these levels).
+
+3.  First ask the question: WHY WOULD YOU EXPECT TO SEE ANY BOUNDARY EFFECT?
+
+4.  The way it can be coded is to create a X km boundary and create a dummy variable that is 1 when the firm falls within a boundary (one boundary for each level).
+
+5.  For simple assigning ACs to zip code, its a good idea to do it at district level as we dont want the boundary firm location to spill into other side.
+
+6.  According to this doc( https://ceomadhyapradesh.nic.in/delimitation/Delimitation_of_Constituencies.pdf). Each AC is situated within a district and AC boundary and district boundaries do not intersect.
+
+7.  #ISSUE: There are definitely zip code polygons that stradles two district polygons. That is, zip code lies in two districts.
+
+8 #MAJORPROBLEM: So the zip shp has longer and new district list ( n=985 ish) whereas AC shp has older district list with only 585 district.How this happens is that new districts are created all the time and the AC shp is just old. Therefore some ACs that should be tagged with newer district still has old district names. AS A FIRST PASS, I am just taking around 450 district that are common to both. This kind of crosswalking will continue to be a headache.
+
+9.  ANALYSIS: So, I am trying to estimate the mean difference in new firm flow rate across boundary_idx. There is a wide hetergeneity in firm flow rate across districts, so apriori I expect the firm_flow\~boundary_idx regression should change if I include district FE or not. But surprisingly, the coefficient does not change when district+year FE is included, which is PUZZLING. I am going to get that beta at district level to get some spatial sense.
+
+10. ANALYSIS: Looking at activity_description variable in the MCA reg_firms, top categs are generic like Buss. Services ( 35%) and Social Services (10%), etc. Does this variable have any meaning or are people just picking up any option. Look at the variation in categs over time?
+
+11. #DONTKNOW : In ZIP-AC mapping, somehow there are less than 5% zips ( almost no zip actually) that completely lie within one AC. Either this means that ACs are in effect really small ( of the order of zip) OR zip boundaries are random ( MOST LIKELY) or something has gone wrong in the mapping phase.
+
+12 #ISSUE: In the ZIP-AC mapping, the match is sketchy as the underlying data is sketchy .. the exact list of ACs is sketchy ( double ACs, etc). Therefore the final map should be taken with a pinch and need to be put into paces.
+
+13 #ISSUE: In the ZIP-AC mapping, AC is tagged to a ZIP if their boundaries are intersecting ( approach 3), therefore each zip is tagged with multiple ACs. This creates multiple counting problem as firm in one zip is counted for each intersecting AC.
+
+14 #ANALYSIS: So in the MCA data, there is some positive boundary effect for zip at the district boundary. But Negative strong boundary effect for AC at the state boundary and very weak positive effect for Dist at the state boundary ( even when split across north and south India). TO SUM: ITS ALL OVER, AND VERY INCONCLUSIVE. Either there is nothing here .. or some problem with data work.
+
+##\$ ADR/ELECTION DATA NOTES
+
+1.  In adr_cand_X, there are 1945 missing obs for liabilities whereas only 10 for assets. Instead of dropping all, I am setting all 1945 libalities to zero. There are two pieces that might be in favor of this decison: (1) Median liabilitiy is zero, (2) Among these missing libability obs, avg asset is lower that global distribution:
+
+2.  #ISSUE: In the current ADR data from SHRUG. The assets values are all missing except for winner and runner up. That is for each election, there are only two assets values. This is prolly because the data comes from Fischer .. and maybe better data can directly be sought from ADR or myneta. #TOFIGUREOUT
+
+3.  #NOTE: In the EL_analysis-1.R, we are computing p_cand_change as the probability of an election switching out the incumbent ( ie incumbent==T and win==F)/n_distinct(sh_election_id), in some cases ( 262/7k) it can be 2 ( ie more than 1) as often candidates are incumbent in another constituency and stand in other constituency in the next election. Therefore there can be more than one incumbent in the election. This is only because incumbent is coded as TRUE if the person is sitting member of the LA ( from any constituency).
+
+4 #FIGUREOUT: #INTERESTING Even in the winner data ( win==T), there is some mass at asset=0. In other words, at baseline the distribution of assets among winner looks bimodal with mass at 0 and remaining (majority) of mass at high assets. And their asset growth is higher, that means there is real upward economic mobility in politics.
+
+5 #NOTE: In simple terms, there are 3 elections for most states. But at the AC level, there are atmost 2 elections. This is because ACs were reconstructed and the new ACs only saw 2 elections at the most. The question of mapping across old and new ACs only makes sense if you are thinking at the village/town level ( shrid?) otherwise .. they are just different and independent entities. That is, there is no logical mapping from previous AC ( ac07_id) to the new AC ( ac08_id).
+
+6 #ISSUE: in E1_readingIN.R. Towards the end where I am generating acyear_cand_asset, I filter using winner==1. THe problem is that there are lot of candidates for which winner==NA and I am dropping them out. For these candidates ( around 44k), I dont have wither winner or position. Because of this I am throwing out around 5500 unique elections and 1966 unique ac_id. At this point, I dont know what can I do about this. This is happening because I am merging using names. For now, I am going to move on and worry about it later.
+
+### ADR SCRAPING NOTES
+
+1.  As of Sept 27, the scrapped data is prolly not okay at all. For eg, crime and assets vars are all just NAs, and it should not be like that. Need a relook as to how to recover/revise the code.
+
+<!-- > summary(adr_cand_x$assets[is.na(adr_cand_x$liabilities)])/summary(adr_cand_x$assets) -->
+
+<!--    Min. 1st Qu.  Median    Mean 3rd Qu.    Max.    NA's  -->
+
+<!--     NaN 1.74825 1.02197 0.49552 0.67438 0.02585       1  -->
+
+### CMIE NOTES
+
+1.  The no. of employees (in the miss section of Standalone Statesment) is only there for around 10% of the data. THe documentation advises against using that variable as its not reliable.
+
+# IAS-TCPD NOTES
+
+1.  Around 10% of the IAS stints lasts more than 3 years. ( In aggregate data) \> sum(as.numeric(ias_exp\$duration)/365\>3, na.rm=T)/nrow(ias_exp) \[1\] 0.103762
+
+### CIVIL SERVICES DATA
+
+1.  List of data that are available:
+
+    -   For each civil servant (IAS), their education, their employment history and their prof training. All this is present in ER sheet. This is also available in the TCPD dataset. However, one issue here is that the employment history data is a bit sloppily recorded if you need the exact geo location. Links: -- https://easy.nic.in/civilListIAS/ -- https://easy.nic.in/civilListIAS/YrCurr/FinalCL.asp --
+
+    -   For each IAS, their asset disclosure. Link: https://sparrow-ias.eoffice.gov.in/IPRSTATUS/IPRFiledSearch. Its available for every year. One way is to manually download it one by one, but that is probably not the right way. It will take too long and is prone to mistakes. Perhaps Upwork? https://dopt.gov.in/immovable-property-return-ipr
+
+2.  LGD Data: There seems to be a detailed govt structure data available. This will require deep diving. Link: https://ramseraph.github.io/opendata/lgd/ Also downloaded a recent copy.
+
+### List of Relevant Policies:
+
+1.  One good one district policy: Link: https://ndap.niti.gov.in/dataset/7343
+
+### USEFUL DATA
+
+1.  Construction Cost index for several cities: http://www.cidc.in/activities3a.html
+
+2.  This portal seem to have a listing of all real estate related projects. This entity is based on a central act of 2016 and therefore this portal only has very recent projects ( starting 2017). There are cutoffs and you are required to register a project that uses more than a level of land area. More details in the about me/FAQ pages. In short, wont get a longer time series here. https://rera.rajasthan.gov.in/ProjectSearch
+
+## CS directory
+
+General:
+
+1.  It seems unlikely that I will get a universe of civil list archive with detailed district information. Absent of that, some possible options:
+
+<!-- -->
+
+a.  First lets focus on states where data is available? Raj and UP, maybe some other state also has data available.
+b.  First lets have some structure in place with teh available data. That is, the link to firm entry and otehr behaviour and more specifically the instrument. Currently this bit is not at all clear. Iyer and Mani 2012 has established that there is a response to politics ( their analysis is at state level) and their results do give some possibly helpful dimensions ( initial education, training investment, caste, etc) that might be important. Another imp dimension is department ( Land and Revenue, Finance, etc).
+
+### Rajasthan
+
+\#### Post Data
+
+1.  I am removing departments that have just 1 unique post and less than 3 postings for that post. Doing so, I am removing those departments that are very periphercal.
+
+2.  I can not do the same with designations as designations with less posts are likely to be on top and I dont want to remove those posts yet.
+
+3.  For districts, after looking at the raw data removing all the districts with fewer than and equal to 4 unique posts. There are still some left that can be removed, but being conservative for now.
+
+4.  #TODO: In the data, I can also see when and for how long a post is left unoccupied because there is a gap in successive postings. This seems like an interested metric to construct. 5 #ISSUE: I can use the duration metric also but its missing for around 33% obs in RJ ( and sure for UP too). The reason I cant impute it from next start date is that often there is a duration when the post is vacant and including that time in previous post's duration might distort the metric. At this point, no solution if you want to use it know that 33% of it is missing.
+
+### Officer level data
+
+1.  In the RJ CS officer level data, there are often two posts in one row. For eg, an officer can have post A and post B in one row, and in the following row post B. That is often there are periods of two posts and then one posts goes way. In principle, there is no transfer or churn here. Note that this is not from additional posting column, those postings are in addition to the double posting in the main column. Therefore, I need to process and clean this posting data and it might not work if I just use it in its raw form. Particularly, the churn measures without taking care of the above issue might not measure things correctly.
+
+### UP
+
+1.  In the posting data, there is often a line item that is just "Waiting" with very less duration. Results should be robust of removing those waiting postings.
+
+2.  The reason I am not fixing the sample for UP IAS now is that I am using end_year to compute the churn which should be kinda immune from new entrants assuming the new joinees are in the junior posting which should not interfere with the career trajectory of older cohort. (for RJ, I am using start_date). However, I dont have good logic for it tbh.
+
+### MERGING POST DATA WITH MLA DATA
+
+1.  AC-District mapping seems good ... except some border cases in ( NE, JHK, etc) there is only one district per AC for the most part. ( this also aligns well with what is present in the written documentation. )
+
+2.  So after merging it seems like both asset levels and num_crime levels are quite correlated with number of transfers/orders that are going to happen in the next 5 years. In other words, high wealth candidate tend to be associated with high churn in the beaurocracy. Basically, this is a positive result and is in line with what I was going for.
+
+2b: Right now we are not distinguishing between year 0 or year 1,2,3 etc after election. You need to create multiple Y variables ( for each year) and see when are most of these tranfers/orders happening .. are they all right after election .. or do we get some bite in later year Y also. This is important.
+
+3.  In this light, for next step I should just do directly what I want to do. That is, the main variation in the ability or willingness of the politician. So I need measures that changes either ability or willingness of politician to excert more or less control. Examples of these measures can be something that shift the potential profit of corruption. It can be heavy action in one sector ( big ticket construction project) that have spillover ffect on other sectors through changing the state of beurocracy.

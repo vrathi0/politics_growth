@@ -1,0 +1,261 @@
+---
+title: "CCI"
+format: pdf
+editor: visual
+---
+
+Here I document CCI data. Raw data is city-by-month data and has a number of cost indexes. 
+
+```{r}
+rm(list=ls())
+
+
+# Reading the imported files
+library(here)
+
+source(here("code/functions.R"))
+```
+
+
+```{r READ}
+# This code is to play around with CCI month data, basically see the trend or bumps or whatever 
+
+
+cci_monthly=read_rds(here("data/clean/cci_total.rds"))
+cci_monthly = cci_monthly %>%  arrange(city, year, month)
+cci_monthly=cci_monthly %>% 
+  mutate(date=as.Date(paste(year, month, "01", sep = "-"))) %>% 
+  mutate_at(vars(building:maintenance), as.numeric)
+
+election_df=read_rds(here("data/clean/elec_candX_inner.rds"))
+winner_asset=read_rds(here("data/clean/acyear_cand_asset.rds"))
+# The election df is only till 2017 as SHRUG only has cnadidate characteristics till 2017. 
+#  I would need to update it by myself by datameet or through myneta itself. 
+
+```
+
+
+
+```{r cor_mat}
+
+
+# 
+# 
+# cci_city=split(cci_monthly, cci_monthly$city)
+# 
+# correlation_matrices <- lapply(cci_city, function(city_df) {
+#   # Select only the numeric variables (var1 to var7)
+#   numeric_vars <- as.matrix((city_df[, 3:13]))
+#   # Compute the correlation matrix
+#   cor((numeric_vars))
+# })
+# 
+# 
+# #sum_correlation_matrix <- sum(correlation_matrices, na.rm=T)
+# 
+# # Very high correlation Can just sum them and use the sum as one index. 
+# 
+# # Just summing them and normalizing them
+# 
+# compute_row_sums <- function(df) {
+#   df %>%
+#     mutate(sumVar = rowSums(across(building:maintenance), na.rm = TRUE))
+# }
+# 
+# # Apply the custom function to your dataframe
+
+# 
+# fml=as.formula(paste0("yearly_agg_index~year"))
+# 
+# cci_agg_city=split(cci_agg_year, cci_agg_year$city)
+# cci_agg_city=cci_agg_city[sapply(cci_agg_city, nrow) > 1]
+# 
+# 
+# trend_list=list()
+# 
+# for(c in 1:length(cci_agg_city)){
+#   
+#   df=cci_agg_city[[c]] 
+#   
+#   reg=felm(fml, df)
+#   
+#   trend_list[[c]]=reg$coefficient[2,1]
+#   print(c)
+#   
+#   
+# }
+
+# Creating a summed index that is just rowsum of all the indices
+cci_aggr <- cci_monthly %>%
+  mutate(agg_index =rowSums(across(building:maintenance), na.rm = TRUE)) %>%
+  group_by(city) %>%
+  arrange(city,year, month) %>%
+  mutate_at(vars(agg_index), ~ . / first(.)) %>%
+  group_by(city, year) %>%
+  mutate(yearly_agg_index=mean(agg_index, na.rm=T)) %>%
+  ungroup()
+
+cci_agg_year=cci_aggr %>% dplyr::select(city, year, yearly_agg_index) %>%
+  distinct() %>% mutate(year=as.numeric(year))
+
+
+new_row <- data.frame(city = unique(cci_agg_year$city), year = 2011, yearly_agg_index=1)  # Replace "City1" and 2025 with your values
+# Append the new row to each city's data
+cci_agg_year=cci_agg_year %>% bind_rows(new_row) %>% 
+  arrange(city, year)
+
+city_state_df <- data.frame(
+  city = unique(cci_agg_year$city),
+  state = c(
+    "Maharashtra", "Tripura", "Uttar Pradesh", "Gujarat", "Mizoram", "Rajasthan", "Uttar Pradesh",
+    "Haryana", "Punjab", "Gujarat", "Gujarat", "West Bengal", "Karnataka", "Madhya Pradesh",
+    "Odisha", "Bihar", "Chandigarh", "Tamil Nadu", "Kerala", "Tamil Nadu", "Delhi", "Jharkhand",
+    "Haryana", "Sikkim", "Assam", "Uttarakhand", "Telangana", "Manipur", "Madhya Pradesh",
+    "Arunachal Pradesh", "Madhya Pradesh", "Rajasthan", "Punjab", "Punjab", "Jammu and Kashmir",
+    "Jharkhand", "Rajasthan", "Assam", "Uttar Pradesh", "Nagaland", "West Bengal", "Uttar Pradesh",
+    "Punjab", "Tamil Nadu", "Uttar Pradesh", "Uttar Pradesh", "Gujarat", "Maharashtra",
+    "Karnataka", "Maharashtra", "Uttarakhand","Maharashtra","Maharashtra","Maharashtra",NA, "Assam", "Goa", "Bihar", "Puducherry",
+    "Andaman and Nicobar Islands", "Maharashtra", "Odisha", "Chhattisgarh", "Maharashtra",
+    "Chhattisgarh", "Andhra Pradesh", "Gujarat", "Jharkhand", "Uttarakhand", "Meghalaya",
+    "Himachal Pradesh", "Assam", "Jammu and Kashmir", "Gujarat", "Kerala", "Madhya Pradesh","Gujarat",
+    "Uttar Pradesh", "Goa", "Andhra Pradesh", "Andhra Pradesh","Andhra Pradesh"
+  )
+)
+
+city_state_df=city_state_df %>% 
+  mutate(state=gsub(" ", "_", state))
+
+cci_agg_styear=cci_agg_year %>% inner_join(city_state_df) %>% 
+  filter(!is.na(state)) %>% mutate(state=tolower(state))
+
+
+state_eyear=winner_asset %>% dplyr::select(state,year) %>%  distinct() %>% 
+   mutate(election=1)
+
+
+cci_agg_st_eyear=cci_agg_styear %>% left_join(state_eyear)
+cci_agg_st_eyear$election[is.na(cci_agg_st_eyear$election)]=0
+
+cci_agg_st_eyear=cci_agg_st_eyear %>% mutate(city=tolower(city))
+
+
+# This establish significant negative effect on price index one year before and during the election
+# Meaning, there is likely a negative demand shock ( or positive supply shock) around election
+# I think I need to remove 2011
+
+# dt1=cci_agg_st_eyear %>%  group_by(state, city) %>% 
+#   arrange(state, city, year) %>% mutate(lag_election=Lag(election, 2), 
+#                                         lead_election=Lag(election, -1)) %>% 
+#   ungroup()# %>%   filter(year!=2011)
+# 
+# fml=as.formula(paste0("yearly_agg_index~lead_election|state"))
+# reg=felm(fml, dt1); summary(reg)
+
+
+# Now pulling in winner-year-asset data
+# Here I am getting district level aggregated measures of 
+# characteristic of candidates ( namely asset level and crime ). 
+# Again, this is aggregated across all candidate in one district-electionyear
+
+winner_city_df=winner_asset %>% 
+  rename( city=adr_district_name) %>% 
+  group_by(state, city, assembly_no, year) %>% 
+  summarise(winner_assets=mean(winner_assets, na.rm=T), 
+            #asset_cdf=mean(asset_cdf, na.rm=T),
+            #net_asset_cdf=mean(net_asset_cdf, na.rm=T),
+         #num_crim=sum(num_crim, na.rm=T), 
+         rich=mean(rich, na.rm=T), 
+         mean_all_net_asset=mean(mean_all_net_asset, na.rm=T)) %>% 
+         #mean_net_asset=mean(mean_net_asset, na.rm=T)) %>% 
+  ungroup() 
+
+elec_cci0=cci_agg_st_eyear %>% full_join(winner_city_df, by= c("state","city", "year")) %>% 
+  group_by(state, city) %>% 
+  arrange(state, city, year) %>% 
+  mutate(assembly_no=as.numeric(assembly_no)) %>% 
+  mutate(lead_assembly=Lag(assembly_no, -1)) %>% 
+  ungroup() %>% 
+  mutate(assembly_no=if_else(is.na(assembly_no), 
+                             as.numeric(lead_assembly)-1, assembly_no))
+
+
+elec_cci1=elec_cci0 %>% group_by(state, city) %>% 
+  arrange(state, city, year) %>% 
+  fill(c(assembly_no, winner_assets, rich,mean_all_net_asset,
+                             ), .direction = "down") %>% 
+  fill(assembly_no, .direction = "up")
+                                       
+
+elec_cci=elec_cci1 %>% group_by(assembly_no, election, city) %>% 
+        mutate(index=mean(yearly_agg_index, na.rm=T)) %>% 
+  ungroup() %>% 
+  group_by(state, city) %>% 
+  arrange(state, city, year) %>% 
+  mutate(lag_index=Lag(index, 1), 
+         lead_index=Lag(index, -1)) %>% 
+  ungroup() %>% 
+  mutate(winner_assets=winner_assets/1e6, 
+         mean_all_net_asset=mean_all_net_asset/1e6,
+         mean_all_net_asset=mean_all_net_asset/1e6)
+
+svars=c("year","state","winner_assets","rich","mean_all_net_asset",
+        "lead_index","lag_index")
+regdt=elec_cci %>% 
+  filter(complete.cases(across(all_of((svars))))) %>% 
+  filter(election==1)
+
+fml=as.formula(paste0("winner_assets~lag_index +lead_index +year +mean_all_net_asset    | state"))
+reg=felm(fml, regdt); summary(reg)
+
+
+# > fml=as.formula(paste0("winner_assets~lag_index +lead_index +year +mean_all_net_asset    | state"))
+# > reg=felm(fml, regdt); summary(reg)
+# Warning: the matrix is either rank-deficient or indefiniteWarning: the matrix is either rank-deficient or indefinite
+# Call:
+#    felm(formula = fml, data = regdt) 
+# 
+# Residuals:
+#      Min       1Q   Median       3Q      Max 
+# -119.404  -33.423   -4.477   22.361  274.340 
+# 
+# Coefficients:
+#                    Estimate Std. Error t value Pr(>|t|)  
+# lag_index           1968.82    1000.54   1.968    0.055 .
+# lead_index         -1582.06     966.91  -1.636    0.108  
+# year                 -30.74      21.15  -1.453    0.153  
+# mean_all_net_asset      NaN         NA     NaN      NaN  
+# ---
+# Signif. codes:  0 ‘***’ 0.001 ‘**’ 0.01 ‘*’ 0.05 ‘.’ 0.1 ‘ ’ 1
+# 
+# Residual standard error: 79.82 on 47 degrees of freedom
+# Multiple R-squared(full model): 0.4241   Adjusted R-squared: 0.1668 
+# Multiple R-squared(proj model): 0.1606   Adjusted R-squared: -0.2145 
+# F-statistic(full model):1.648 on 21 and 47 DF, p-value: 0.0778 
+# F-statistic(proj model): 2.248 on 4 and 47 DF, p-value: 0.07804 
+```
+
+
+
+```{r FD_reg}
+
+# Now, tranforming the df into FD format
+fd_var=c("assets","asset_cdf","num_crim","rich","mean_ass",
+        "lead_index","lag_index")
+
+fd_df=regdt %>% group_by(state, city) %>% 
+  arrange(state, city, year) %>% 
+  mutate(fd_assets=assets-Lag(assets),
+         fd_asset_cdf=asset_cdf-Lag(asset_cdf), 
+         fd_numcrim=num_crim-Lag(num_crim), 
+         fd_rich=rich-Lag(rich), 
+         fd_lead_index=lead_index-Lag(lead_index), 
+         fd_lag_index=lag_index-Lag(lag_index), 
+         fd_mean_ass=mean_ass-Lag(mean_ass)) %>% 
+  filter(!is.na(fd_assets))
+
+fml=as.formula(paste0("fd_mean_ass~fd_lead_index +fd_lag_index  "))
+reg=felm(fml, fd_df); summary(reg)
+  
+
+```
+

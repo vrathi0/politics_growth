@@ -5,6 +5,7 @@
 # Allow specific directories
 
 !code/
+!code/**
 !fig/
 !updates/
 

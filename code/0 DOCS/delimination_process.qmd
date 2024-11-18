@@ -1,0 +1,117 @@
+---
+title: "Comprehensive Procedural Reference on Delimitation Exercise in India"
+author: "VR, Nov 10, 2024"
+format: pdf
+---
+
+# Delimitation Exercise in India: Detailed Procedures and Methodologies
+
+## I. Constitutional and Legal Framework
+
+1. **Constitutional Amendments**:
+   - *Eighty-fourth Amendment Act, 2001* and *Eighty-seventh Amendment Act, 2003* amended Articles 81, 82, 170, 330, and 332.
+   - **Impact of Amendments**:
+     - Fixed the total number of seats allocated to each State in the House of the People and Legislative Assemblies based on the 1971 Census until the first census after 2026.
+     - Reserved seats for SCs and STs to be adjusted according to the 2001 Census.
+
+2. **Delimitation Act, 2002**:
+   - Established the Delimitation Commission, amended by the Delimitation (Amendment) Act, 2003.
+   - **Commission Structure**:
+     - Chairman (Justice Kuldip Singh), Election Commissioner, and State Election Commissioner as ex-officio members.
+     - *Associate Members*: Up to five Lok Sabha members and five State Legislative Assembly members from each state, with no voting rights.
+
+## II. Key Objectives of Delimitation
+1. **Freezing Constituencies**:
+   - Based on the 2001 Census, constituency boundaries will remain unchanged until the first census post-2026.
+2. **Equitable Population Distribution**:
+   - Aim for population equality across constituencies, “as far as practicable,” using state-specific average population figures.
+
+## III. Constituency Division and Methodology
+
+1. **Division Criteria**:
+   - **Assembly and Parliamentary Constituencies**:
+     - Allocated based on the current total seats in State Legislatures and the House of the People.
+     - Each constituency should cover a geographically compact area, considering physical features, administrative boundaries, and public convenience.
+
+2. **Population Standardization**:
+   - **2001 Census Data**: Sole basis for population figures.
+   - **State Average Calculation**:
+     - Divide the total population by the number of assembly constituencies in a state.
+     - Aim for consistency in population across constituencies within a 10% deviation from the state or district average if necessary due to geography or communication issues.
+
+3. **Permissible Deviation**:
+   - A deviation of up to 10% plus or minus from the state or district average population is allowed, particularly if geography, communication, and administrative unity demand it.
+
+## IV. Administrative Units and Cut-off Dates
+1. **Administrative Alignment**:
+   - Delimitation is to follow administrative boundaries as of *February 15, 2004*, using districts, subdivisions, tehsils, patwar circles, panchayat samitis, and panchayats.
+   - **Boundary Stability**:
+     - States advised not to alter administrative units post-*August 1, 2002*, although specific reorganizations were permitted based on justification.
+
+## V. Methodology for Allocating Assembly Constituencies to Districts
+1. **District-Based Allocation Process**:
+   - **Confinement within Districts**:
+     - Where feasible, each district should contain its own assembly constituencies without crossing into other districts.
+   - **Calculation of Seats per District**:
+     - Divide each district’s total population by the state’s average population per constituency.
+     - Rounding: Fractions over 0.5 are rounded up; those below 0.5 are rounded down.
+
+2. **District Population Standards**:
+   - Average population per constituency within a district determined by dividing district population by allocated seats.
+   - 10% deviation from district averages is permissible to avoid unnecessary administrative splits.
+
+3. **Geographical Continuity**:
+   - Constituencies to maintain contiguous areas, avoiding the creation of enclaves or fragmented sections.
+
+4. **Zig-Zag Method**:
+   - Constituency delimitation within each district is generally oriented North to North-East, proceeding in a zig-zag pattern to the South.
+
+## VI. Delimitation of Parliamentary Constituencies
+1. **Assembly Constituencies Within Parliamentary Boundaries**:
+   - Parliamentary constituencies are composed of whole assembly constituencies within a state.
+   - No assembly constituency should span more than one parliamentary constituency.
+
+## VII. Reservation of Seats for SCs and STs
+1. **Reservation Criteria**:
+   - Seats reserved proportionally for SCs and STs based on their population in the 2001 Census relative to the state’s total population.
+
+2. **Allocation Process**:
+   - **For STs**:
+     - As per section 9(1)(d) of the Delimitation Act, ST seats are reserved in constituencies with the highest ST population percentages in descending order.
+   - **For SCs**:
+     - SC reservations are distributed across the state, with preference given to constituencies where SCs represent a higher percentage of the total population.
+
+## VIII. Preparation and Approval of Working Paper
+1. **Working Paper Components**:
+   - **Seven Key Papers**:
+     - *Paper I*: District-wise 2001 population data and assembly seat entitlement.
+     - *Paper II*: SC seat entitlement across districts.
+     - *Paper III*: Proposed SC constituency allocations.
+     - *Paper IV*: Proposed ST constituency allocations.
+     - *Paper V*: Summary of proposed constituencies, including total SC and ST populations.
+     - *Paper VI*: District-wise statement showing constituency extent, total/SC/ST population.
+     - *Paper VII*: Proposed Lok Sabha constituencies and their respective assembly constituencies.
+
+2. **Tentative Approval Process**:
+   - **Initial Approval**: Papers I and II, defining seat allocation per district and SC seat distribution, are approved by the Commission before consultation with Associate Members.
+   - **Consultation and Feedback**:
+     - Associate Members are consulted in subsequent meetings, with Chief Electoral Officers available to clarify data and maps.
+
+## IX. Draft Proposals and Public Involvement
+1. **Draft Proposal Publication**:
+   - **Gazette and Newspaper Publication**:
+     - Draft proposals published in the Gazette of India, relevant State Gazettes, and at least two vernacular newspapers.
+     - Public objections and suggestions invited, with a specific deadline for responses.
+
+2. **Public Hearings**:
+   - After the deadline, the Commission holds public hearings for additional feedback.
+
+## X. Final Orders
+1. **Finalization of Delimitation**:
+   - Post-hearing, the Commission meets with Associate Members (non-voting) to consider all suggestions.
+   - **Publication of Final Orders**:
+     - Final orders signed by the full Commission are published in the Gazette and regional newspapers.
+     - Orders take effect on a date specified by the President, with copies submitted to the House of the People and respective State Legislative Assemblies.
+
+## Conclusion and Reference Points
+This document provides a comprehensive procedural reference for India’s delimitation exercise, reflecting key administrative, legal, and procedural details. This detailed structure is essential for any causal design in economic or political research, capturing all relevant cut-offs, allocations, and constituency guidelines.
