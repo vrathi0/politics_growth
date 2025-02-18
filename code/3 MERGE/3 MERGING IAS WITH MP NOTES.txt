@@ -1,0 +1,18 @@
+
+
+
+1. Looking at raw count of PC election around 1989-1999, 
+the period was marked with intense political destabalization in India and 
+with fall of congress, coalition politics started to emerge.It took some time
+to mature. 
+
+2. When merging the QH data with GE election data, there are around 54 merge failiure. 
+mm=qcount_df %>% inner_join(ge_win,
+                            by=c("party","constituency"="constituency_name", 
+                                 "ls_number"="assembly_no", 
+                                 "state"="state_name"))
+                                 
+Reasons include, AP/Telangana mismatch, constituency DNE in one of the data (South Goa), 
+by-elections data absent in election data etc
+
+

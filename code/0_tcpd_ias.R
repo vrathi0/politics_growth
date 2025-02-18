@@ -24,7 +24,9 @@ edu_df=read_csv(here("../Data/TCPD/IAS/ias_education.csv")) %>%
 exp_df=exp_df %>% mutate(start_date=as.Date(start_date), 
                              end_date=as.Date(end_date), 
                              start_year=year(start_date), 
-                             end_year=year(end_date)) %>% 
+                             end_year=year(end_date), 
+                         start_month=month(start_date), 
+                         end_month=month(end_date)) %>% 
                 mutate(duration=end_date-start_date) %>% 
   mutate(level_eq=str_replace(level,"Equivalent","")) %>% 
   mutate(level_eq=str_trim(level_eq)) 
@@ -302,6 +304,8 @@ ias_exp=ias_exp %>%
   rename(centre_deput_grd14=centre_deput)
 
 
+ias_exp=ias_exp %>% 
+  rename(cohort=batch_yr)
 
 qsave(ias_exp, "data/tcpd_ias_exp.qs") # USE THIS FOR INPUT 
 

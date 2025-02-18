@@ -1,0 +1,20 @@
+\usepackage{amsmath}
+\usepackage{amssymb}
+\usepackage{bm}      % Bold math symbols
+\usepackage{xcolor}
+\usepackage{lmodern} % Modern font support
+\usepackage{mathspec} % Optional for XeLaTeX/LuaLaTeX users
+\usepackage{unicode-math}
+\setmathfont{Latin Modern Math} % Or any supported math font
+\DeclareFontShape{OT1}{cmss}{b}{n}{<->ssub * cmss/bx/n}{} 
+\setbeamertemplate{footline}[frame number]
+\setbeamertemplate{footline}{%
+  \hfill%
+  \usebeamerfont{footline}%
+  \usebeamercolor[fg]{footline}%
+  \insertframenumber%
+  \hspace{1em}
+}
+\beamertemplatenavigationsymbolsempty
+
+

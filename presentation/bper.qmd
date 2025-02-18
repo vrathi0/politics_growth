@@ -1,0 +1,138 @@
+---
+title: "Political assets and firm dynamics"
+author: "Vaibhav Rathi"
+format: beamer
+editor: visual
+fonttheme: structuresmallcapsserif
+theme: Singapore
+colortheme: default
+---
+
+```{r, include=F}
+# Include politicians asset growth here. Main point to drive home: 
+# 1. Asset growth is high ( compared to what?)
+# 2. Whats driving the growth?
+
+# Graph: Can include unconditional and only for top 3
+# PS: Results from Ray Fisman paper
+```
+
+# Context
+
+## 
+
+-   Around 4200 state assembly constituencies and elections are held at state level to elect state legislative assembly members.
+-   These constituencies are drawn to balance the population at around 220k in each constituency.
+-   Candidate campaign on party's agenda and party that hold majority seats govern that cycle.
+
+## 
+
+-   Hierarchical system where most agenda is set at the party level, and its illegal for elected representatives to vote against the party lines. To sum, party is bigger than elected members.\
+-   Role of MLAs is a bit ambiguous. Few likely roles they perform:
+    -   Messengers in case of an emergency.
+    -   Responsible for utilizing a fixed development fund ( almost always used up).
+    -   **De facto boss of the bureaucracy in the election constituency**.
+-   Quite likely because of pt 3, historically they wield lot of power and are allegedly able to extract/direct rent from the government finances. For example, *Shenoy and Zimmermann, 2023*
+
+## 
+
+-   Looking into assets of state assembly candidates
+
+*Total Assets = Undisclosed extracted rent + disclosed assets*
+
+-   They are legally mandated to disclose all their assets when filing their nomination to contest an election.
+-   However, we can only observe what they publicly file in their filing documents. It is likely to leave out all the undisclosed corruption rent.
+-   We know their asset portfolio from these filings in terms of bank deposits and loans; land holdings; or links to any private firm that may have bid for a public contract. For both self and other members of immediate family.
+
+# Research Question
+
+## 
+
+**What is the elasticity of local firm dynamics wrt asset holdings of local politicians?**
+
+If politicians hold considerable sway in their constituency, and they have equity in the local economy due to the assets they hold. Then this could be:
+
+-   adversely affecting firm dynamics if their holdings deter market entry in any particular segment, OR
+
+-   positive affect on firm dynamics if their holdings sends positive signal in the market in complementary segments. For eg, their stake in sector X might promote local growth in sector Y, where Y is either an input to X or complementary to X.
+
+# Election Data
+
+## 
+
+Self-disclosed asset level of election (top 2) winners grow at an average of 35-40% annually.
+
+![](winner_asset_growth.png){width="75%"}
+
+Relevant Numbers:
+
+-   In levels, it is an average disclosed wealth of around USD 11,000 ( corresponds to top 25% of population)
+
+-   Rate of growth for all running candidates is around 12% annually.
+
+## 
+
+Fixing the sample to candidates that were among top 3 in the first election AND contested the following two elections also. Asset grows at around 46% annually.
+
+![](asset_growth_fixed_sample.png){width="75%"}
+
+Fisman (2015, JPE) finds that in a similar Indian sample, close election winner's asset grow by 3-5% more than runnerup's assets.
+
+## Criminality
+
+![](crime_mob.png)
+
+## 
+
+Elections are highly competitive
+
+![](new_cand_mobility.png){width="75%"}
+
+## 
+
+What about party level mobility?
+
+-   For any constituency, *Pr( winning \| won in previous election)=0.32*
+
+**Conclusion**:
+
+-   Elections seems to be fairly competitive. Incumbency dis-advantage.
+
+-   Top candidates have both high baseline asset and (much) steeper growth trajectory.
+
+-   Elected candidates rational expectation should be that they will be voted out after one term.
+
+# Firm Data
+
+## 
+
+-   Universe of new 967759 private firm registration from 2016 to 2022. (no overlap with election data).
+-   Currently only using it as a flow measure aggregated to any arbitrary geographical level ( AC, district, etc).
+-   Significant geographical inequality in new stock. 90/10 ratio varies from 200 to 500 depending on the geographical aggregation.
+
+## 
+
+![](dist_firm_stock.png)
+
+## 
+
+![](yearly_count.png)
+
+## 
+
+-   Dutta et al (2023) WP finds that due to electoral redistricting, administrative districts that cover two electoral district see a higher firm entry rate.
+-   **Boundary effect**: Comparing AC/district along a state boundary with similar units interior of states. I am getting a puzzling negative boundary effect i.e interior regions have higher firm flow/stock. (No rationalization yet).
+
+## 
+
+-   **Temporal Variation**: Using a time series at AC level, I can regress it on AC fe. Estimated FEs only account for around 35% of the total variation. In other words, there is a significant time series variation.
+
+-   **Spatial Variation**: Similarly, district FEs only account for around 15% of the AC level variation. In other words, there is significant spatial variation even at sub-district level.
+
+# Next Steps
+
+## 
+
+-   CapEx CMIE data: Rich investment project level data with information on capicity increment investments.
+-   CMIE Firm datasets: Currently processing.
+-   Scraping and processing Candidate level asset portfolios.

@@ -1,0 +1,335 @@
+---
+title: "GOI Structure"
+author: "Vaibhav Rathi"
+date: "2024-12-28"
+output: html_document
+---
+
+# Indian State Bureaucracy Hierarchical Data Exploration
+
+This document collates the findings of the exploration of state-level hierarchical data related to government departments across India. Each state has been analyzed to identify resources that provide organizational structures or e-governance initiatives.
+
+
+
+## State 1: Andhra Pradesh
+- **Resource Found**: Yes
+  - [AP Government Portal](https://www.ap.gov.in/): Partial details, links to various departments.
+  - [AP e-Governance Authority](https://www.apegov.ap.gov.in/): Focuses on e-governance without hierarchical details.
+  - [AP State Portal](https://www.aponline.gov.in/): Information on departments and services without detailed hierarchy.
+- **Summary**: Partial information available but lacks a detailed hierarchical structure.
+
+## State 2: Arunachal Pradesh
+- **Resource Found**: Yes
+  - [Arunachal Pradesh State Portal](https://arunachalpradesh.gov.in/): Partial details, lists departments and key officials.
+  - [Department of Information and Public Relations - Who's Who](https://diprarunachal.org/whos-who/): Key officials listed without full hierarchy.
+  - [NIC Arunachal Pradesh - Organization Structure](https://arunachal.nic.in/organization-structure/): Focuses on NIC state unit, not the entire government.
+- **Summary**: Partial information, not a comprehensive interactive structure.
+
+## State 3: Assam
+- **Resource Found**: Yes
+  - [Assam Government Official Portal](https://assam.gov.in/): Links to departments but lacks a comprehensive structure.
+  - [Assam Administrative Staff College](https://aasc.assam.gov.in/): Training-focused without hierarchical details.
+  - [Assam Secretariat Administration Department](https://sad.assam.gov.in/): Partial details about the secretariat.
+- **Summary**: Partial information, lacks comprehensive hierarchical representation.
+
+## State 4: Bihar
+- **Resource Found**: Yes
+  - [Bihar Government Official Portal](https://state.bihar.gov.in/): Partial links to departments.
+  - [Bihar Administrative Service Association](http://basa.in/): No hierarchical information.
+  - [Bihar State Electronics Development Corporation Ltd. (BELTRON)](http://www.beltron.in/): IT-focused without departmental hierarchies.
+- **Summary**: Partial information, lacks comprehensive hierarchical representation.
+
+## State 5: Chhattisgarh
+- **Resource Found**: Yes
+  - [Chhattisgarh Government Official Portal](https://cgstate.gov.in/en): Partial departmental links.
+  - [Chhattisgarh Infotech Promotion Society (CHiPS)](https://chips.gov.in/): IT-focused without hierarchy.
+  - [Chhattisgarh State Power Distribution Company Limited](https://cspdcl.co.in/): Focused on power distribution, no hierarchical information.
+- **Summary**: Partial information, lacks detailed hierarchy.
+
+## State 6: Goa
+- **Resource Found**: Yes
+  - [Goa Government Official Portal](https://www.goa.gov.in/): Partial departmental links.
+  - [Info Tech Corporation of Goa Ltd.](https://infotech.goa.gov.in/): IT-focused without hierarchy.
+  - [Goa Public Service Commission](http://gpsc.goa.gov.in/): Focused on public service exams.
+- **Summary**: Partial information, lacks comprehensive hierarchical representation.
+
+## State 7: Gujarat
+- **Resource Found**: Yes
+  - [General Administration Department - Organization Structure](https://gad.gujarat.gov.in/organization-structure.htm): Detailed structure for the General Administration Department.
+  - [Revenue Department - Organization Chart](https://revenuedepartment.gujarat.gov.in/organization-chart): Detailed departmental structure.
+  - [Gujarat State Portal - Government Departments](https://www.gujaratindia.gov.in/state-profile/govt-department.htm): Partial links to departments.
+- **Summary**: Detailed structures for specific departments, no integrated representation.
+
+## State 8: Haryana
+- **Resource Found**: Yes
+  - [Haryana Government Official Portal - Organization Chart](https://haryana.gov.in/organization-chart/): State-level organizational chart.
+  - [Revenue and Disaster Management Department - Organization Chart](https://revenueharyana.gov.in/organization-chart/): Detailed structure.
+  - [Departments | Haryana Government](https://haryana.gov.in/departments/): Partial departmental links.
+- **Summary**: Offers state-level and departmental organizational charts, lacks interactivity.
+
+## State 9: Himachal Pradesh
+- **Resource Found**: Yes
+  - [Himachal Pradesh Government Official Portal](https://himachal.nic.in/en-IN/): Partial departmental links.
+  - [Department of Personnel - Organizational Structure](https://himachal.nic.in/en-IN/organization-structure.html): Detailed personnel structure.
+  - [e-Governance Portal](https://hpegovernance.nic.in/): IT-focused without hierarchy.
+- **Summary**: Partial information with specific departmental details, no integrated hierarchy.
+
+## State 10: Jharkhand
+- **Resource Found**: Yes
+  - [Jharkhand Government Official Portal](https://www.jharkhand.gov.in/): Partial departmental links.
+  - [Department of Personnel, Administrative Reforms and Rajbhasha](https://personnel.jharkhand.gov.in/): Administrative-focused, lacks detailed hierarchy.
+  - [Jharkhand Agency for Promotion of Information Technology (JAPIT)](https://japit.jharkhand.gov.in/): IT-focused without hierarchy.
+- **Summary**: Partial information, lacks comprehensive hierarchical representation.
+
+*(Findings for all remaining states continue similarly, organized in the same structure, summarizing key resources and their details.)*
+
+## Conclusion
+- **Unique Example**: Rajasthan's RajKaj portal stands out as a comprehensive resource with an interactive hierarchical representation of government departments and offices.
+- **General Observation**: Most states provide partial departmental information, often fragmented across different portals.
+- **Recommendation**: States should consider developing integrated e-governance portals modeled after RajKaj to improve transparency and accessibility.
+
+
+# Indian State Bureaucracy Hierarchical Data Exploration
+
+This document collates the findings of the exploration of state-level hierarchical data related to government departments across India. Each state has been analyzed to identify resources that provide organizational structures or e-governance initiatives.
+
+---
+
+## Findings by State
+
+## State 1: Andhra Pradesh
+- **Resource Found**: Yes
+  - [AP Government Portal](https://www.ap.gov.in/): Partial details, links to various departments.
+  - [AP e-Governance Authority](https://www.apegov.ap.gov.in/): Focuses on e-governance without hierarchical details.
+  - [AP State Portal](https://www.aponline.gov.in/): Information on departments and services without detailed hierarchy.
+- **Summary**: Partial information available but lacks a detailed hierarchical structure.
+
+## State 2: Arunachal Pradesh
+- **Resource Found**: Yes
+  - [Arunachal Pradesh State Portal](https://arunachalpradesh.gov.in/): Partial details, lists departments and key officials.
+  - [Department of Information and Public Relations - Who's Who](https://diprarunachal.org/whos-who/): Key officials listed without full hierarchy.
+  - [NIC Arunachal Pradesh - Organization Structure](https://arunachal.nic.in/organization-structure/): Focuses on NIC state unit, not the entire government.
+- **Summary**: Partial information, not a comprehensive interactive structure.
+
+## State 3: Assam
+- **Resource Found**: Yes
+  - [Assam Government Official Portal](https://assam.gov.in/): Links to departments but lacks a comprehensive structure.
+  - [Assam Administrative Staff College](https://aasc.assam.gov.in/): Training-focused without hierarchical details.
+  - [Assam Secretariat Administration Department](https://sad.assam.gov.in/): Partial details about the secretariat.
+- **Summary**: Partial information, lacks comprehensive hierarchical representation.
+
+## State 4: Bihar
+- **Resource Found**: Yes
+  - [Bihar Government Official Portal](https://state.bihar.gov.in/): Partial links to departments.
+  - [Bihar Administrative Service Association](http://basa.in/): No hierarchical information.
+  - [Bihar State Electronics Development Corporation Ltd. (BELTRON)](http://www.beltron.in/): IT-focused without departmental hierarchies.
+- **Summary**: Partial information, lacks comprehensive hierarchical representation.
+
+## State 5: Chhattisgarh
+- **Resource Found**: Yes
+  - [Chhattisgarh Government Official Portal](https://cgstate.gov.in/en): Partial departmental links.
+  - [Chhattisgarh Infotech Promotion Society (CHiPS)](https://chips.gov.in/): IT-focused without hierarchy.
+  - [Chhattisgarh State Power Distribution Company Limited](https://cspdcl.co.in/): Focused on power distribution, no hierarchical information.
+- **Summary**: Partial information, lacks detailed hierarchy.
+
+## State 6: Goa
+- **Resource Found**: Yes
+  - [Goa Government Official Portal](https://www.goa.gov.in/): Partial departmental links.
+  - [Info Tech Corporation of Goa Ltd.](https://infotech.goa.gov.in/): IT-focused without hierarchy.
+  - [Goa Public Service Commission](http://gpsc.goa.gov.in/): Focused on public service exams.
+- **Summary**: Partial information, lacks comprehensive hierarchical representation.
+
+## State 7: Gujarat
+- **Resource Found**: Yes
+  - [General Administration Department - Organization Structure](https://gad.gujarat.gov.in/organization-structure.htm): Detailed structure for the General Administration Department.
+  - [Revenue Department - Organization Chart](https://revenuedepartment.gujarat.gov.in/organization-chart): Detailed departmental structure.
+  - [Gujarat State Portal - Government Departments](https://www.gujaratindia.gov.in/state-profile/govt-department.htm): Partial links to departments.
+- **Summary**: Detailed structures for specific departments, no integrated representation.
+
+
+## Conclusion
+
+- **Unique Example**: Rajasthan's RajKaj portal stands out as a comprehensive resource with an interactive hierarchical representation of government departments and offices.
+- **General Observation**: Most states provide partial departmental information, often fragmented across different portals.
+- **Recommendation**: States should consider developing integrated e-governance portals modeled after RajKaj to improve transparency and accessibility.
+
+
+## State 1-7: Already Covered
+
+## State 8: Haryana
+- **Resource Found**: Yes
+  - [Haryana Government Official Portal - Organization Chart](https://haryana.gov.in/organization-chart/): Provides a state-level organizational chart.
+  - [Revenue and Disaster Management Department - Organization Chart](https://revenueharyana.gov.in/organization-chart/): Detailed structure for the department.
+  - [Departments | Haryana Government](https://haryana.gov.in/departments/): Lists departments but lacks detailed hierarchy.
+- **Summary**: Offers state-level and departmental organizational charts, but lacks interactivity.
+
+## State 9: Himachal Pradesh
+- **Resource Found**: Yes
+  - [Himachal Pradesh Government Official Portal](https://himachal.nic.in/en-IN/): Partial departmental links.
+  - [Department of Personnel - Organizational Structure](https://himachal.nic.in/en-IN/organization-structure.html): Detailed personnel structure.
+  - [e-Governance Portal](https://hpegovernance.nic.in/): IT-focused without hierarchy.
+- **Summary**: Partial information with specific departmental details, no integrated hierarchy.
+
+## State 10: Jharkhand
+- **Resource Found**: Yes
+  - [Jharkhand Government Official Portal](https://www.jharkhand.gov.in/): Partial departmental links.
+  - [Department of Personnel, Administrative Reforms and Rajbhasha](https://personnel.jharkhand.gov.in/): Administrative-focused, lacks detailed hierarchy.
+  - [Jharkhand Agency for Promotion of Information Technology (JAPIT)](https://japit.jharkhand.gov.in/): IT-focused without hierarchy.
+- **Summary**: Partial information, lacks comprehensive hierarchical representation.
+
+## State 11: Karnataka
+- **Resource Found**: Yes
+  - [Karnataka Government Official Portal](https://www.karnataka.gov.in/): Partial departmental links.
+  - [Centre for e-Governance](https://ceg.karnataka.gov.in/en): IT-focused without hierarchy.
+  - [Department of Personnel and Administrative Reforms](https://egovernance.karnataka.gov.in/english): Administrative services but lacks a detailed hierarchy.
+- **Summary**: Partial information available but lacks comprehensive hierarchy.
+
+## State 12: Kerala
+- **Resource Found**: Yes
+  - [Kerala Government Official Portal](https://kerala.gov.in/): Partial departmental links.
+  - [Kerala State IT Mission](https://itmission.kerala.gov.in/): IT-focused without hierarchy.
+  - [Department of Personnel and Administrative Reforms](https://dpar.kerala.gov.in/): Administrative-focused, lacks a comprehensive structure.
+- **Summary**: Partial information, lacks integrated hierarchical representation.
+
+## State 13: Madhya Pradesh
+- **Resource Found**: Yes
+  - [Madhya Pradesh Government Official Portal](https://www.mp.gov.in/): Links to departments but lacks hierarchy.
+  - [Madhya Pradesh Agency for Promotion of Information Technology (MAP_IT)](https://mapit.gov.in/): IT-focused without hierarchy.
+  - [Department of General Administration](https://gad.mp.gov.in/): Administrative services but lacks a detailed structure.
+- **Summary**: Partial details, lacks comprehensive hierarchy.
+
+## State 14: Maharashtra
+- **Resource Found**: Yes
+  - [Maharashtra Government Official Portal](https://www.maharashtra.gov.in/): Links to departments but lacks hierarchy.
+  - [Maharashtra Information Technology Corporation Ltd. (MahaIT)](https://www.mahait.org/): IT-focused without hierarchy.
+  - [General Administration Department](https://gad.maharashtra.gov.in/): Administrative services but lacks detailed structure.
+- **Summary**: Partial information, lacks comprehensive hierarchy.
+
+## State 15: Manipur
+- **Resource Found**: Yes
+  - [Manipur Government Official Portal](https://manipur.gov.in/): Links to departments but lacks hierarchy.
+  - [Department of Information Technology](https://ditmanipur.gov.in/): IT-focused without hierarchy.
+  - [Department of Personnel](https://manipur.gov.in/?page_id=138): Administrative services but lacks detailed structure.
+- **Summary**: Partial details, lacks interactive hierarchy.
+
+## State 16: Meghalaya
+- **Resource Found**: Yes
+  - [Meghalaya Government Official Portal](https://meghalaya.gov.in/): Links to departments but lacks hierarchy.
+  - [Department of Information Technology](https://ditmeghalaya.gov.in/): IT-focused without hierarchy.
+  - [Department of Personnel & Administrative Reforms](https://meghalaya.gov.in/department/personnel): Administrative-focused without comprehensive structure.
+- **Summary**: Partial details, lacks interactive hierarchy.
+
+## State 17: Mizoram
+- **Resource Found**: Yes
+  - [Mizoram Government Official Portal](https://mizoram.gov.in/): Links to departments but lacks hierarchy.
+  - [Department of Information & Communication Technology](https://dict.mizoram.gov.in/): IT-focused without hierarchy.
+  - [Department of Personnel & Administrative Reforms](https://dp&ar.mizoram.gov.in/): Administrative-focused, lacks comprehensive hierarchy.
+- **Summary**: Partial information, no detailed hierarchy.
+
+## State 18: Nagaland
+- **Resource Found**: Yes
+  - [Nagaland Government Official Portal](https://nagaland.gov.in/): Links to departments but lacks hierarchy.
+  - [Department of Information Technology & Communication](https://ditc.nagaland.gov.in/): IT-focused without hierarchy.
+  - [Department of Personnel & Administrative Reforms](https://dpar.nagaland.gov.in/): Administrative-focused, lacks detailed structure.
+- **Summary**: Partial details, lacks interactive hierarchy.
+
+## State 19: Odisha
+- **Resource Found**: Yes
+  - [Odisha Government Official Portal](https://odisha.gov.in/): Links to departments but lacks hierarchy.
+  - [Odisha Computer Application Centre (OCAC)](https://ocac.in/): IT-focused without hierarchy.
+  - [General Administration & Public Grievance Department](https://ga.odisha.gov.in/): Administrative-focused without detailed structure.
+- **Summary**: Partial details, lacks comprehensive hierarchy.
+
+
+
+
+## **State 20: Punjab**
+
+* **Resource Found**: Yes  
+  * [Government of Punjab Official Portal](https://punjab.gov.in/government/departments/): Lists various government departments but lacks a comprehensive hierarchical structure.  
+  * [Department of Revenue \- Organization Chart](https://revenue.punjab.gov.in/?q=organization-chart): Detailed structure for the Department of Revenue.  
+  * [Department of Local Government \- Organizational Chart](https://www.lgpunjab.gov.in/upload/uploadfiles/files/org%20chart%20ALL%20FINAL.pdf): Detailed organizational chart for the Local Government Department.  
+  * [Department of Water Resources \- Organization Structure](https://irrigation.punjab.gov.in/en/organisation-structure): Hierarchy for the Water Resources Department.  
+* **Summary**: Punjab provides detailed organizational structures for specific departments but lacks an integrated, interactive portal.
+
+## **State 21: Rajasthan**
+
+* **Resource Found**: Yes  
+  * [RajKaj Portal](https://rajkaj.rajasthan.gov.in/): Comprehensive and interactive hierarchical structure of the state government.  
+  * [Rajasthan Government Official Portal](https://www.rajasthan.gov.in/): Links to departments, not hierarchical.  
+  * [Department of Information Technology & Communication](https://doitc.rajasthan.gov.in/): IT-focused without hierarchy.  
+* **Summary**: Rajasthan's RajKaj portal is a standout model for detailed, interactive governmental hierarchy.
+
+### Additional details:
+  1. Performance assessment data: Just the count of assessment done at dept-district-year level is available at: https://va.rajasthan.gov.in/views/PAR/DistrictWiseDetails?%3Aembed=y&%3AisGuestRedirectFromVizportal=y
+  This can perhaps be used to get "strength of govt" at district-dept-year level. 
+  
+  
+  
+
+## **State 22: Sikkim**
+
+* **Resource Found**: Yes  
+  * [Sikkim Government Official Portal](https://sikkim.gov.in/): Lists various departments, lacks hierarchical details.  
+  * Department of Information Technology: IT-focused without hierarchy.  
+  * Department of Personnel: Administrative-focused, lacks comprehensive hierarchy.  
+* **Summary**: Partial details, no interactive hierarchy.
+
+## **State 23: Tamil Nadu**
+
+* **Resource Found**: Yes  
+  * [Tamil Nadu Government Official Portal](https://www.tn.gov.in/): Links to departments, no detailed hierarchy.  
+  * Tamil Nadu e-Governance Agency (TNeGA): IT-focused without hierarchy.  
+  * Department of Personnel and Administrative Reforms: Partial details about personnel services.  
+* **Summary**: Partial details, no comprehensive hierarchy.
+
+## **State 24: Telangana**
+
+* **Resource Found**: Yes  
+  * [Telangana Government Official Portal](https://www.telangana.gov.in/): Links to departments, no detailed hierarchy.  
+  * Telangana State Technology Services (TSTS): IT-focused without hierarchy.  
+  * General Administration Department: Partial administrative details.  
+* **Summary**: Partial details, lacks comprehensive representation.
+
+## **State 25: Tripura**
+
+* **Resource Found**: Yes  
+  * [Tripura Government Official Portal](https://tripura.gov.in/): Links to departments but lacks hierarchical details.  
+  * Department of Information Technology: IT-focused without hierarchy.  
+  * Department of Personnel & Training: Administrative services, no detailed hierarchy.  
+* **Summary**: Partial details, no comprehensive hierarchy.
+
+## **State 26: Uttar Pradesh**
+
+* **Resource Found**: Yes  
+  * [Uttar Pradesh Government Official Portal](http://up.gov.in/): Links to departments, no detailed hierarchy.  
+  * Department of Appointment and Personnel: Partial administrative details.  
+  * Uttar Pradesh e-Governance Portal: IT-focused without hierarchy.  
+* **Summary**: Partial details, lacks comprehensive representation.
+
+## **State 27: Uttarakhand**
+
+* **Resource Found**: Yes  
+  * [Uttarakhand Government Official Portal](https://uk.gov.in/): Links to departments, no detailed hierarchy.  
+  * Department of Information Technology: IT-focused without hierarchy.  
+  * Department of Personnel: Partial administrative details.  
+* **Summary**: Partial details, no comprehensive hierarchy.
+
+## **State 28: West Bengal**
+
+* **Resource Found**: Yes  
+  * [West Bengal Government Official Portal](https://wb.gov.in/): Links to departments, no detailed hierarchy.  
+  * Department of Information Technology & Electronics: IT-focused without hierarchy.  
+  * [Department of Personnel & Administrative Reforms](https://wbpar.gov.in/): Administrative-focused, lacks detailed hierarchy.  
+* **Summary**: Partial details, no comprehensive hierarchy.
+
+---
+
+## **Conclusion**
+
+* **Unique Example**: Rajasthan's RajKaj portal remains the most comprehensive, interactive model for hierarchical governmental structure representation.  
+* **General Observation**: Other states primarily provide fragmented or incomplete departmental information across multiple portals.  
+* **Recommendations**:  
+  1. Develop integrated hierarchical e-governance portals for better transparency and accessibility.  
+  2. Provide interactive and user-friendly interfaces to engage citizens and improve governance.
+

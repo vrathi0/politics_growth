@@ -1,0 +1,99 @@
+---
+title: "Politics and Firm"
+format: beamer
+editor: visual
+---
+
+## 
+
+### **Goal**
+
+To identify and investigate political mechanisms that might be affecting firm level investments and innovations in India.
+
+I don't have any specific political mechanism pinned down yet, but contextually I have priors that political actors do indeed interfere with the market. But the nature of that interference is not well understood. ( Include references). 
+
+### **Current State**
+
+One particular mechanism I was working towards was signals generated through assets held by political representatives. The idea here was that elected representatives are likely to have preference over the value of the portfolio and therefore are motivated to behave in a way that increases the value. Other people will also have that expectation and it might create some distortion in investment patterns in the local economy. 
+
+
+
+## Data - Election Level
+
+-   For every election ( ie every 4 years), data available for all running candidates starting 2003. Median AC has data for 3 elections.
+-   Data includes education level, sources of income, assets and liabilities, criminal background etc.
+-   Also available election outcome data.
+
+## Stylyzed Facts: Self-disclosed asset level of election winners register a growth rate of 255 % over 4 year period.
+
+![](winner_asset_growth.png){width="75%"}
+
+Same number for all candidates is at 130% over 4 years.
+
+Within state asset distribution are getting narrower, i.e sd falling over time.
+
+## Fixed Sample:
+
+![](asset_growth_fixed_sample.png)
+
+## 
+
+-   Asset growth levels and trajectory of top (3) candidates are virtually indistinguishable. Fisman 2015 finds that winner's asset grow by an additional 3-5% annually, but that is not economically significant given the baseline rate of growth.
+
+-   Levels and slope here are aggregates and they differ substantially across states ( N=30).
+
+-   **Next Steps**: Currently mapping heterogeneity of political variables over industrial clusters/zones.
+
+## Candidate level mobility: New entrant
+
+-   Sample: First and (potentially) second election for all candidates
+
+![](new_cand_mobility.png)
+
+## North India
+
+![](north_new_cand_mobility.png)
+
+## South India
+
+![](south_new_cand_mobility.png)
+
+## Candidate level mobility: Incumbent
+
+-   Sample: Incumbent mobility from 2nd to 3rd election.
+
+![](incumbent_mobility.png)
+
+Similar across north and south India too.
+
+## What about party level mobility?
+
+-   For any constituency, *Pr( winning \| winning in previous election)=0.32*
+
+**Conclusion**:
+
+-   Elections seems to be fairly competitive.
+
+-   Top candidates have high baseline asset and (much) steeper growth trajectory.
+
+**Next**: - Asset and liability portfolio of candidates.
+
+```{r, include=FALSE}
+## Election winners that starts lower in the asset distribution grow at a much higher rate
+
+# Taking a pool of election winners in the first election and then tracking them across elections. Winners that fall in first quartile of asset distribution, experience a growth rate that is 7%, 12% and 20% higher than second, third and fourth quartile respectively.
+
+## Incidently, share of criminals in politics is falling preciptiously
+
+# ![](crime_mob.jpg){width="75%"}
+# 
+# ## Data- Firms
+# 
+# Multiple sources processed and merged. Summary stats and broad correlation next on agenda list.
+# 
+# ## Basic Theoritical Structure
+# 
+# There is a version of this project that is estimating elasticity of private investment ( or some measure of it) wrt asset growth of political class.
+# 
+# A priori, it should depends how interlinked political assets are with the local economy ( vs how extractive it it)
+```

@@ -1,25 +1,20 @@
+# Ignore everything
 *
-# Allow R scripts
-!*.R
 
-# Allow specific directories
-
+# But don't ignore these directories and their contents
 !code/
 !code/**
-!fig/
+!presentation/
+!presentation/**
 !updates/
+!updates/**
 
-# Allow README and configuration files
-!README.md
-!.gitignore
+# Ignore R-specific files even in code directory
+code/**/.RData
+code/**/.Rhistory
+code/**/.Rproj.user/
+code/**/*.Rproj
 
-
-# Ignore temporary files
-*.tmp
-*.log
-*.pdf
-*.zip
-
-# Ignore RStudio session files
-.Rhistory
-.Rproj.user/
+# Ignore system files
+.DS_Store
+.Thumbs.db

@@ -1,0 +1,44 @@
+---
+title: "Project Update"
+author: "Nov 6, 2023"
+format: pdf
+editor: visual
+---
+
+## **Goal**
+
+To identify and investigate political mechanisms that might be affecting firm level investments and innovations in India.
+
+I don't have any specific political mechanism pinned down yet, but contextually I have priors that political actors do indeed interfere with the market. But the nature of that interference is not well understood. 
+
+### **Current State**
+
+One particular mechanism I was working towards was signals generated through assets held by political representatives. The idea here was that elected representatives are likely to have preference over the value of the portfolio and therefore are motivated to behave in a way that increases the value. Other people will also have that expectation and it might create some distortion in investment patterns in the local economy. 
+
+However, in recent weeks I am increasingly suspicious of the current direction for the following reasons: 
+
+1. **Data**: Looking at the asset portfolio data in detail its clear that the data is mostly made up of two kinds of assets: (a) Savings account balances and loans, (b) Various land holdings. There are other categories, but they have very little data recorded in those categories. Its unlikely that any sector level analysis can be done which entails matching the sector level equity of the representative to the sector level outcome for the constituency. 
+
+2. **Strategic disclosure**: This perhaps might be an opportunity or a challenge, not clear. One of the bigger concern is that all the data is self-disclosed. This can be a problem if the assets and their value is an outcome of some unobserved process. For eg, asset value increase that we observe over time can just be candidate disclosing more of their assets ( and not any increase in the asset value). In other words, there is quite likely an ommited variable here and I don't have any thoughts reg it at the moment. 
+
+3. **Existing Literature**: There are several papers already where the main idea is quantifying value of political connections. For this reason, it seems like not a great idea to repeat the exercise. To be clear, this project was not completely about political connection. It was more about politicians inadvertently generating frictions through their asset holdings, but given that these politicians are relatively small and local it seems unlikely that any effect is interpretable or indicative of any specific mechanism. 
+
+Furthermore, I understand that US and Brazil might have much better candidate level data and even there no such paper exists seems like a signal. 
+
+
+
+## **Possible Solutions/Further Avenues**: 
+
+None of the possible solutions address the core concern at present. 
+
+I can start by expanding to civil servants/bureaucrats and local civic body elections. Two key details regarding civil servants that might be relevant are:
+
+- They are generally rotated every 15 months or so to a new location/posting. 
+- Their rotation is almost always entirely out of their control. 
+
+1. **Effects at the (temporal) margin**: Using additional data from bureaucrats rotation as well as election cycle, I can test if these events have any effect on firm side outcomes. 
+
+2. **Intensive Effect**: Firm's medium to long term investment is likely to be reflected in its wage bill. In a different CMIE dataset, I can observe firm's wage bill and correlate the expansion with bureaucrat rotation.  
+
+
+

@@ -1,0 +1,942 @@
+---
+title: "CAPEX Data Notes"
+format: pdf
+editor: visual
+---
+
+# Output:
+
+1.  A state_district-year level panel with some aggregated stats indicating the state of new project in that year in that geography.
+
+```{r, echo=FALSE, message=FALSE, warning=FALSE}
+rm(list = ls())
+library(here)
+here::i_am("code/1 Data Notes or Explore/1 CAPex_notes.qmd")
+source(here("code/functions.R"))
+
+
+
+```
+
+```{r}
+# Load necessary packages
+library(lfe)
+
+# Define the function
+get_var <- function(data, y_var, fe1, fe2) {
+  # Validate inputs
+  if (!all(c(y_var, fe1, fe2) %in% names(data))) {
+    stop("y_var, fe1, or fe2 not found in the dataset.")
+  }
+  
+  # Ensure no missing values for the specified variables
+  data <- data[complete.cases(data[, c(y_var, fe1, fe2)]), ]
+  
+  # Center y_var for proper variance computation
+  data[[y_var]] <- scale(data[[y_var]], center = TRUE, scale = FALSE)
+  
+  # Construct regression formulas
+  full_formula <- as.formula(paste(y_var, "~", fe1, "+", fe2))
+  fe1_formula <- as.formula(paste(y_var, "~", fe1))
+  fe2_formula <- as.formula(paste(y_var, "~", fe2))
+  
+  # Fit the models
+  full_model <- lm(full_formula, data = data)
+  fe1_model <- lm(fe1_formula, data = data)
+  fe2_model <- lm(fe2_formula, data = data)
+  
+  # Compute total variance of y_var
+  total_var <- var(data[[y_var]], na.rm = TRUE)
+  
+  # Compute residual variances for each model
+  residual_var_full <- var(residuals(full_model), na.rm = TRUE)
+  residual_var_fe1 <- var(residuals(fe1_model), na.rm = TRUE)
+  residual_var_fe2 <- var(residuals(fe2_model), na.rm = TRUE)
+  
+  # Compute R2 values
+  r2_full <- 1 - residual_var_full / total_var
+  r2_fe1 <- 1 - residual_var_fe1 / total_var
+  r2_fe2 <- 1 - residual_var_fe2 / total_var
+  
+  # Compute shares of explained variance
+  share_fe1 <- r2_fe1 / r2_full
+  share_fe2 <- r2_fe2 / r2_full
+  
+  # Return results as a named list
+  return(as.data.frame(list(
+    outcome=y_var,
+    full_r2 = r2_full,
+    r2_fe1 = r2_fe1,
+    r2_fe2 = r2_fe2,
+    share_fe1 = share_fe1,
+    share_fe2 = share_fe2
+  )))
+}
+
+# # Example Usage
+# set.seed(123)
+# example_data <- data.frame(
+#   y = rnorm(100),
+#   fe1 = factor(rep(1:10, each = 10)),
+#   fe2 = factor(rep(1:5, times = 20))
+# )
+# 
+# results <- compute_fe_r2(data = example_data, y_var = "y", fe1 = "fe1", fe2 = "fe2")
+# print(results)
+
+
+```
+
+```{r}
+# capex_full=qread(here("data/0 RAW/capex_full.qs"))
+# names(capex_full)
+```
+
+```{r}
+capex_list=qread(here("data/0 RAW/capex_list.qs"))
+
+capex_state_dist_list=capex_list$project_location %>% 
+  dplyr::select(location, district, district_code, state, longitude_latitude) %>% distinct() %>% 
+  arrange(state, district, location, longitude_latitude)
+
+qsave(capex_state_dist_list, 
+        file = here("data/0 RAW/capex_st_dist_list.qs"))
+
+```
+
+```{r event_list, echo=FALSE}
+rank1_events=c(
+  #"Date of announcement",
+  "Environment clearance sought",
+  "Environmental clearance received",
+  "Memorandum of Understanding (MoU) signed",
+  "State government approval received",
+  "Industrial entrepreneurs memorandum (IEM) filed",
+  "Land acquired",
+  "Implementation stalled on",
+  "Central Government approval received",
+  "Expert Appraisal Committee (EAC) recommendation received",
+  "Shelved on",
+  "Abandoned on",
+  "Board of Directors' approval received",
+  "Forest clearance sought",
+  "Land acquisition problem",
+  "Power purchase agreement (PPA) signed",
+  "Forest clearance received",
+  "Letter of Intent (LoI) received",
+  "Cabinet Committee on Economic Affairs (CCEA) approval received",
+  "Cabinet approval received",
+  "Special Economc Zone (SEZ) Board formal approval received",
+  "Planning Commission approval received",
+  "Coastal regulatory zone (CRZ) clearance received",
+  "Special Economic Zone (SEZ) Board in-principle approval received",
+  "Central Electricity Authority (CEA) in principle approval received",
+  "Formal approval cancelled by SEZ Board (BoA)",
+  "Foreign Investment Promotion Board (FIPB) approval received",
+  "Coal linkage granted",
+  "Issues resolved by Cabinet Committee on Investment (CCI)",
+  "Land acquisition problem resolved",
+  "Public Investment Board (PIB) approval received",
+  "Forest Advisory Committee (FAC) recommendation received",
+  "Fuel supply agreement (FSA) signed",
+  "MRTP (Monopolistic & Restrictive Trade Practices) clearanMonopolistic & Restrictive Trade Practices (MRTP) clearance receivedce received",
+  "De-notification request approved by BoA/SEZ Board",
+  "Secretariat for Industrial Assistance (SIA) clearance received",
+  "Cabinet Committee on Foreign Investment (CCFI) approval received",
+  "Memorandum of Understanding (MoU) cancelled",
+  "Power purchase agreement (PPA) cancelled",
+  "Land allotment cancelled",
+  "Rejected by central government",
+  "Central Electricity Authority (CEA) initial approval received",
+  "Collaboration approved",
+  "Project rejected/deferred by the SEZ Board",
+  "Acquired land returned",
+  "Contract termination revoked"
+)
+
+```
+
+```{r}
+# df=capex_list
+# df1=df %>% group_by(project_number) %>% summarise(pno=n()) %>% ungroup %>% 
+#   mutate(pcount=n_distinct(project_number), 
+#          pno_95=as.numeric(quantile(pno, 0.95, na.rm=T))) 
+# own_df=sort(desc(table(df$ownership)/nrow(df))*100)
+# 
+# df$project_detail %>% count_fun(ownership)
+
+```
+
+Below I am constructing a geo-time level dataset that has, for each level, reduced dimensional info such as counts, averages etc for a choice of variables. This might be the first step in seeing descriptives for range of vars as well as first data that can be merged at district level to other datasets.
+
+```{r project_event}
+
+# taking project_location df as base
+
+
+event_raw=capex_list$project_events
+
+event_raw=event_raw %>%  mutate(
+    date = dmy(event_date), # Convert the string to date
+    month = lubridate::month(date, label = TRUE), # Extract month as a labeled factor (e.g., Jan, Feb)
+    year = year(date) # Extract year
+  ) %>% group_by(company, company_code, 
+           project_name, project_number) %>% 
+  arrange(date, .by_group = TRUE) %>% 
+  mutate(sno=row_number()) %>% ungroup() %>% 
+  mutate(begin=(sno==1) | event=="Date of announcement")
+
+event_df=event_raw %>% 
+  mutate(rank1_event=event %in% rank1_events) %>% 
+  mutate(start_year=if_else(begin==1, year, NA )) %>% 
+  group_by(company, company_code, 
+           project_name, project_number) %>% 
+  fill(.,start_year) %>% ungroup() %>% 
+  dplyr::select(-c("product",
+                   "quantity", "quantity_unit", 
+                   "sno")) %>% 
+  group_by(company, company_code, 
+           project_name, project_number, year) %>% 
+  mutate(rank1_event_yrcount=sum(rank1_event, na.rm=T), 
+         event_yr_count=n(),
+         begin=max(begin, na.rm=T)) %>% 
+  ungroup() %>% 
+  dplyr::select(company, company_code, 
+           project_name, project_number, year,begin,
+           start_year, rank1_event_yrcount,event_yr_count) %>% 
+  distinct() 
+  
+
+
+
+event_df2=event_df %>% inner_join(base_df)
+#Joining with `by = join_by(company, company_code, project_name, project_number)
+
+# yr_event_df=event_df2 %>% 
+#   group_by(state, district_code,district, year) %>% 
+#   summarise(begin_count=sum(begin==TRUE), 
+#             rank1_event_count=sum(rank1_event==TRUE), 
+#             total_event=n()) %>% 
+#   ungroup() %>% 
+#   filter(year>=1990 & year <=2024)
+
+  
+
+# ggplot(yr_event_df, aes(x = year)) +
+#   geom_line(aes(y = begin_count, color = "new_project"), size = 1) +
+#   geom_line(aes(y = rank1_event_count, color = "rank1_event"), size = 1) +
+#   geom_line(aes(y = total_event/10, color = "total_event"), size = 1) +
+#   scale_color_manual(
+#     name = "event",
+#     values = c("new_project" = "blue", "rank1_event" = "red", "total_event"="green")
+#   ) +
+#   theme_minimal() +
+#   labs(
+#     title = "Yearly events",
+#     x = "Year",
+#     y = "event"
+#   )
+
+
+
+
+
+
+```
+
+```{r project_detail}
+
+det_raw=capex_list$project_detail
+
+det_raw=det_raw %>%
+  # Initialize `own_cat` as NA or a default value
+  mutate(own_cat = NA_character_) %>%
+  # Assign "Corp Group" to rows with "Group" in ownership
+  mutate(own_cat = if_else(grepl("Group", 
+                                 ownership, ignore.case = TRUE), 
+                           "Corp Group", 
+                           own_cat)) %>% 
+  mutate(own_cat = if_else(grepl("State", 
+                                 ownership, ignore.case = TRUE), 
+                           "State", 
+                           own_cat)) %>% 
+  mutate(own_cat = if_else(grepl("Central", 
+                                 ownership, ignore.case = TRUE), 
+                           "Central", 
+                           own_cat)) %>% 
+  mutate(own_cat = if_else(ownership=="Private (Indian)", 
+                           "Private (Indian)", 
+                           own_cat)) %>% 
+  mutate(own_cat = if_else(ownership=="Private (Foreign)", 
+                           "Private (Foreign)", 
+                           own_cat))
+
+det_raw= det_raw %>% 
+  mutate(new_unit = if_else(type_of_unit=="New Unit",
+                            1,0)) %>% 
+   mutate(renovation = if_else(type_of_unit=="Renovation & Modernisation",
+                               1,0)) %>% 
+  mutate(expansion = if_else(type_of_unit=="Substantial Expansion",  1,0))
+
+
+det_df=det_raw %>% ungroup() %>% 
+  dplyr::select(company, company_code, 
+                project_name, project_number, 
+                own_cat, new_unit, renovation, expansion, 
+                cost_rs_million,industry,industry_code, 
+                ownership,type_of_unit
+                ) %>% distinct()
+
+# I am categorizing industries around how common they are
+# q4 would be industries that are most common in the data
+# q1 would be the opposite. 
+
+# Create the quantile indicator at the industry level
+det_df <- det_df %>%
+  group_by(industry_code) %>%
+  mutate(industry_count = n()) %>% 
+  ungroup() %>%
+  mutate(
+    ind_quantile = ntile(industry_count, 4) # Assign quantile groups (1 to 4)
+  ) %>%
+  dplyr::select(-industry_count) # Optional: remove intermediate column
+
+loc_df=capex_list$project_location
+loc_df=loc_df %>% group_by(company, company_code, 
+                           project_name, project_number) %>% 
+  mutate(n_loc=n_distinct(state, district_code)) %>% 
+  ungroup() %>% mutate(multi_loc=if_else(n_loc>1,1,0))
+
+
+det_loc_df=det_df %>% inner_join(loc_df)
+
+
+                           
+
+
+
+
+```
+
+```{r project_location, echo=FALSE, warning=FALSE, message=FALSE}
+
+# ALREADY COVERED IN base_df
+
+loc_raw=capex_list$project_location
+
+cs_loc_df=loc_raw %>% 
+  group_by(state, district,district_code) %>% 
+  summarise(project_count=n_distinct(company_code, 
+                                     project_name, 
+                                     project_number)) %>% 
+  ungroup() #%>% filter(project_count>100) %>%
+  #filter(project_count<=1000)
+
+
+ggplot(cs_loc_df, aes(x = project_count)) +
+  geom_density(fill = "blue", alpha = 0.5, adjust=0.5) +
+  theme_minimal() +
+  labs(
+    title = "Density Plot of Project Count",
+    x = "Project Count",
+    y = "Density"
+  )
+
+
+ggplot(cs_loc_df, aes(x = project_count)) +
+  stat_ecdf(geom = "step") +
+  theme_minimal() +
+  labs(
+    title = "Cumulative Distribution of Project Count",
+    x = "Project Count",
+    y = "Cumulative Probability"
+  )
+
+
+
+```
+
+```{r product_cap}
+
+prod_raw=capex_list$products_and_capacity
+
+# This has capacity numbers also, but there are like 260 different 
+# units and the summarize those numbers seems like a time intensive tast
+# leaving that for now. For now, can just have number of unique products
+# per project. 
+
+prod_df=prod_raw %>% 
+  group_by(company,company_code, project_name, project_number) %>% 
+  summarise(product_count=n_distinct(product_code)) %>% 
+  ungroup()
+#only 15% of project has more than one product
+
+```
+
+```{r completion}
+
+complete_raw=capex_list$project_completion_details
+
+complete_raw=complete_raw %>% 
+  mutate(
+    date = dmy(completion_date), # Convert the string to date
+    month = lubridate::month(date, label = TRUE), # Extract month as a labeled factor (e.g., Jan, Feb)
+    year = year(date) # Extract year
+  ) 
+
+prj_complete_date=complete_raw %>% 
+  filter(description=="Completed") %>% 
+  dplyr::select(project_name, project_number, 
+                company, company_code, year) %>%
+  distinct() %>% 
+  rename(complete_year=year)
+
+complete_count=complete_raw %>% 
+  filter(description=="Completed") %>% 
+  group_by(year) %>% 
+  summarise(project_completed=n_distinct(company_code, project_name, 
+                                         project_number)) %>% 
+  ungroup() 
+
+
+ggplot(complete_count, aes(x = year, y = project_completed)) +
+  geom_bar(stat = "identity", fill = "blue", alpha = 0.7) +
+  theme_minimal() +
+  labs(
+    title = "Projects Completed by Year",
+    x = "Year",
+    y = "Projects Completed"
+  )
+
+
+```
+
+```{r cost}
+
+cost_raw=capex_list$project_cost
+
+cost_raw= cost_raw %>% 
+  mutate(
+    cost_date = dmy(date_of_cost_of_project), # Convert the string to date
+    cost_month = lubridate::month(cost_date, label = TRUE), # Extract month as a labeled factor (e.g., Jan, Feb)
+    cost_year = year(cost_date) # Extract year
+  ) 
+
+cost_df=cost_raw %>% dplyr::select(-date_of_cost_of_project) %>% distinct()
+
+cost_df=cost_df %>% group_by(company, company_code, 
+                            project_name, project_number) %>% 
+  arrange(cost_date, .by_group = TRUE) %>% 
+  mutate(
+    order_no=row_number(),
+    cost_change = cost_of_project_rs_million - dplyr::lag(cost_of_project_rs_million) # Calculate first difference, use 0 for the first value
+  ) %>%   ungroup() %>%   distinct() %>% 
+  mutate(cost_went_down=if_else(cost_change<0 &order_no!=1, TRUE, FALSE)) %>%
+  mutate(cost_went_up=if_else(cost_change>0 &order_no!=1, 
+                              TRUE, FALSE)) %>% 
+  mutate(cost_first=if_else(order_no==1, 
+                            cost_of_project_rs_million, NA)) %>% 
+  group_by(company, company_code,
+           project_name, project_number) %>% 
+  fill(cost_first) %>% ungroup() %>% 
+  dplyr::select(-c(cost_date, 
+                   cost_month)) %>% distinct() %>% 
+  rename(cost_proj=cost_of_project_rs_million)
+
+# Also creating quantile_indicator for each project based on their first cost
+dd=cost_df %>% 
+  dplyr::select(company, company_code,
+           project_name, project_number, cost_first)%>%
+  distinct() %>% 
+  mutate(cost_q=ntile(cost_first, 5)) %>% 
+  dplyr::select(-cost_first)
+
+cost_df=cost_df %>% inner_join(dd)
+
+
+
+
+
+  
+  
+yearly_cost=cost_raw %>% 
+  group_by(cost_year) %>% 
+  summarise(yearly_cost_p50=quantile(cost_of_project_rs_million, 0.5, na.rm=T), 
+            yearly_cost_p05=quantile(cost_of_project_rs_million, 0.05, na.rm=T),
+            yearly_cost_p95=quantile(cost_of_project_rs_million, 0.95, na.rm=T) )%>% 
+  ungroup() %>% filter(cost_year>=1990)
+
+
+ggplot(yearly_cost, aes(x = cost_year)) +
+  geom_line(aes(y = log(yearly_cost_p50), color = "P50"), size = 1) +
+  geom_line(aes(y = log(yearly_cost_p05), color = "P05"), size = 1) +
+  geom_line(aes(y = log(yearly_cost_p95), color = "P95"), size = 1) +
+  scale_color_manual(
+    name = "Cost Percentiles",
+    values = c("P50" = "blue", "P05" = "red", "P95" = "green")
+  ) +
+  theme_minimal() +
+  labs(
+    title = "Yearly Costs over Time",
+    x = "Year",
+    y = "Cost",
+    color = "Percentiles"
+  )
+
+
+
+```
+
+```{r project_associates}
+
+ac_raw=capex_list$project_associates
+
+
+
+
+```
+
+```{r merging_all}
+
+# Doing merge in two steps:"
+# 1. First create a state state-district panel
+# 2. Then merge it with the event_df to add time dimension
+
+
+proj_state_dist_df= det_loc_df %>% full_join(prod_df) %>% 
+  full_join(prj_complete_date) 
+
+cost_event_df=event_df %>% 
+  full_join(cost_df,
+            by=c(intersect(names(cost_df), 
+                           names(event_df)),
+                 "year"="cost_year"))
+
+
+time_geo_panel=proj_state_dist_df %>% 
+  full_join(cost_event_df) %>% distinct()
+
+# Joining with `by = join_by(company, company_code, project_name, project_number)`Joining with `by = join_by(company, company_code, project_name, project_number)`Joining with `by = join_by(company, company_code, project_name, project_number)`Warning: Detected an unexpected many-to-many relationship between `x` and `y`. 
+
+#time_geo_panel=proj_state_dist_df %>% full_join(event_df)
+#Joining with `by = join_by(company, company_code, project_name, project_number)`
+
+library(dplyr)
+# Precompute Unique Project ID
+time_geo_panel <- time_geo_panel %>%
+  mutate(proj_id = paste0(company, company_code, project_name, project_number))
+
+
+
+# Add Logical Flags to Avoid Repeated Calculations
+time_geo_panel1 <- time_geo_panel %>%
+  mutate(
+    is_begin = begin == 1,
+    is_central = own_cat == "Central" & is_begin,
+    is_corp_group = own_cat == "Corp Group" & is_begin,
+    is_priv_foreign = own_cat == "Private (Foreign)" & is_begin,
+    is_priv_indian = own_cat == "Private (Indian)" & is_begin,
+    is_state = own_cat == "State" & is_begin,
+    is_new_unit=new_unit == 1,
+    is_renovation=renovation == 1,
+    is_expansion=expansion == 1, 
+    is_multiloc=multi_loc==1 & is_begin
+  )
+# Aggregate Using Precomputed Columns
+time_geo <- time_geo_panel1 %>%
+  group_by(state, district, district_code, year) %>%
+  summarise(
+    # Projects Started
+    projects_started = n_distinct(proj_id[is_begin], na.rm = TRUE),
+    
+    # Rank1 Events Count
+    rank1_events_count = sum(rank1_event_yrcount, na.rm = TRUE),
+    # Total events count
+    tot_events_count=sum(event_yr_count, na.rm=T),
+    
+    # Total Cost for New Projects
+    new_proj_cost_million = sum(cost_first[is_begin], na.rm = TRUE),
+    
+    # Cost Changes
+    cost_went_up = sum(cost_went_up, na.rm = TRUE),
+    cost_went_down = sum(cost_went_up, na.rm = TRUE),
+    
+    # Project counts by cost quantiles
+    n_cost_q1=n_distinct(proj_id[is_begin & cost_q==1], na.rm=T),
+    n_cost_q2=n_distinct(proj_id[is_begin & cost_q==2], na.rm=T),
+    n_cost_q3=n_distinct(proj_id[is_begin & cost_q==3], na.rm=T),
+    n_cost_q4=n_distinct(proj_id[is_begin & cost_q==4], na.rm=T),
+    n_cost_q5=n_distinct(proj_id[is_begin & cost_q==5], na.rm=T),
+
+    
+    
+    # Industry Counts by Quantiles
+    count_ind_q1 = n_distinct(industry_code[is_begin & ind_quantile == 1], na.rm = TRUE),
+    count_ind_q2 = n_distinct(industry_code[is_begin & ind_quantile == 2], na.rm = TRUE),
+    count_ind_q3 = n_distinct(industry_code[is_begin & ind_quantile == 3], na.rm = TRUE),
+    count_ind_q4 = n_distinct(industry_code[is_begin & ind_quantile == 4], na.rm = TRUE),
+    count_ind_total = n_distinct(industry_code[is_begin], na.rm = TRUE),
+    
+    # Ownership Counts
+    central = n_distinct(proj_id[is_central], na.rm = TRUE),
+    corp_group = n_distinct(proj_id[is_corp_group], na.rm = TRUE),
+    priv_foreign = n_distinct(proj_id[is_priv_foreign], na.rm = TRUE),
+    priv_indian = n_distinct(proj_id[is_priv_indian], na.rm = TRUE),
+    state_prj = n_distinct(proj_id[is_state], na.rm = TRUE),
+    
+    # Other Categories
+    new_units = n_distinct(proj_id[is_new_unit], na.rm = TRUE),
+    renovations = n_distinct(proj_id[is_renovation], na.rm = TRUE),
+    expansions = n_distinct(proj_id[is_expansion], na.rm = TRUE)
+  ) %>%
+  ungroup() %>% 
+  mutate(state_dist=paste0(state, district, sep="-"))
+
+
+
+
+
+
+```
+
+```{r var_decom}
+
+
+#y_var="new_proj_cost_million"
+data=time_geo
+fe1="state_dist";fe2="year"
+
+
+varlist=names(data)[5:28]
+
+var_decom_df=lapply(varlist, get_var, data=data, fe1=fe1, fe2=fe2 )
+var_decom_state_dist=var_decom_df %>% bind_rows()
+
+
+var_decom_df=lapply(varlist, get_var, data=data, fe1="state",
+                       fe2=fe2 )
+var_decom_state=var_decom_df %>% bind_rows()
+
+```
+
+```{r plot_proj}
+
+
+# Load necessary libraries
+
+
+# Prepare the data
+dt=capex_list$project_location
+
+# Load necessary libraries
+library(ggplot2)
+library(maps)
+
+# Prepare the data
+coordinates <- dt$longitude_latitude %>%
+  as.data.frame() %>%
+  rename(long_lat = ".") %>%
+  mutate(
+    longitude = as.numeric(sub(",.*", "", long_lat)),
+    latitude = as.numeric(sub(".*,", "", long_lat))
+  ) %>%
+  dplyr::select(longitude, latitude)
+
+# Get India's map using the maps package
+india_map <- map_data("world", region = "India")
+
+# Plot the map with points
+ggplot() +
+  geom_polygon(
+    data = india_map,
+    aes(x = long, y = lat, group = group),
+    fill = "white", color = "black", linewidth = 0.3
+  ) +
+  geom_point(
+    data = coordinates,
+    aes(x = longitude, y = latitude),
+    color = "blue",
+    alpha = 0.4, # Transparency to indicate density
+    size = 0.5   # Small size for individual points
+  ) +
+  coord_fixed(1.3) +
+  theme_minimal() +
+  labs(
+    title = "Spatial Distribution of Coordinates in India",
+    x = "Longitude",
+    y = "Latitude"
+  )
+
+
+
+```
+
+## CAPEX-PC-2009 Regression
+
+This is a toy attempt to see the jump in CAPEX covars because of transition in reservation status of PC in 2009
+
+```{r}
+capex_delim_pc=qread(here("data/2 CLEAN/capex_delim_pc.qs"))
+```
+
+-   time dimensions are: year, assembly no
+-   geo dim are: pc_uid, dist_name, st_name
+-   pc covar: mob_cls
+-   pc-time: incumbent
+
+We can keep at year level, or aggregate at assembly_no level. For the first attempt, it makes sense to aggregate at assembly_no level as then later on a proper way would be to zone into an even better dimension than just pure year.
+
+Dont need to aggregate to mob_cls, it can be a FE
+
+IMPORTANT: (not doing this also!) Also we should normalize all the variables to be 1 at the initial time within each geo unit, ie everything else is divided by the first value.
+
+```{r DID1}
+vlist=names(capex_delim_pc)[3:26]
+
+df=capex_delim_pc %>% 
+  dplyr::select(all_of(vlist), st_name, 
+                dist_name, pc_uid, mob_cls, assembly_no,
+                incumbent) %>% distinct()
+  
+dt=df %>% 
+  filter(mob_cls %in% c("GEN to Res","GEN to GEN")) %>% 
+  mutate(treat_dum=if_else(mob_cls=="GEN to Res",1,0)) %>% 
+  mutate(post_treatment = if_else(assembly_no >= 15, 1, 0)) %>% 
+  mutate(event_time = assembly_no - 15) %>% 
+  mutate(event_time_factor = as.factor(event_time))
+
+dt_event=dt %>% 
+  filter(event_time != 0)
+
+results <- lapply(vlist, function(yvar) {
+    # Define the regression formula
+    fml_did <- as.formula(
+      paste0(yvar, " ~ post_treatment * treat_dum | st_name")
+    )
+    
+    # Run the regression
+    reg <- felm(fml_did, data = dt)
+    
+    # Extract the coefficient and t-value for the interaction term
+    coef <- summary(reg)$coefficients["post_treatment:treat_dum", "Estimate"]
+    t_val <- summary(reg)$coefficients["post_treatment:treat_dum", "t value"]
+    
+    # Return results for this yvar
+   # Calculate the mean of yvar
+  y_mean <- mean(dt[[yvar]], na.rm = TRUE)
+  
+  # Calculate % change
+  pct_change <- (coef / y_mean) * 100
+  
+  # Return results for this yvar
+  data.frame(
+    yvar = yvar,
+    beta = coef,
+    t_val = t_val,
+    pct_change = pct_change
+  )
+})
+
+result_df=results %>% bind_rows()
+
+
+```
+
+Now we can do the similar in event study type regression
+
+```{r event_study}
+
+vlist=names(capex_delim_pc)[3:26]
+
+df=capex_delim_pc %>% 
+  dplyr::select(all_of(vlist), st_name, year,
+                dist_name, pc_uid, mob_cls, assembly_no,
+                incumbent) %>% distinct()
+  
+dt=df %>% 
+  filter(mob_cls %in% c("GEN to Res","GEN to GEN")) %>% 
+  mutate(treat_dum=if_else(mob_cls=="GEN to Res",1,0)) %>% 
+  mutate(post_treatment = if_else(assembly_no >= 15, 1, 0)) %>% 
+  mutate(event_time = assembly_no - 15) %>% 
+  mutate(event_time_factor = as.factor(event_time))
+
+dt_event=dt %>% 
+  filter(event_time != 0)
+
+results <- lapply(vlist, function(yvar) {
+    # Define the regression formula
+   fml_event<- as.formula(
+      paste0(vlist[24], " ~ event_time_factor * treat_dum |dist_name")
+    )
+
+    # Run event study regression
+    reg_event <- felm(fml_event, data = dt)
+    summary(reg_event)
+    
+    # Extract the coefficient and t-value for the interaction term
+    coef <- summary(reg)$coefficients["post_treatment:treat_dum", "Estimate"]
+    t_val <- summary(reg)$coefficients["post_treatment:treat_dum", "t value"]
+    
+    # Return results for this yvar
+   # Calculate the mean of yvar
+  y_mean <- mean(dt[[yvar]], na.rm = TRUE)
+  
+  # Calculate % change
+  pct_change <- (coef / y_mean) * 100
+  
+  # Return results for this yvar
+  data.frame(
+    yvar = yvar,
+    beta = coef,
+    t_val = t_val,
+    pct_change = pct_change
+  )
+})
+
+result_df=results %>% bind_rows()
+
+
+```
+
+```{r ROUGH, eval=FALSE, include=FALSE}
+# Step 1: Aggregate variables in `vlist` at the level of `pc_uid` and `assembly_no`
+vlist=names(capex_delim1)[5:28]
+pc_agg <- capex_delim1 %>%
+  filter(!is.na(assembly_no)) %>% 
+  group_by(pc_uid, assembly_no) %>%
+  mutate(across(
+    all_of(vlist),
+    ~ sum(.x, na.rm = TRUE) # Aggregate variables using mutate
+  )) %>% ungroup()
+
+pc_agg=pc_agg %>% 
+  dplyr::select(all_of(vlist), 
+                pc_uid, assembly_no, 
+                st_name, mob_cls) %>% 
+  distinct()
+
+# Step 2: Normalize variables within each `pc_uid` using values at `assembly_no == 13`
+# first removing where min ass_no!~=13
+pc_agg_full=pc_agg %>% 
+  group_by(pc_uid) %>% 
+  mutate(min_ass=min(assembly_no, na.rm=T)) %>% 
+  ungroup() %>% 
+  filter(min_ass==13)
+
+pc_normalized <- pc_agg_full %>%
+  group_by(pc_uid) %>%
+  mutate(across(
+    all_of(vlist),
+    ~ (. + 1) / (. [assembly_no == 13] + 1), # Add 1 to both numerator and denominator
+    .names = "{.col}"  # Retain the same variable names
+  )) %>%  ungroup()
+
+
+
+# Trying to see the same in a regression framework. 
+# data: capex_delim1
+
+yvar=vlist[1]
+dt=pc_normalized %>% 
+  filter(mob_cls %in% c("GEN to Res","GEN to GEN")) %>% 
+  mutate(res_dum=if_else(mob_cls=="GEN to Res",1,0)) %>% 
+  mutate(post_treatment = if_else(assembly_no >= 15, 1, 0)) %>% 
+  mutate(event_time = assembly_no - 15) %>% 
+  mutate(event_time_factor = as.factor(event_time))
+
+dt_event=dt %>% 
+  filter(event_time != 0)
+
+fml_did <- as.formula(
+  paste0(yvar, " ~ post_treatment * res_dum |st_name ")
+)
+reg=felm(fml_did, dt)
+summary(reg)
+
+
+
+fml_event<- as.formula(
+  paste0(yvar, " ~ event_time_factor * res_dum | st_name")
+)
+
+# Run event study regression
+reg_event <- felm(fml_event, data = dt_event)
+summary(reg_event)
+
+
+# PC level combined regression -------------------------------------------------------
+
+library(dplyr)
+library(lfe)
+
+# Define the function
+run_did_analysis <- function(data, yvars) {
+  # Prepare the data
+  dt <- data %>%
+    filter(mob_cls %in% c("GEN to Res", "GEN to GEN")) %>%
+    mutate(
+      res_dum = if_else(mob_cls == "GEN to Res", 1, 0),
+      post_treatment = if_else(assembly_no >= 15, 1, 0),
+      event_time = assembly_no - 15,
+      event_time_factor = as.factor(event_time)
+    )
+  
+  # Iterate over yvars and collect results
+  results <- lapply(yvars, function(yvar) {
+    # Define the regression formula
+    fml_did <- as.formula(
+      paste0(yvar, " ~ post_treatment * res_dum | st_name")
+    )
+    
+    # Run the regression
+    reg <- felm(fml_did, data = dt)
+    
+    # Extract the coefficient and t-value for the interaction term
+    coef <- summary(reg)$coefficients["post_treatment:res_dum", "Estimate"]
+    t_val <- summary(reg)$coefficients["post_treatment:res_dum", "t value"]
+    
+    # Return results for this yvar
+    data.frame(
+      yvar = yvar,
+      beta = coef,
+      t_val = t_val
+    )
+  })
+  
+  # Combine results into a single dataframe
+  results_df <- do.call(rbind, results)
+  
+  return(results_df)
+}
+
+# Example usage
+results_df <- run_did_analysis(pc_normalized, vlist)
+
+# View results
+print(results_df)
+
+
+
+
+
+# AT mob_cls level
+
+yvar=vlist[1]
+dt=capex_delim1 %>% 
+  filter(mob_cls %in% c("GEN to Res","GEN to GEN")) %>% 
+  mutate(res_dum=if_else(mob_cls=="GEN to Res",1,0)) %>% 
+  mutate(post_treatment = if_else(assembly_no >= 15, 1, 0)) %>% 
+  mutate(event_time = assembly_no - 15) %>% 
+  mutate(event_time_factor = as.factor(event_time))
+
+dt_event=dt %>% 
+  filter(event_time != 0)
+
+fml_did <- as.formula(
+  paste0(yvar, " ~ post_treatment * res_dum |state ")
+)
+reg=felm(fml_did, dt)
+summary(reg)
+
+
+```

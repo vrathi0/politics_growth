@@ -34,6 +34,12 @@ library(patchwork)  # For side-by-side plots
 # 2. OUtside of name match, the area interaction sample might currently contain 
 # some errors. 
 
+# 3. It looks like currently the matching across AC-PC-DIST are 
+# just coming from pre and post AC level shapefiles. There is no spatial join 
+# to construct this mapping. This is good because less scope for error. 
+# But, it also remove scope for the amount of overlap, ie splitting shares across 
+# different units. 
+
 # FUNCTIONS ------------------------------------------------
 
 library(sf)
@@ -92,6 +98,25 @@ plot_state <- function(shapefile1, shapefile2, state_name, pc_names) {
 # shapefile1 <- st_read("path_to_shapefile1.shp")  # Replace with the path to your first shapefile
 # shapefile2 <- st_read("path_to_shapefile2.shp")  # Replace with the path to your second shapefile
 # plot_state_comparison(shapefile1, shapefile2, "Madhya Pradesh", c("PC1", "PC2"))
+
+
+# STANDARD STATE NAMES
+# Function to standardize state names
+standardize_state_names <- function(state_name) {
+  dplyr::case_when(
+    state_name %in% c("uttarakhand", "uttarkhand") ~ "uttaranchal",
+    state_name == "orissa" ~ "odisha",
+    state_name %in% c("arunanchal pradesh") ~ "arunachal pradesh",
+    state_name %in% c("jammu and kashmir", "jammu & kashmir") ~ "jammu and kashmir",
+    state_name == "tamilnadu" ~ "tamil nadu",
+    state_name %in% c("delhi", "national capital territory of delhi", "delhi & ncr") ~ "delhi & ncr",
+    state_name == "puducherry" ~ "pondicherry",
+    state_name %in% c("andaman & nicobar islands") ~ "andaman & nicobar island",
+    state_name == "dadra & nagar haveli" ~ "dadara & nagar havelli",
+    state_name == "daman and diu" ~ "daman & diu",
+    TRUE ~ state_name  # Retain unchanged state names
+  )
+}
 
 
 
@@ -166,11 +191,38 @@ dist_shp <- st_read(shapefile_path)
 
 # Add unique IDs to each geometry
 dist_shp <- dist_shp %>%
+  clean_names() %>% 
   mutate(admin_id = paste0( row_number())) 
 
 # Calculate total area for each administrative district
 dist_shp <- dist_shp %>%
   mutate(admin_area = st_area(geometry))
+
+dist_shp=dist_shp %>% 
+  rename(st_name=st_nm, 
+         dist_name=district, 
+         pc01_state_id=st_cen_cd, 
+         pc01_district_id=dt_cen_cd) %>% 
+  mutate(st_name=tolower(st_name), 
+         dist_name=tolower(dist_name)) %>% 
+  mutate(st_name=standardize_state_names(st_name))
+
+
+pc01_id=dist_shp %>% as.data.frame() %>% 
+  dplyr::select(pc01_state_id, pc01_district_id, 
+                st_name, dist_name) %>% 
+  distinct() %>% 
+  mutate(pc01_state_id=padzero(pc01_state_id, 2)) %>%
+  mutate(pc01_district_id=padzero(pc01_district_id, 2))
+
+
+# pc_id=dist_shp %>% as.data.frame() %>% 
+#   dplyr::select(ST_CEN_CD, DT_CEN_CD) %>% 
+#   rename(pc01_state_id=ST_CEN_CD, pc01_district_id=DT_CEN_CD) %>%
+#   distinct() %>% 
+#   mutate(pc01_state_id=padzero(pc01_state_id, 2)) %>%
+#   mutate(pc01_district_id=padzero(pc01_district_id, 2))
+# 
 
 # 1 READING ADMIN DISTRICT 2011 ---------------------------------------------
 
@@ -198,7 +250,7 @@ dist_shp11 <- dist_shp11 %>%
 
 # 2 READING PRE DELIM PC AND INTERSECTING IT WITH DISTRICT SHP---------------------------------
 
-
+# (NOT INTERSECTING CURRENTLY)
 
 # Define the directory path
 base_dir <- "../Data/MAPS- INDIA/pre-delim/PC_Data/States"
@@ -227,18 +279,6 @@ pc_shp <- state_folders %>%
 #   labs(title = "Indian States Shapefiles",
 #        fill = "State ID")
 
-# pc_shp_pre_rg=pc_shp %>%
-#   as.data.frame() %>% 
-#   mutate(pc_id=padzero(PC_NO, 2)) %>% 
-#   arrange(ST_NAME, pc_id) %>% 
-#   dplyr::select(ST_NAME,ST_CODE,PC_NAME, pc_id) %>% 
-#   distinct() %>% group_by(ST_NAME) %>% 
-#   mutate(pc_count=n_distinct(pc_id)) %>% ungroup() %>% 
-#     filter(str_to_title(ST_NAME)!="Andhra Pradesh")
-# pc_name_pre=pc_shp_pre_rg %>% 
-#   mutate(pc_name=trimws(gsub("\\s*\\(.*\\)", "", PC_NAME))) %>% 
-#   mutate(pc_name=tolower(pc_name))
-# pc_name_pre=unique(pc_name_pre$pc_name)
 
 
 
@@ -261,6 +301,37 @@ pc_shp_valid <- pc_shp_valid %>%
 pc_shp_valid=pc_shp_valid %>% 
   # Remove the first character from 'state_code_pc'
   mutate(ST_CODE = substr(ST_CODE, 2, nchar(ST_CODE)))# %>% 
+
+
+# Unique ID for each admin district
+
+pc_shp_valid <- pc_shp_valid %>%
+  mutate(ST_NAME=tolower(ST_NAME)) %>%
+  mutate(ST_NAME=standardize_state_names(ST_NAME))
+  # mutate(
+  #   ST_NAME = case_when(
+  #     ST_NAME == "Uttaranchal" ~ "Uttarakhand",
+  #     ST_NAME == "Arunachal Pradesh" ~ "Arunanchal Pradesh",
+  #     ST_NAME == "Jammu & Kashmir" ~ "Jammu and Kashmir",
+  #     ST_NAME == "Tamilnadu" ~ "Tamil Nadu",
+  #     ST_NAME == "Delhi" ~ "Delhi & NCR",
+  #     ST_NAME == "Orissa" ~ "Odisha",
+  #     ST_NAME == "Pondicherry" ~ "Puducherry",
+  #     ST_NAME == "Andaman & Nicobar Islands" ~ "Andaman & Nicobar Island",
+  #     ST_NAME == "Dadra & Nagar Haveli" ~ "Dadara & Nagar Havelli",
+  #     ST_NAME == "Daman and Diu" ~ "Daman & Diu",
+  #     TRUE ~ ST_NAME  # Keep the state as-is if no changes are needed
+  #   )
+  # )
+
+
+
+pc_shp_valid <- pc_shp_valid %>%
+  mutate(election_id = paste0( row_number()))  # Unique ID for each election district
+
+
+
+
 #filter(!grepl("^U", ST_CODE))
 # (NOT REMOVING) This removes all UTs including Delhi.
 # [1] "ANDAMAN & NICOBAR ISLANDS"          
@@ -285,86 +356,65 @@ pc_shp_valid=pc_shp_valid %>%
 #   labs(title = "Selected Elements from dist_shape and pc_shp")
 
 
-# Unique ID for each admin district
 
-pc_shp_valid <- pc_shp_valid %>%
-  mutate(ST_NAME=str_to_title(ST_NAME)) %>% 
-  mutate(
-    ST_NAME = case_when(
-      ST_NAME == "Uttaranchal" ~ "Uttarakhand",
-      ST_NAME == "Arunachal Pradesh" ~ "Arunanchal Pradesh",
-      ST_NAME == "Jammu & Kashmir" ~ "Jammu and Kashmir",
-      ST_NAME == "Tamilnadu" ~ "Tamil Nadu",
-      ST_NAME == "Delhi" ~ "Delhi & NCR",
-      ST_NAME == "Orissa" ~ "Odisha",
-      ST_NAME == "Pondicherry" ~ "Puducherry",
-      ST_NAME == "Andaman & Nicobar Islands" ~ "Andaman & Nicobar Island",
-      ST_NAME == "Dadra & Nagar Haveli" ~ "Dadara & Nagar Havelli",
-      ST_NAME == "Daman and Diu" ~ "Daman & Diu",
-      TRUE ~ ST_NAME  # Keep the state as-is if no changes are needed
-    )
-  )
+# NOT USING CURRENTLY 
 
 
-
-pc_shp_valid <- pc_shp_valid %>%
-  mutate(election_id = paste0( row_number()))  # Unique ID for each election district
-
-# Convert sf objects to geos_geometry for faster processing
-admin_geos <- as_geos_geometry(dist_shp)
-election_geos <- as_geos_geometry(pc_shp_valid)
-
-# Create an empty list to store results
-intersection_results <- list()
-
-# Perform intersections
-for (i in seq_along(admin_geos)) {
-  # Find intersections with each admin district geometry
-  admin_geom <- admin_geos[i]
-  intersects <- geos_intersects(admin_geom, election_geos)
-  
-  # For intersecting election districts, calculate intersection areas
-  if (any(intersects)) {
-    intersected_geoms <- geos_intersection(admin_geom, election_geos[intersects])
-    intersection_areas <- geos_area(intersected_geoms)
-    
-    # Filter out cases with zero intersection area (i.e., only boundaries touch)
-    valid_intersections <- intersection_areas > 0
-    
-    # Only store results with non-zero intersection area
-    if (any(valid_intersections)) {
-      # Calculate area of each intersected election district geometry
-      election_areas <- geos_area(election_geos[intersects][valid_intersections])
-      
-      results <- data.frame(
-        dist_id = dist_shp$DT_CEN_CD[i],  # Use the newly created unique admin ID
-        dist_name=dist_shp$DISTRICT[i],
-        pc_id = pc_shp_valid$PC_CODE[intersects][valid_intersections],  # Use the unique election ID
-        pc_name=pc_shp_valid$PC_NAME[intersects][valid_intersections],
-        pc_type=pc_shp_valid$PC_TYPE[intersects][valid_intersections],
-        state_pc=tolower(pc_shp_valid$ST_NAME[intersects][valid_intersections]),
-        state_dist=tolower(dist_shp$ST_NM[i]),
-        state_code_dist=dist_shp$ST_CEN_CD[i],
-        state_code_pc=pc_shp_valid$ST_CODE[intersects][valid_intersections],
-        intx_area = intersection_areas[valid_intersections],
-        dist_area = geos_area(admin_geom),
-        dist_area_pct= (intersection_areas[valid_intersections] / geos_area(admin_geom)) * 100,
-        pc_area = election_areas,  
-        pc_area_pct = (intersection_areas[valid_intersections] / election_areas) * 100
-        
-        
-      )
-      
-      intersection_results[[i]] <- results
-    }
-  }
-}
-
-# Combine results into a single dataframe
-pc_dist_table_pre <- bind_rows(intersection_results)
-pc_dist_table_pre=pc_dist_table_pre %>% filter(dist_area_pct>=1) %>% 
-  filter(pc_area_pct>=1) %>% 
-  mutate(delim_id=3) %>% distinct()
+# # Convert sf objects to geos_geometry for faster processing
+# admin_geos <- as_geos_geometry(dist_shp)
+# election_geos <- as_geos_geometry(pc_shp_valid)
+# 
+# # Create an empty list to store results
+# intersection_results <- list()
+# 
+# # Perform intersections
+# for (i in seq_along(admin_geos)) {
+#   # Find intersections with each admin district geometry
+#   admin_geom <- admin_geos[i]
+#   intersects <- geos_intersects(admin_geom, election_geos)
+#   
+#   # For intersecting election districts, calculate intersection areas
+#   if (any(intersects)) {
+#     intersected_geoms <- geos_intersection(admin_geom, election_geos[intersects])
+#     intersection_areas <- geos_area(intersected_geoms)
+#     
+#     # Filter out cases with zero intersection area (i.e., only boundaries touch)
+#     valid_intersections <- intersection_areas > 0
+#     
+#     # Only store results with non-zero intersection area
+#     if (any(valid_intersections)) {
+#       # Calculate area of each intersected election district geometry
+#       election_areas <- geos_area(election_geos[intersects][valid_intersections])
+#       
+#       results <- data.frame(
+#         dist_id = dist_shp$DT_CEN_CD[i],  # Use the newly created unique admin ID
+#         dist_name=dist_shp$DISTRICT[i],
+#         pc_id = pc_shp_valid$PC_CODE[intersects][valid_intersections],  # Use the unique election ID
+#         pc_name=pc_shp_valid$PC_NAME[intersects][valid_intersections],
+#         pc_type=pc_shp_valid$PC_TYPE[intersects][valid_intersections],
+#         state_pc=tolower(pc_shp_valid$ST_NAME[intersects][valid_intersections]),
+#         state_dist=tolower(dist_shp$ST_NM[i]),
+#         state_code_dist=dist_shp$ST_CEN_CD[i],
+#         state_code_pc=pc_shp_valid$ST_CODE[intersects][valid_intersections],
+#         intx_area = intersection_areas[valid_intersections],
+#         dist_area = geos_area(admin_geom),
+#         dist_area_pct= (intersection_areas[valid_intersections] / geos_area(admin_geom)) * 100,
+#         pc_area = election_areas,  
+#         pc_area_pct = (intersection_areas[valid_intersections] / election_areas) * 100
+#         
+#         
+#       )
+#       
+#       intersection_results[[i]] <- results
+#     }
+#   }
+# }
+# 
+# # Combine results into a single dataframe
+# pc_dist_table_pre <- bind_rows(intersection_results)
+# pc_dist_table_pre=pc_dist_table_pre %>% filter(dist_area_pct>=1) %>% 
+#   filter(pc_area_pct>=1) %>% 
+#   mutate(delim_id=3) %>% distinct()
 #mutate(pc_id=sub("^S", "", pc_id))
 
 
@@ -373,6 +423,7 @@ pc_dist_table_pre=pc_dist_table_pre %>% filter(dist_area_pct>=1) %>%
 
 
 # 3 READING PRE DELIM AC AND INTERSECTING IT WITH DISTRICT---------------
+# (NOT INTERSECTING CURRENTLY)
 
 # Define the directory path
 shp_path <- "../Data/MAPS- INDIA/pre-delim/ac_all_final_april_2012/AC_All_Final.shp"
@@ -391,6 +442,7 @@ ac_shp <- ac_shp %>%
 ac_shp <- ac_shp %>%
   mutate(ac_area = st_area(geometry))
 
+
 # ggplot(data = ac_shp) +
 #   geom_sf(color = "black", fill = NA, size = 0.2) +
 #   theme_minimal() +
@@ -403,21 +455,24 @@ ac_shp <- ac_shp %>%
 # 
 
 ac_shp <- ac_shp %>%
-  mutate(
-    State = case_when(
-      State == "Uttaranchal" ~ "Uttarakhand",
-      State == "Arunachal Pradesh" ~ "Arunanchal Pradesh",
-      State == "Jammu & Kashmir" ~ "Jammu and Kashmir",
-      State == "Tamilnadu" ~ "Tamil Nadu",
-      State == "Delhi" ~ "Delhi & NCR",
-      State == "Orissa" ~ "Odisha",
-      State == "Pondicherry" ~ "Puducherry",
-      State == "Andaman & Nicobar Islands" ~ "Andaman & Nicobar Island",
-      State == "Dadra & Nagar Haveli" ~ "Dadara & Nagar Havelli",
-      State == "Daman and Diu" ~ "Daman & Diu",
-      TRUE ~ State  # Keep the state as-is if no changes are needed
-    )
-  )
+  mutate(State=tolower(State)) %>%
+  mutate(State = standardize_state_names(State))
+  
+  # mutate(
+  #   State = case_when(
+  #     State == "Uttaranchal" ~ "Uttarakhand",
+  #     State == "Arunachal Pradesh" ~ "Arunanchal Pradesh",
+  #     State == "Jammu & Kashmir" ~ "Jammu and Kashmir",
+  #     State == "Tamilnadu" ~ "Tamil Nadu",
+  #     State == "Delhi" ~ "Delhi & NCR",
+  #     State == "Orissa" ~ "Odisha",
+  #     State == "Pondicherry" ~ "Puducherry",
+  #     State == "Andaman & Nicobar Islands" ~ "Andaman & Nicobar Island",
+  #     State == "Dadra & Nagar Haveli" ~ "Dadara & Nagar Havelli",
+  #     State == "Daman and Diu" ~ "Daman & Diu",
+  #     TRUE ~ State  # Keep the state as-is if no changes are needed
+  #   )
+  # )
 
 
 pre_ac_pc_dist=ac_shp %>% clean_names() %>% 
@@ -425,66 +480,73 @@ pre_ac_pc_dist=ac_shp %>% clean_names() %>%
   dplyr::select(dist_name,ac_name,state,pc_name) %>% 
   distinct() %>% rename(st_name=state) %>% 
   mutate_all(tolower) %>% 
-  mutate(delim_id=3)
+  mutate(delim_id=3) %>% 
+  group_by(st_name, dist_name) %>%
+  mutate(ac_count_pre=n_distinct(ac_name)) %>% ungroup() %>% 
+  mutate(dist_name = str_trim(str_remove(dist_name, 
+                                         "\\*\\s*$")))
+
+pre_ac_pc_dist=pre_ac_pc_dist %>% left_join(pc01_id)
+
 
 
 # Convert sf objects to geos_geometry for faster processing
-admin_geos <- as_geos_geometry(dist_shp)
-election_geos <- as_geos_geometry(ac_shp)
-
-# Create an empty list to store results
-intersection_results <- list()
-
-# Perform intersections
-for (i in seq_along(admin_geos)) {
-  # Find intersections with each admin district geometry
-  admin_geom <- admin_geos[i]
-  intersects <- geos_intersects(admin_geom, election_geos)
-  
-  # For intersecting election districts, calculate intersection areas
-  if (any(intersects)) {
-    intersected_geoms <- geos_intersection(admin_geom, election_geos[intersects])
-    intersection_areas <- geos_area(intersected_geoms)
-    
-    # Filter out cases with zero intersection area (i.e., only boundaries touch)
-    valid_intersections <- intersection_areas > 0
-    
-    # Only store results with non-zero intersection area
-    if (any(valid_intersections)) {
-      # Calculate area of each intersected election district geometry
-      election_areas <- geos_area(election_geos[intersects][valid_intersections])
-      
-      results <- data.frame(
-        dist_id = dist_shp$admin_id[i],  # Use the newly created unique admin ID
-        dist_name=tolower(dist_shp$DISTRICT[i]),
-        dist_ac=tolower(ac_shp$DIST_NAME[intersects][valid_intersections]),
-        ac_id = ac_shp$ac_id[intersects][valid_intersections],  # Use the unique election ID
-        ac_name=ac_shp$AC_NAME[intersects][valid_intersections],
-        ac_type=ac_shp$AC_TYPE[intersects][valid_intersections],
-        state_ac=tolower(ac_shp$State[intersects][valid_intersections]),
-        state_dist=tolower(dist_shp$ST_NM[i]),
-        intx_area = intersection_areas[valid_intersections],
-        dist_area = geos_area(admin_geom),
-        dist_area_pct= (intersection_areas[valid_intersections] / geos_area(admin_geom)) * 100,
-        ac_area = election_areas,  
-        ac_area_pct = (intersection_areas[valid_intersections] / election_areas) * 100
-        
-        
-      )
-      
-      intersection_results[[i]] <- results
-    }
-  }
-}
-
-
-ac_dist_table_pre <- bind_rows(intersection_results)
-
-
-ac_dist_table_pre=ac_dist_table_pre %>% 
-          mutate(mismatch_dum1=if_else(state_ac!=state_dist, 0,1),
-                 mismatch_dum2=if_else(dist_area_pct<=1,0,1)) %>% 
-  mutate(delim_id=3)
+# admin_geos <- as_geos_geometry(dist_shp)
+# election_geos <- as_geos_geometry(ac_shp)
+# 
+# # Create an empty list to store results
+# intersection_results <- list()
+# 
+# # Perform intersections
+# for (i in seq_along(admin_geos)) {
+#   # Find intersections with each admin district geometry
+#   admin_geom <- admin_geos[i]
+#   intersects <- geos_intersects(admin_geom, election_geos)
+#   
+#   # For intersecting election districts, calculate intersection areas
+#   if (any(intersects)) {
+#     intersected_geoms <- geos_intersection(admin_geom, election_geos[intersects])
+#     intersection_areas <- geos_area(intersected_geoms)
+#     
+#     # Filter out cases with zero intersection area (i.e., only boundaries touch)
+#     valid_intersections <- intersection_areas > 0
+#     
+#     # Only store results with non-zero intersection area
+#     if (any(valid_intersections)) {
+#       # Calculate area of each intersected election district geometry
+#       election_areas <- geos_area(election_geos[intersects][valid_intersections])
+#       
+#       results <- data.frame(
+#         dist_id = dist_shp$admin_id[i],  # Use the newly created unique admin ID
+#         dist_name=tolower(dist_shp$DISTRICT[i]),
+#         dist_ac=tolower(ac_shp$DIST_NAME[intersects][valid_intersections]),
+#         ac_id = ac_shp$ac_id[intersects][valid_intersections],  # Use the unique election ID
+#         ac_name=ac_shp$AC_NAME[intersects][valid_intersections],
+#         ac_type=ac_shp$AC_TYPE[intersects][valid_intersections],
+#         state_ac=tolower(ac_shp$State[intersects][valid_intersections]),
+#         state_dist=tolower(dist_shp$ST_NM[i]),
+#         intx_area = intersection_areas[valid_intersections],
+#         dist_area = geos_area(admin_geom),
+#         dist_area_pct= (intersection_areas[valid_intersections] / geos_area(admin_geom)) * 100,
+#         ac_area = election_areas,  
+#         ac_area_pct = (intersection_areas[valid_intersections] / election_areas) * 100
+#         
+#         
+#       )
+#       
+#       intersection_results[[i]] <- results
+#     }
+#   }
+# }
+# 
+# 
+# ac_dist_table_pre <- bind_rows(intersection_results)
+# 
+# 
+# ac_dist_table_pre=ac_dist_table_pre %>% 
+#           mutate(mismatch_dum1=if_else(state_ac!=state_dist, 0,1),
+#                  mismatch_dum2=if_else(dist_area_pct<=1,0,1)) %>% 
+#   mutate(delim_id=3)
         
 
 # THere are bunch of mistmatch particularly at the state borders
@@ -499,17 +561,7 @@ ac_dist_table_pre=ac_dist_table_pre %>%
 
 # Define the directory path
 base_dir <- "../Data/MAPS- INDIA/AC/maps-master/assembly-constituencies/India_AC.shp"
-
 ac_shp_post=st_read(base_dir)
-
-# # List all assembly files
-# flist=list.files(base_dir, 
-#                     pattern= "assembly\\.shp$", 
-#                     full.names = TRUE, 
-#                  recursive = T)
-# 
-# shp_list=lapply(flist, st_read)
-# ac_shp_post=shp_list %>% bind_rows()
 
 
 # Ensure both layers have the same CRS
@@ -517,7 +569,6 @@ ac_shp_post=st_read(base_dir)
 if (st_crs(dist_shp) != st_crs(ac_shp_post)) {
   ac_shp_post <- st_transform(ac_shp_post, st_crs(dist_shp))
 }
-
 
 # Calculate total area for each election district (optional, if needed)
 ac_shp_post <- ac_shp_post %>%
@@ -528,89 +579,113 @@ ac_shp_post <- ac_shp_post %>%
 ac_shp_post <- ac_shp_post %>%
   mutate(election_area = st_area(geometry))
 
-# Unique ID for each admin district
-
+# Unique ID for each AC
 ac_shp_post <- ac_shp_post %>%
   mutate(election_id = paste0( row_number()))  # Unique ID for each election district
+
 
 post_ac_pc_dist=ac_shp_post %>% clean_names() %>% 
   as.data.frame() %>% 
   dplyr::select(dist_name,ac_name,st_name,pc_name) %>% 
   distinct() %>% 
   mutate_all(tolower) %>% 
-  mutate(delim_id=4)
+  mutate(st_name = standardize_state_names(st_name)) %>% 
+  mutate(delim_id=4) %>% 
+  group_by(st_name, dist_name) %>%
+  mutate(ac_count_post=n_distinct(ac_name)) %>% ungroup() %>% 
+  mutate(dist_name = str_trim(str_remove(dist_name, 
+                                         "\\*\\s*$")))
+
+post_ac_pc_dist=post_ac_pc_dist %>% left_join(pc01_id)
 
 
-# Convert sf objects to geos_geometry for faster processing
-admin_geos <- as_geos_geometry(dist_shp)
-election_geos <- as_geos_geometry(ac_shp_post)
-
-# Create an empty list to store results
-intersection_results <- list()
-
-# Perform intersections
-for (i in seq_along(admin_geos)) {
-  # Find intersections with each admin district geometry
-  admin_geom <- admin_geos[i]
-  intersects <- geos_intersects(admin_geom, election_geos)
-  
-  # For intersecting election districts, calculate intersection areas
-  if (any(intersects)) {
-    intersected_geoms <- geos_intersection(admin_geom, election_geos[intersects])
-    intersection_areas <- geos_area(intersected_geoms)
-    
-    # Filter out cases with zero intersection area (i.e., only boundaries touch)
-    valid_intersections <- intersection_areas > 0
-    
-    # Only store results with non-zero intersection area
-    if (any(valid_intersections)) {
-      # Calculate area of each intersected election district geometry
-      election_areas <- geos_area(election_geos[intersects][valid_intersections])
-      
-      results <- data.frame(
-        dist_id = dist_shp$admin_id[i],  # Use the newly created unique admin ID
-        dist_name=dist_shp$DISTRICT[i],
-        ac_no = ac_shp_post$AC_NO[intersects][valid_intersections],  # Use the unique election ID
-        ac_name=ac_shp_post$AC_NAME[intersects][valid_intersections],
-        #pc_type=pc_shp_valid$PC_TYPE[intersects][valid_intersections],
-        state_ac=tolower(ac_shp_post$ST_NAME[intersects][valid_intersections]),
-        state_id=dist_shp$ST_CEN_CD[i],
-        state_dist=tolower(dist_shp$ST_NM[i]),
-        intx_area = intersection_areas[valid_intersections],
-        dist_area = geos_area(admin_geom),
-        dist_area_pct= (intersection_areas[valid_intersections] / geos_area(admin_geom)) * 100,
-        ac_area = election_areas,  
-        ac_area_pct = (intersection_areas[valid_intersections] / election_areas) * 100
-        
-        
-      )
-      
-      intersection_results[[i]] <- results
-    }
-  }
-}
+# ROUGH/SIDE
+# merging pre and post here at AC level
+df1=pre_ac_pc_dist %>% 
+  dplyr::select(dist_name,  st_name, ac_count_pre) %>%
+  distinct()
+df2=post_ac_pc_dist %>% 
+  dplyr::select(dist_name, st_name, ac_count_post) %>%
+  distinct()
+ac_dist=df1 %>% inner_join(df2) %>% 
+  mutate(ac_count_diff=ac_count_post-ac_count_pre)
+# > table(ac_dist$ac_count_diff)
+# 
+# -10  -7  -5  -4  -3  -2  -1   0   1   2   3   4   5   8  10  13 
+# 1   1   2   3   6  23  76 162  81  22   8   3   1   1   1   3 
+# ROUGH/SIDE
 
 
-
-
-
-
-# Combine results into a single dataframe
-ac_dist_table_post <- bind_rows(intersection_results)
-ac_dist_table_post=ac_dist_table_post %>% 
-  filter(!is.na(ac_name)) %>% 
-  mutate(mismatch_dum1=if_else(state_ac!=state_dist, 0,1),
-         mismatch_dum2=if_else(dist_area_pct<=1,0,1)) %>% 
-  filter(mismatch_dum2==1)
-
-ac_dist_table_post=ac_dist_table_post %>% 
-  mutate(ac_no=padzero(ac_no, 3))
+# 
+# # Convert sf objects to geos_geometry for faster processing
+# admin_geos <- as_geos_geometry(dist_shp)
+# election_geos <- as_geos_geometry(ac_shp_post)
+# 
+# # Create an empty list to store results
+# intersection_results <- list()
+# 
+# # Perform intersections
+# for (i in seq_along(admin_geos)) {
+#   # Find intersections with each admin district geometry
+#   admin_geom <- admin_geos[i]
+#   intersects <- geos_intersects(admin_geom, election_geos)
+#   
+#   # For intersecting election districts, calculate intersection areas
+#   if (any(intersects)) {
+#     intersected_geoms <- geos_intersection(admin_geom, election_geos[intersects])
+#     intersection_areas <- geos_area(intersected_geoms)
+#     
+#     # Filter out cases with zero intersection area (i.e., only boundaries touch)
+#     valid_intersections <- intersection_areas > 0
+#     
+#     # Only store results with non-zero intersection area
+#     if (any(valid_intersections)) {
+#       # Calculate area of each intersected election district geometry
+#       election_areas <- geos_area(election_geos[intersects][valid_intersections])
+#       
+#       results <- data.frame(
+#         dist_id = dist_shp$admin_id[i],  # Use the newly created unique admin ID
+#         dist_name=dist_shp$DISTRICT[i],
+#         ac_no = ac_shp_post$AC_NO[intersects][valid_intersections],  # Use the unique election ID
+#         ac_name=ac_shp_post$AC_NAME[intersects][valid_intersections],
+#         #pc_type=pc_shp_valid$PC_TYPE[intersects][valid_intersections],
+#         state_ac=tolower(ac_shp_post$ST_NAME[intersects][valid_intersections]),
+#         state_id=dist_shp$ST_CEN_CD[i],
+#         state_dist=tolower(dist_shp$ST_NM[i]),
+#         intx_area = intersection_areas[valid_intersections],
+#         dist_area = geos_area(admin_geom),
+#         dist_area_pct= (intersection_areas[valid_intersections] / geos_area(admin_geom)) * 100,
+#         ac_area = election_areas,  
+#         ac_area_pct = (intersection_areas[valid_intersections] / election_areas) * 100
+#         
+#         
+#       )
+#       
+#       intersection_results[[i]] <- results
+#     }
+#   }
+# }
+# 
+# 
+# 
+# 
+# 
+# 
+# # Combine results into a single dataframe
+# ac_dist_table_post <- bind_rows(intersection_results)
+# ac_dist_table_post=ac_dist_table_post %>% 
+#   filter(!is.na(ac_name)) %>% 
+#   mutate(mismatch_dum1=if_else(state_ac!=state_dist, 0,1),
+#          mismatch_dum2=if_else(dist_area_pct<=1,0,1)) %>% 
+#   filter(mismatch_dum2==1)
+# 
+# ac_dist_table_post=ac_dist_table_post %>% 
+#   mutate(ac_no=padzero(ac_no, 3))
 
 
 # Now bringing AC_TYPE from the TCPD AC ELECTION DATA
-
-ac_dist_table_post=ac_dist_table_post %>% 
-  inner_join(post_ac) %>% mutate(delim_id=4)
+# ac_dist_table_post=ac_dist_table_post %>% 
+#   inner_join(post_ac) %>% mutate(delim_id=4)
 
 
 
@@ -626,29 +701,6 @@ pc_shp_post <- pc_shp_post %>%
 pc_shp_post <- pc_shp_post %>%
   filter(st_is_valid(geometry))
 
-# Rough
-# pc_shp_post_rg=pc_shp_post %>%
-#   as.data.frame() %>% 
-#   mutate(pc_id=padzero(PC_CODE, 2)) %>% 
-#   arrange(ST_NAME, pc_id) %>% 
-#   dplyr::select(ST_NAME,ST_CODE,PC_NAME, pc_id) %>% 
-#   distinct() %>% group_by(ST_NAME) %>% 
-#   mutate(pc_count=n_distinct(pc_id)) %>% ungroup() %>% 
-#   filter(str_to_title(ST_NAME)!="Andhra Pradesh")
-# 
-# pc_name_post=pc_shp_post_rg %>% 
-#   mutate(pc_name=trimws(gsub("\\s*\\(.*\\)", "", PC_NAME))) %>% 
-#   mutate(pc_name=tolower(pc_name))
-# pc_name_post=unique(pc_name_post$pc_name)
-# 
-# not_in_post <- setdiff(pc_name_pre, pc_name_post)
-# 
-# # Find names in pc_name_post that are not in pc_name_pre
-# not_in_pre <- setdiff(pc_name_post, pc_name_pre)
-
-
-#Rough
-
 # Ensure both layers have the same CRS
 st_crs(pc_shp_post) <- 4326
 if (st_crs(dist_shp) != st_crs(pc_shp_post)) {
@@ -660,96 +712,98 @@ pc_shp_post <- pc_shp_post %>%
 
 
 pc_shp_post <- pc_shp_post %>%
-  mutate(ST_NAME=str_to_title(ST_NAME)) %>% 
-  mutate(
-    ST_NAME = case_when(
-      ST_NAME == "Uttaranchal" ~ "Uttarakhand",
-      ST_NAME == "Arunachal Pradesh" ~ "Arunanchal Pradesh",
-      ST_NAME == "Jammu & Kashmir" ~ "Jammu and Kashmir",
-      ST_NAME == "Tamilnadu" ~ "Tamil Nadu",
-      ST_NAME == "Delhi" ~ "Delhi & NCR",
-      ST_NAME == "Orissa" ~ "Odisha",
-      ST_NAME == "Pondicherry" ~ "Puducherry",
-      ST_NAME == "Andaman & Nicobar Islands" ~ "Andaman & Nicobar Island",
-      ST_NAME == "Dadra & Nagar Haveli" ~ "Dadara & Nagar Havelli",
-      ST_NAME == "Daman and Diu" ~ "Daman & Diu",
-      TRUE ~ ST_NAME  # Keep the state as-is if no changes are needed
-    )
-  )
-
+  mutate(ST_NAME=tolower(ST_NAME)) %>%
+  mutate(ST_NAME=standardize_state_names(ST_NAME))
 # Unique ID for each admin district
-
 pc_shp_post <- pc_shp_post %>%
   mutate(election_id = paste0( row_number()))  # Unique ID for each election district
 
-# Convert sf objects to geos_geometry for faster processing
-admin_geos <- as_geos_geometry(dist_shp)
-election_geos <- as_geos_geometry(pc_shp_post)
 
-# Create an empty list to store results
-intersection_results <- list()
+  # mutate(ST_NAME=str_to_title(ST_NAME)) %>% 
+  # mutate(
+  #   ST_NAME = case_when(
+  #     ST_NAME == "Uttaranchal" ~ "Uttarakhand",
+  #     ST_NAME == "Arunachal Pradesh" ~ "Arunanchal Pradesh",
+  #     ST_NAME == "Jammu & Kashmir" ~ "Jammu and Kashmir",
+  #     ST_NAME == "Tamilnadu" ~ "Tamil Nadu",
+  #     ST_NAME == "Delhi" ~ "Delhi & NCR",
+  #     ST_NAME == "Orissa" ~ "Odisha",
+  #     ST_NAME == "Pondicherry" ~ "Puducherry",
+  #     ST_NAME == "Andaman & Nicobar Islands" ~ "Andaman & Nicobar Island",
+  #     ST_NAME == "Dadra & Nagar Haveli" ~ "Dadara & Nagar Havelli",
+  #     ST_NAME == "Daman and Diu" ~ "Daman & Diu",
+  #     TRUE ~ ST_NAME  # Keep the state as-is if no changes are needed
+  #   )
+  # )
 
-# Perform intersections
-for (i in seq_along(admin_geos)) {
-  # Find intersections with each admin district geometry
-  admin_geom <- admin_geos[i]
-  intersects <- geos_intersects(admin_geom, election_geos)
-  
-  # For intersecting election districts, calculate intersection areas
-  if (any(intersects)) {
-    intersected_geoms <- geos_intersection(admin_geom, election_geos[intersects])
-    intersection_areas <- geos_area(intersected_geoms)
-    
-    # Filter out cases with zero intersection area (i.e., only boundaries touch)
-    valid_intersections <- intersection_areas > 0
-    
-    # Only store results with non-zero intersection area
-    if (any(valid_intersections)) {
-      # Calculate area of each intersected election district geometry
-      election_areas <- geos_area(election_geos[intersects][valid_intersections])
-      
-      results <- data.frame(
-        dist_id = dist_shp$DT_CEN_CD[i],  # Use the newly created unique admin ID
-        dist_name=dist_shp$DISTRICT[i],
-        pc_id = pc_shp_post$PC_CODE[intersects][valid_intersections],  # Use the unique election ID
-        pc_name=pc_shp_post$PC_NAME[intersects][valid_intersections],
-        pc_type=pc_shp_post$Res[intersects][valid_intersections],
-        state_pc=tolower(pc_shp_post$ST_NAME[intersects][valid_intersections]),
-        state_dist=tolower(dist_shp$ST_NM[i]),
-        state_code_dist=dist_shp$ST_CEN_CD[i],
-        state_code_pc=pc_shp_post$ST_CODE[intersects][valid_intersections],
-        intx_area = intersection_areas[valid_intersections],
-        dist_area = geos_area(admin_geom),
-        dist_area_pct= (intersection_areas[valid_intersections] / geos_area(admin_geom)) * 100,
-        pc_area = election_areas,  
-        pc_area_pct = (intersection_areas[valid_intersections] / election_areas) * 100
-        
-        
-      )
-      
-      intersection_results[[i]] <- results
-    }
-  }
-}
-
-# Combine results into a single dataframe
-pc_dist_table_post <- bind_rows(intersection_results)
-
-
-# # MERGING IN STATE CODE FROM OUTSIDE (CODES ARE SAME AS IN ST_CEN_CODE)
-# dd =pc_dist_table_post %>% 
-#   mutate(state_pc=str_replace_all(state_pc, " ", "_")) %>% 
-#   left_join(state_code, by=c("state_pc"="state"))
-# dd=dd %>% dplyr::select(state_pc, state_dist, state_code_dist, 
-#                         state_code_pc, state_id) %>% distinct()
-
-
-pc_dist_table_post=pc_dist_table_post %>% filter(dist_area_pct>=1) %>% 
-  filter(pc_area_pct>=1) %>% 
-  mutate(delim_id=4) %>% distinct()
+# 
+# # Convert sf objects to geos_geometry for faster processing
+# admin_geos <- as_geos_geometry(dist_shp)
+# election_geos <- as_geos_geometry(pc_shp_post)
+# 
+# # Create an empty list to store results
+# intersection_results <- list()
+# 
+# # Perform intersections
+# for (i in seq_along(admin_geos)) {
+#   # Find intersections with each admin district geometry
+#   admin_geom <- admin_geos[i]
+#   intersects <- geos_intersects(admin_geom, election_geos)
+#   
+#   # For intersecting election districts, calculate intersection areas
+#   if (any(intersects)) {
+#     intersected_geoms <- geos_intersection(admin_geom, election_geos[intersects])
+#     intersection_areas <- geos_area(intersected_geoms)
+#     
+#     # Filter out cases with zero intersection area (i.e., only boundaries touch)
+#     valid_intersections <- intersection_areas > 0
+#     
+#     # Only store results with non-zero intersection area
+#     if (any(valid_intersections)) {
+#       # Calculate area of each intersected election district geometry
+#       election_areas <- geos_area(election_geos[intersects][valid_intersections])
+#       
+#       results <- data.frame(
+#         dist_id = dist_shp$DT_CEN_CD[i],  # Use the newly created unique admin ID
+#         dist_name=dist_shp$DISTRICT[i],
+#         pc_id = pc_shp_post$PC_CODE[intersects][valid_intersections],  # Use the unique election ID
+#         pc_name=pc_shp_post$PC_NAME[intersects][valid_intersections],
+#         pc_type=pc_shp_post$Res[intersects][valid_intersections],
+#         state_pc=tolower(pc_shp_post$ST_NAME[intersects][valid_intersections]),
+#         state_dist=tolower(dist_shp$ST_NM[i]),
+#         state_code_dist=dist_shp$ST_CEN_CD[i],
+#         state_code_pc=pc_shp_post$ST_CODE[intersects][valid_intersections],
+#         intx_area = intersection_areas[valid_intersections],
+#         dist_area = geos_area(admin_geom),
+#         dist_area_pct= (intersection_areas[valid_intersections] / geos_area(admin_geom)) * 100,
+#         pc_area = election_areas,  
+#         pc_area_pct = (intersection_areas[valid_intersections] / election_areas) * 100
+#         
+#         
+#       )
+#       
+#       intersection_results[[i]] <- results
+#     }
+#   }
+# }
+# 
+# # Combine results into a single dataframe
+# pc_dist_table_post <- bind_rows(intersection_results)
+# 
+# 
+# # # MERGING IN STATE CODE FROM OUTSIDE (CODES ARE SAME AS IN ST_CEN_CODE)
+# # dd =pc_dist_table_post %>% 
+# #   mutate(state_pc=str_replace_all(state_pc, " ", "_")) %>% 
+# #   left_join(state_code, by=c("state_pc"="state"))
+# # dd=dd %>% dplyr::select(state_pc, state_dist, state_code_dist, 
+# #                         state_code_pc, state_id) %>% distinct()
+# 
+# 
+# pc_dist_table_post=pc_dist_table_post %>% filter(dist_area_pct>=1) %>% 
+#   filter(pc_area_pct>=1) %>% 
+#   mutate(delim_id=4) %>% distinct()
  # mutate(pc_id=padzero(pc_id, 2)) %>% 
  # mutate(pc_id=paste0(state_code_pc, pc_id))
-
 
 
 # 6 MERGING PRE PC GEO AND POST PC GEO ----------------------------------
@@ -882,9 +936,6 @@ pre_post_pc_table=pre_post_pc_table %>%
   # ungroup() %>% 
   # arrange(pre_st_name, pre_pc_code, desc(intersect_area))
 
-
-
-
 # For each pre-delim constituency, find the post-delim constituency with the maximum intersected area
 pre_to_post_max <- pre_post_pc_table %>%
   group_by(pre_st_name, pre_pc_name) %>%
@@ -896,7 +947,6 @@ pre_to_post_max <- pre_post_pc_table %>%
 
 
 # JUST USING PRE_TO_POST as THAT IS MORE NATURAL TO CARRY ALONG PREVIOUS PC DATA
-
 
 pre_post_map=pre_to_post_max %>% 
   rename(st_name_3=pre_st_name, 
@@ -922,21 +972,22 @@ pre_post_long <- pre_post_map %>%
   dplyr::select(pc_uid, delim_id, st_name, pc_name, pc_type, 
                 match_pct1)
 
-
 pre_post_long=pre_post_long %>% 
-  mutate(
-    st_name = case_when(
-      st_name == "Uttaranchal" ~ "Uttarakhand",
-      st_name == "Arunachal Pradesh" ~ "Arunanchal Pradesh",
-      st_name == "Jammu & Kashmir" ~ "Jammu and Kashmir",
-      st_name == "Tamilnadu" ~ "Tamil Nadu",
-      st_name == "national capital territory of delhi" ~ "delhi & ncr",
-      st_name == "orissa" ~ "odisha",
-      st_name == "andaman & nicobar island" ~ "andaman & nicobar",
-      st_name == "Dadra & Nagar Haveli" ~ "Dadara & Nagar Havelli",
-      st_name == "Daman and Diu" ~ "Daman & Diu",
-    TRUE ~ st_name  # Keep the state as-is if no changes are needed
-  ))
+  mutate(st_name=tolower(st_name)) %>% 
+  mutate(st_name=standardize_state_names(st_name)) 
+  # mutate(
+  #   st_name = case_when(
+  #     st_name == "Uttaranchal" ~ "Uttarakhand",
+  #     st_name == "Arunachal Pradesh" ~ "Arunanchal Pradesh",
+  #     st_name == "Jammu & Kashmir" ~ "Jammu and Kashmir",
+  #     st_name == "Tamilnadu" ~ "Tamil Nadu",
+  #     st_name == "national capital territory of delhi" ~ "delhi & ncr",
+  #     st_name == "orissa" ~ "odisha",
+  #     st_name == "andaman & nicobar island" ~ "andaman & nicobar",
+  #     st_name == "Dadra & Nagar Haveli" ~ "Dadara & Nagar Havelli",
+  #     st_name == "Daman and Diu" ~ "Daman & Diu",
+  #   TRUE ~ st_name  # Keep the state as-is if no changes are needed
+  # ))
   
   
 
@@ -974,15 +1025,6 @@ post_shp_matched <- pc_shp_post %>%
              by = c("PC_NAME" = "pc_name", "ST_NAME" = "st_name")) %>% 
   arrange(ST_NAME, PC_NAME)
 
-
-
-#ROUGH
-
-# plot_state(pre_shp_matched, 
-#            post_shp_matched, 
-#            "madhya pradesh", 
-#            "bhopal")
-# 
 
 
 # Ensure CRS consistency
@@ -1061,7 +1103,141 @@ final_pc_map=final_pc_map %>% ungroup() %>%
 
 
 
+# 7 MERGING PRE_DELIM AC AND POST-DELIM AC  --------------------------------------------
 
+
+pre_ac_shp=ac_shp %>% clean_names() %>% 
+  mutate(across(-geometry, tolower)) %>% 
+  mutate(ac_area=st_area(geometry)) 
+  
+pre_ac_df=pre_ac_shp %>% clean_names() %>% 
+  as.data.frame() %>% 
+  rename(st_name=state) %>% 
+  dplyr::select(dist_name,ac_name, 
+                st_name,ac_type) %>% 
+  distinct() %>% 
+  rename(pre_ac_type=ac_type) %>% 
+  mutate(pre_ac_type=toupper(pre_ac_type)) 
+
+
+post_ac_shp=ac_shp_post %>% 
+  clean_names() %>% 
+  mutate(ac_area=st_area(geometry)) %>% 
+  mutate(across(-geometry, tolower)) %>% 
+  mutate(st_name=standardize_state_names(st_name))
+  # mutate(
+  #   st_name = case_when(
+  #     st_name == "uttarkhand" ~ "uttarakhand",
+  #     st_name == "orissa" ~ "odisha",
+  #     st_name == "jammu & kashmir" ~ "jammu and kashmir",
+  #     st_name == "delhi" ~ "delhi & ncr",
+  #     TRUE ~ st_name  # Keep the state as-is if no changes are needed
+  #   )
+  # )
+
+post_ac_shp=post_ac_shp %>%
+  mutate(dist_name = str_trim(str_remove(dist_name, 
+                                         "\\*\\s*$"))) %>% 
+  mutate(
+    post_ac_type = str_extract(ac_name, "\\(([^)]+)\\)"),  # Extract text inside parentheses
+    post_ac_type = toupper(str_replace_all(post_ac_type, "[()]", "")),  # Remove parentheses
+    ac_name = str_trim(str_remove(ac_name, "\\(.*\\)"))  # Remove parentheses and their contents
+  ) %>% 
+  mutate(post_ac_type=if_else(is.na(post_ac_type), "GEN", 
+                              post_ac_type)) %>% 
+  mutate(post_ac_type=if_else(!post_ac_type %in% c("SC", "ST", "GEN"), 
+                              "GEN", post_ac_type) )
+
+
+
+post_ac_df=post_ac_shp %>% clean_names() %>% 
+  as.data.frame() %>% 
+  dplyr::select(dist_name,ac_name,st_name,post_ac_type
+               ) %>% 
+  distinct()
+ 
+ 
+# FIRST MERGING BY NAME 
+
+# Merge pre and post data by names
+ac_name_merge <- pre_ac_df %>%
+  inner_join(post_ac_df, 
+             by = c("st_name", "ac_name","dist_name"
+                    )) %>%
+  mutate(name_merge = 1) %>% distinct()
+
+
+dd=ac_name_merge %>% 
+  tabyl(pre_ac_type, post_ac_type) %>%
+  # Compute row percentages
+  adorn_totals("col") %>% 
+  adorn_totals("row")#
+               
+# Create a long format dataset with `delim_id` and `pc_type`
+ac_name_merge <- ac_name_merge %>%
+  uncount(2) %>%  # Duplicate each row twice
+  group_by(st_name, ac_name, dist_name) %>%
+  mutate(
+    delim_id = c(3, 4)  # Assign delim_id
+) %>%
+  ungroup() %>% distinct()
+ 
+
+# NOW WE WILL DO POLYGON INTERSECTION
+
+# Convert sf objects to geos geometries
+pre_ac_geom <- as_geos_geometry(pre_ac_shp)
+post_ac_geom <- as_geos_geometry(post_ac_shp)
+
+# Initialize an empty list to store results
+intersections_list <- list()
+
+# Loop through each pre-delim geometry and find intersections with post-delim geometries
+for (i in seq_along(pre_ac_geom)) {
+  # Get intersections of the current pre-delim geometry with all post-delim geometries
+  if(i/100==round(i/100)){
+    print(paste(i))
+  }
+  
+  intersected_geoms <- geos_intersection(pre_ac_geom[i], 
+                                         post_ac_geom)
+  
+  # Calculate the area of each intersection
+  #intersection_areas <- geos_area(intersected_geoms)
+  intersection_areas=st_area(st_as_sf(intersected_geoms))
+  
+  # Filter out empty geometries (no intersection)
+  non_empty <- which(as.numeric(intersection_areas) > 0)
+  
+  # Only collect results if there are non-empty intersections
+  if (length(non_empty) > 0) {
+    # Collect results for the current pre-delim geometry
+    intersections_list[[i]] <- data.frame(
+      pre_state = rep(pre_ac_shp$state[i], length(non_empty)),
+      pre_ac_id = rep(pre_ac_shp$ac_id[i], length(non_empty)),
+      pre_ac_name = rep(pre_ac_shp$ac_name[i], length(non_empty)),
+      pre_ac_type = rep(pre_ac_shp$ac_type[i], length(non_empty)),
+      pre_ac_area = rep(pre_ac_shp$ac_area[i], length(non_empty)),
+      post_state = post_ac_shp$st_name[non_empty],
+      post_ac_no = post_ac_shp$election_id[non_empty],
+      post_ac_name = post_ac_shp$ac_name[non_empty],
+      post_ac_type = post_ac_shp$post_ac_type[non_empty],
+      post_ac_area = post_ac_shp$ac_area[non_empty],
+      intersect_area = intersection_areas[non_empty]
+    )
+  }
+}
+
+# Combine results from each pre-delim geometry into a single data frame
+pre_post_ac_table <- bind_rows(intersections_list)
+
+pre_post_ac_table=pre_post_ac_table %>% 
+  mutate(area_ratio=as.numeric(intersect_area/pre_ac_area)) %>% 
+  group_by(pre_ac_id) %>% 
+  mutate(n_matches=n_distinct(post_ac_no)) %>% 
+  mutate(min_intx_ratio=min(area_ratio, na.rn=T), 
+         max_intx_ratio=max(area_ratio, na.rm=T)) %>% 
+  ungroup()
 
 
 
@@ -1071,13 +1247,32 @@ final_pc_map=final_pc_map %>% ungroup() %>%
 ac_pc_dist=pre_ac_pc_dist %>% 
   bind_rows(post_ac_pc_dist)
 
+# 89 districts do not have pc01_district_id
+
+# dd=ac_pc_dist %>% 
+#   dplyr::select(st_name, dist_name, 
+#                 pc01_state_id, pc01_district_id) %>% 
+#   distinct() %>% 
+#   filter(is.na(pc01_district_id)) %>% 
+#   group_by(pc01_state_id, pc01_district_id) %>%
+#   mutate(n_dist_names=n_distinct(st_name, dist_name)) %>%
+#   group_by(st_name, dist_name) %>%
+#   mutate(n_dist_names2=n_distinct(pc01_state_id, pc01_district_id)) %>%
+#   ungroup() %>% 
+#   arrange(-n_dist_names, -n_dist_names2)
+
+
+
 ac_pc_dist=ac_pc_dist %>% 
   mutate(pc_name = gsub("\\s*\\(.*\\)", "", pc_name)) %>%
   mutate(pc_name = str_trim(pc_name))
 
-ac_pc_dist_delim=final_pc_map %>% 
+ac_pc_dist_delim=final_pc_map %>%
+  as.data.frame() %>% 
+  dplyr::select( -geometry) %>% 
+  distinct() %>% 
   left_join(ac_pc_dist) %>% 
-  dplyr::select( -geometry) %>% distinct() %>% 
+   distinct() %>% 
   arrange(pc_uid, st_name, pc_name)
 #Joining with `by = join_by(delim_id, st_name, pc_name)`
 

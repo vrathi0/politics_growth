@@ -1,0 +1,681 @@
+<body class=""><header class="headerOuter">
+  
+  <section class="header-logosec">
+    <div class="container-fluid" style="width: 90%;">
+      <div class="row">
+        <div class="col-lg-4 col-md-4 col-12 pt-2 pb-2 hideinphone" style="max-width:33.33%;">
+          <div class="logodiv"> <a href="#"><img src="/images/logo.png" style="max-height: 80px;" alt="logo"></a>
+            <a href="#"><img src="https://rajkaj.rajasthan.gov.in/uploads/doitc_images_1685096713.png" style="max-height: 80px;overflow: hidden;" alt="logo"></a> </div>
+              </div>
+              
+              <div class="col-lg-4 col-md-4 col-12 pt-2 pb-2 widthincinphone" style="max-width:33.33%;text-align: center;">
+                <div class="logodivcenter"> <a href="/"><img src="/img/RajKaaj.png" style="max-height: 60px;" class="img-fluid" alt="logo"></a> </div>
+                  </div>
+                  
+                  <div class="col-lg-4 col-md-4 col-12 pt-2 pb-2 hideinphone" style="max-width:33.33%;padding-top: 24px !important;">
+                    <div class="logodiv-right"> 
+                      
+                      
+                      
+                      <img src="https://rajkaj.rajasthan.gov.in/img/bhajanlalji.png" style="max-height: 90px;padding-top: -14px !important;margin-top: -20px;margin-bottom: -15px;" alt="logo">
+                        <img src="https://rajkaj.rajasthan.gov.in/img/rvardhanji-img11.png" style="max-height: 90px;padding-top: -14px !important;margin-top: -20px;margin-bottom: -15px;" alt="logo">
+                          
+                          <div class="logo-container">
+                            <img class="logo" src="https://rajkaj.rajasthan.gov.in/uploads/azadikaamrit_1723527754.png" style="max-height: 90px;padding-top: -14px !important;margin-top: -20px;margin-bottom: -15px;" alt="logo"><img class="logo" src="https://rajkaj.rajasthan.gov.in/uploads/samvidhaan_divas_min_1733407520.png" style="max-height: 90px;padding-top: -14px !important;margin-top: -20px;margin-bottom: -15px;" alt="logo"><img class="logo" src="https://rajkaj.rajasthan.gov.in/uploads/goroneyearlogo_1734674454.png" style="max-height: 90px;padding-top: -14px !important;margin-top: -20px;margin-bottom: -15px;" alt="logo">			</div>
+                              
+                              </div>
+                              </div>
+                              
+                              
+                              </div>
+                              </div>
+                              </section>
+                              <section id="header" class="navbarscroll w-100 headerNav">
+                                <div class="container d-flex align-items-center justify-content-between" style="min-height:40px;">
+                                  <button class="navbar-toggler mobile-nav-toggle border-0 p-0 d-lg-none" type="button" data-toggle="collapse" data-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation"> <i class="fa fa-bars text-dark" aria-hidden="true" style="    color: #fff !important;
+    font-size: 14px;"></i> </button>
+                                    <a class="navbar-brand text-right" style="color: #fff; display: none;"></a>
+                                      <nav class="main-nav float-none d-none d-lg-flex align-items-center justify-content-center w-100">
+                                        <div class="p-1 p-md-0 d-none" id="logos"> <img src="/images/logo.jpg" style="max-height:180px;" alt="logo" class="img-fluid"> </div>
+                                          <ul class="d-lg-flex align-items-lg-center float-lg-left">
+                                            <li> <a id="navhome" href="/">Home</a></li>
+                                              
+                                              
+                                              <li> <a id="navabtus" href="/about-us.php">About Us</a></li>
+                                                
+                                                <li class="nav-item dropdown" style="margin-left: -10px; margin-right: 5px;" id="navkwhns">
+                                                  <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                                                    Knowledge Bank
+                                                  </a>
+                                                    <div class="dropdown-menu" aria-labelledby="navbarDropdown" style="background-color: #376da9;">		
+                                                      <a class="dropdown-item" href="/knowledge-bank/sop.php" style="background-color: #376da9;padding-left:10px;">SOP</a><br>
+                                                        <a class="dropdown-item" href="/knowledge-bank/circulars-and-orders.php" style="background-color: #376da9;padding-left:10px;">Circulars</a><br>
+                                                          <a class="dropdown-item" href="/knowledge-bank/help-manual.php" style="background-color: #376da9;padding-left:10px;">Help Manuals</a><br>
+                                                            <!-- <a class="dropdown-item" href="/knowledge-bank/eKYC-help-manual.php" style="background-color: #376da9;padding-left:10px;">e-kyc Help Manual</a><br> -->
+                                                              <a class="dropdown-item" href="/static_html/eKYC.php" style="background-color: #376da9;padding-left:10px;">e-kyc Help Manual</a><br>
+                                                                </div>
+                                                                </li>
+                                                                
+                                                                <li> <a id="navrpts" href="/reports.php">Reports</a></li>
+                                                                  <li> <a id="navdwnlds" href="/downloads.php">Utilities</a></li>
+                                                                    
+                                                                    <li class="nav-item dropdown" style="margin-left: -10px; margin-right: 5px;" id="navkwhns">
+                                                                      <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                                                                        Contact Us
+                                                                      </a>
+                                                                        <div class="dropdown-menu" aria-labelledby="navbarDropdown" style="background-color: #376da9;">		
+                                                                          <a class="dropdown-item" href="/nodal-officer.php" style="background-color: #376da9;padding-left:10px;">PMU &amp; Nodals</a><br>
+                                                                            <a class="dropdown-item" href="/contact-us.php" style="background-color: #376da9;padding-left:10px;">Key Officials</a><br>
+                                                                              </div>
+                                                                              </li>
+                                                                              
+                                                                              <li class="nav-item dropdown" style="margin-left: -10px; margin-right: 5px;" id="navkwhns">
+                                                                                <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                                                                                  Gallery
+                                                                                </a>
+                                                                                  <div class="dropdown-menu" aria-labelledby="navbarDropdown" style="background-color: #376da9;">
+                                                                                    <a class="dropdown-item" href="/gallery/news.php" style="background-color: #376da9;padding-left:10px;">News</a><br>
+                                                                                      <a class="dropdown-item" href="/gallery/photos.php" style="background-color: #376da9;padding-left:10px;">Photos</a><br>
+                                                                                        <a class="dropdown-item" href="/gallery/videos.php" style="background-color: #376da9;padding-left:10px;">Videos</a>
+                                                                                          </div>
+                                                                                          </li>
+                                                                                          
+                                                                                          <li class="nav-item dropdown" style="margin-left: -10px; margin-right: 5px;" id="navkwhns">
+                                                                                            <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                                                                                              More
+                                                                                            </a>
+                                                                                              <div class="dropdown-menu" aria-labelledby="navbarDropdown" style="background-color: #376da9;">		
+                                                                                                <a class="dropdown-item" href="/frequently-asked-questions.php" style="background-color: #376da9;padding-left:10px;">FAQ</a><br>
+                                                                                                  <a class="dropdown-item" href="/release-notes.php" style="background-color: #376da9;padding-left:10px;">Release Notes</a><br>
+                                                                                                    </div>
+                                                                                                    </li>
+                                                                                                    
+                                                                                                    
+                                                                                                    
+                                                                                                    
+                                                                                                    
+                                                                                                    
+                                                                                                    <!--
+                                                                                                    <li class="nav-item dropdown" style="margin-left: -10px; margin-right: 5px;">
+                                                                                                      <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                                                                                                        Reports
+                                                                                                      </a>
+                                                                                                        <div class="dropdown-menu" aria-labelledby="navbarDropdown" style="background-color: #376da9;">
+                                                                                                          <a class="dropdown-item" href="/reports.php" style="background-color: #376da9;padding-left:10px;">General Reports</a>
+                                                                                                            <br><a class="dropdown-item" href="/SASAuth.php?type=3" style="background-color: #376da9;padding-left:10px;">My Analytics</a>
+                                                                                                              </div>
+                                                                                                              </li>
+                                                                                                              -->
+                                                                                                              
+                                                                                                              
+                                                                                                              
+                                                                                                              
+                                                                                                              <li class="nav-item dropdown" style="margin-left: -10px; margin-right: 5px;" id="navkwhns">
+                                                                                                                <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                                                                                                                  Login
+                                                                                                                </a>
+                                                                                                                  <div class="dropdown-menu" aria-labelledby="navbarDropdown" style="background-color: rgb(55, 109, 169); will-change: transform;">
+                                                                                                                    <a class="dropdown-item" href="https://sso.rajasthan.gov.in/signin?ru=RAJKAJIPR" style="background-color: #376da9;padding-left:10px;">IPR</a><br>
+                                                                                                                      <a class="dropdown-item" href="https://sso.rajasthan.gov.in/signin?ru=RAJKAJHRMS" style="background-color: #376da9;padding-left:10px;">HRMS</a><br>
+                                                                                                                        <a class="dropdown-item" href="https://sso.rajasthan.gov.in/signin?ru=EOFFICE" style="background-color: #376da9;padding-left:10px;">eFile/DAK</a><br>
+                                                                                                                          <a class="dropdown-item" href="https://sso.rajasthan.gov.in/signin?ru=RAJKAJPAR" style="background-color: #376da9;padding-left:10px;">ACR/APAR</a><br>
+                                                                                                                            <a class="dropdown-item" href="https://sso.rajasthan.gov.in/signin?ru=RAJKAJAUDIT" style="background-color: #376da9;padding-left:10px;">e-File Audit</a><br>
+                                                                                                                              </div>
+                                                                                                                              </li>
+                                                                                                                              
+                                                                                                                              <!--
+                                                                                                                              <li class="nav-item" id="aacnt"> <a class="nav-link" href="https://sso.rajasthan.gov.in/signin?ru=EOFFICE">Go to RajKaj >></a></li> 
+                                                                                                                                -->
+                                                                                                                                </ul></nav>
+                                                                                                                                
+                                                                                                                                
+                                                                                                                                <!-- .main-nav --> 
+                                                                                                                                </div>
+                                                                                                                                </section>
+                                                                                                                                </header>
+                                                                                                                                <link rel="stylesheet" href="/css/jquery.dataTables.min.css"><!-- end header -->
+                                                                                                                                  
+                                                                                                                                  
+                                                                                                                                  
+                                                                                                                                  <div class="main-content" id="skepcontent">
+                                                                                                                                    <section class="topsection pt-0 pb-4">
+                                                                                                                                      <div class="container" style="min-height:400px;">
+                                                                                                                                        <div class="row" style="margin:30px 70px;">
+                                                                                                                                          <div style="width:90%;margin-bottom:40px;font-size:14px;">
+                                                                                                                                            <div><a target="_blank" href="https://dop.rajasthan.gov.in/Content/displaymoduledesc.aspx?id=173">Click here for IPRs from 2011 to 2013.</a></div>
+                                                                                                                                              <div><a target="_blank" href="https://dop.rajasthan.gov.in/Immovable/ImmovablePropertyMaster.aspx">Click here for IPR of Officers Till 2017.</a></div>
+                                                                                                                                                <div><a target="_blank" href="https://va.rajasthan.gov.in/views/IPR2024/IPRAnalysis" style="color:green;">Click here for Detailed IPR Statistics.</a></div>
+                                                                                                                                                  </div>
+                                                                                                                                                  
+                                                                                                                                                  
+                                                                                                                                                  <div style="margin-bottom:30px;">
+                                                                                                                                                    <label class="radio-inline" style="margin:10px;">
+                                                                                                                                                      <input type="radio" name="iprtypewise" value="emp" id="iprbyempid" checked=""> Employee Wise
+                                                                                                                                                      </label>		
+                                                                                                                                                        <label class="radio-inline" style="margin:10px;">
+                                                                                                                                                          <input type="radio" name="iprtypewise" value="dept"> Department Wise
+                                                                                                                                                          </label>
+                                                                                                                                                            <label class="radio-inline" style="margin:10px;">
+                                                                                                                                                              <input type="radio" name="iprtypewise" value="ddo"> DDO Wise
+                                                                                                                                                              </label>
+                                                                                                                                                                <label class="radio-inline" style="margin:10px;display:none;">
+                                                                                                                                                                  <input type="radio" name="iprtypewise" value="lgc_emp"> Legacy IPR
+                                                                                                                                                                  </label>
+                                                                                                                                                                    </div>
+                                                                                                                                                                    <form style="width: 90%; display: none;" id="deptwiseiprform">
+                                                                                                                                                                      <div class="form-group row">
+                                                                                                                                                                        <label for="staticEmail" class="col-sm-4 col-form-label">Appointing Department *</label>
+                                                                                                                                                                          <div class="col-sm-8">
+                                                                                                                                                                            <select class="form-control selectized" id="appdept" tabindex="-1" style="display: none;"><option value="3000514" selected="selected">Agriculture Department</option></select><div class="selectize-control form-control single"><div class="selectize-input items has-options full has-items"><div class="item" data-value="3000514">Agriculture Department</div><input type="select-one" autocomplete="off" tabindex="" id="appdept-selectized" style="width: 4px; opacity: 0; position: absolute; left: -10000px;"></div><div class="selectize-dropdown single form-control" style="display: none; visibility: visible; width: 571.992px; top: 47.5px; left: 0px;"><div class="selectize-dropdown-content"><div class="option selected" data-selectable="" data-value="3000514">Agriculture Department</div><div class="option" data-selectable="" data-value="3000545">Agriculture Marketing Department</div><div class="option" data-selectable="" data-value="3005612">Animal Husbandry Department</div><div class="option" data-selectable="" data-value="3000289">Archaeology and Museums Department</div><div class="option" data-selectable="" data-value="3000292">Archives Department</div><div class="option" data-selectable="" data-value="3000245">Art, Culture and Archaeology Department</div><div class="option" data-selectable="" data-value="3000686">Ayurved Department</div><div class="option" data-selectable="" data-value="3000352">Bio- Fuel Authority , Rural Development &amp; Panchayati Raj Dept.</div><div class="option" data-selectable="" data-value="3000307">Board of Revenue</div><div class="option" data-selectable="" data-value="3000461">Civil Defence, Department</div><div class="option" data-selectable="" data-value="3000270">College Education Department</div><div class="option" data-selectable="" data-value="3000298">Colonization Department</div><div class="option" data-selectable="" data-value="3000382">Commercial Taxes Department</div><div class="option" data-selectable="" data-value="3000356">Cooperative Department</div><div class="option" data-selectable="" data-value="5800002">Department of Information Technology and Communication</div><div class="option" data-selectable="" data-value="3006623">Department of Law and Legal Affairs (V.R.S.)</div><div class="option" data-selectable="" data-value="3000678">Department of Medical Education</div><div class="option" data-selectable="" data-value="5800543">Department of Personnel</div><div class="option" data-selectable="" data-value="3000422">Department of Revenue</div><div class="option" data-selectable="" data-value="3001399">Department of Technical Education</div><div class="option" data-selectable="" data-value="3009717">Department of Technical Education (Training)</div><div class="option" data-selectable="" data-value="3018063">Department of Unani Chikitsa</div><div class="option" data-selectable="" data-value="3001433">Devasthan Department</div><div class="option" data-selectable="" data-value="5800066">Directorate, Economics &amp; Statistics</div><div class="option" data-selectable="" data-value="3000178">Disaster Management and Relief Department</div><div class="option" data-selectable="" data-value="3000179">Election Department</div><div class="option" data-selectable="" data-value="3000688">Elementry Education Department</div><div class="option" data-selectable="" data-value="3000537">Employee State Insurance Scheme</div><div class="option" data-selectable="" data-value="3005899">Employment Department</div><div class="option" data-selectable="" data-value="3000253">Energy Department</div><div class="option" data-selectable="" data-value="3000405">Estate Department</div><div class="option" data-selectable="" data-value="3000383">Evaluation organization</div><div class="option" data-selectable="" data-value="3000384">Excise Department</div><div class="option" data-selectable="" data-value="3000536">Factories and Boilers Rajasthan</div><div class="option" data-selectable="" data-value="3000260">Finance Department</div><div class="option" data-selectable="" data-value="3000464">Fisheries Department</div><div class="option" data-selectable="" data-value="3000482">Food, Civil Supplies &amp; Consumer Affairs</div><div class="option" data-selectable="" data-value="3020156">Forest Department</div><div class="option" data-selectable="" data-value="3000404">General Administrative Department</div><div class="option" data-selectable="" data-value="3000344">Governor Secretariat</div><div class="option" data-selectable="" data-value="3000534">HCM Rajasthan State Institute of Public Administration, Jaipur</div><div class="option" data-selectable="" data-value="3000264">Higher Education Department</div><div class="option" data-selectable="" data-value="3000263">Home Department</div><div class="option" data-selectable="" data-value="3000512">Home Guards</div><div class="option" data-selectable="" data-value="3017939">Homeopathic Department Jaipur</div><div class="option" data-selectable="" data-value="3000524">Industries Department</div><div class="option" data-selectable="" data-value="3000177">Information and Public Relations Department</div><div class="option" data-selectable="" data-value="3000409">Integrated Child Development Services</div><div class="option" data-selectable="" data-value="3000527">Jail Department</div><div class="option" data-selectable="" data-value="3000257">Labour and Employment Department</div><div class="option" data-selectable="" data-value="3000675">Labour Department</div><div class="option" data-selectable="" data-value="3000301">Land Settlement Department</div><div class="option" data-selectable="" data-value="3000672">Language &amp; Library Department</div><div class="option" data-selectable="" data-value="3000256">Law and Legal Affairs Department</div><div class="option" data-selectable="" data-value="3000340">Law Department</div><div class="option" data-selectable="" data-value="3000667">Literacy &amp; Continuing Education</div><div class="option" data-selectable="" data-value="3000393">Local Fund Audit Department</div><div class="option" data-selectable="" data-value="3000207">Local Self Government  Department</div><div class="option" data-selectable="" data-value="3000401">Lokayukta Secretariat</div><div class="option" data-selectable="" data-value="3000219">Medical and Health Services</div><div class="option" data-selectable="" data-value="3000230">Mines and Geology Department</div><div class="option" data-selectable="" data-value="3005797">Planning Department (ORG)</div><div class="option" data-selectable="" data-value="5800037">Planning Department(Admin)</div><div class="option" data-selectable="" data-value="3000546">Police Department</div><div class="option" data-selectable="" data-value="3000252">Printing and Stationery Department</div><div class="option" data-selectable="" data-value="3007138">Prosecution Department</div><div class="option" data-selectable="" data-value="3001397">Public Health Engineering Department</div><div class="option" data-selectable="" data-value="3001396">Public Works Department</div><div class="option" data-selectable="" data-value="3000398">Rajasthan Civil Services Appellate Tribunal</div><div class="option" data-selectable="" data-value="3001398">Rajasthan Ground Water Department</div><div class="option" data-selectable="" data-value="3005614">Rajasthan High Court</div><div class="option" data-selectable="" data-value="3000296">Rajasthan Oriental Research Institute Jodhpur</div><div class="option" data-selectable="" data-value="3000341">Rajasthan Public Service Commission (RPSC)</div><div class="option" data-selectable="" data-value="3000662">Rajasthan State Pollution Control Board</div><div class="option" data-selectable="" data-value="3050659">Rajasthan State Seed &amp; Organic Certification Agency</div><div class="option" data-selectable="" data-value="3000396">Registration &amp; Stamps Department</div><div class="option" data-selectable="" data-value="3000333">Rural Development and Panchayati Raj Department</div><div class="option" data-selectable="" data-value="3000246">Rural Development Department(Admin)</div><div class="option" data-selectable="" data-value="3000191">Sanskrit Education Department</div><div class="option" data-selectable="" data-value="3000189">School Education Department</div><div class="option" data-selectable="" data-value="3000236">Science and Technology Department</div><div class="option" data-selectable="" data-value="3000689">Secondary Education Department</div><div class="option" data-selectable="" data-value="3000535">Skill,Employment and Entrepreneurship</div><div class="option" data-selectable="" data-value="3000465">Social Justice &amp; Empowerment department</div><div class="option" data-selectable="" data-value="3000200">State Enterprises Department</div><div class="option" data-selectable="" data-value="3005792">State Forensic Science Laboratory</div><div class="option" data-selectable="" data-value="3000386">State Insurance and Provident Fund Department</div><div class="option" data-selectable="" data-value="3000467">Tourism  department</div><div class="option" data-selectable="" data-value="3000413">Town Planning Department</div><div class="option" data-selectable="" data-value="3000525">Transport department</div><div class="option" data-selectable="" data-value="3000389">Treasuries and Accounts Department</div><div class="option" data-selectable="" data-value="3000510">Tribal Area Development</div><div class="option" data-selectable="" data-value="3000238">Urban Development and Housing Department</div><div class="option" data-selectable="" data-value="3000266">Water Resources Department</div><div class="option" data-selectable="" data-value="3000197">Women and Child Development Department</div><div class="option" data-selectable="" data-value="3000229">Women Empowerment Department</div></div></div></div>
+                                                                                                                                                                            </div>
+                                                                                                                                                                              </div>
+                                                                                                                                                                              <div class="form-group row">
+                                                                                                                                                                                <label for="inputPassword" class="col-sm-4 col-form-label">Name</label>
+                                                                                                                                                                                  <div class="col-sm-8">
+                                                                                                                                                                                    <input type="text" class="form-control" id="empname">
+                                                                                                                                                                                      </div>
+                                                                                                                                                                                      </div>
+                                                                                                                                                                                      <div class="form-group row">
+                                                                                                                                                                                        <label for="staticEmail" class="col-sm-4 col-form-label">IPR year *</label>
+                                                                                                                                                                                          <div class="col-sm-8">
+                                                                                                                                                                                            <select class="form-control" id="ipryear">
+                                                                                                                                                                                              <option value="2024">2024</option><option value="2023">2023</option><option value="2022">2022</option><option value="2021">2021</option><option value="2020">2020</option><option value="2019">2019</option><option value="2018">2018</option>                              </select>
+                                                                                                                                                                                                </div>
+                                                                                                                                                                                                </div>
+                                                                                                                                                                                                <button style="float:right;" id="viewipr" type="button" class="btn btn-primary">SUBMIT</button>
+                                                                                                                                                                                                  </form>
+                                                                                                                                                                                                  
+                                                                                                                                                                                                  <div style="width: 90%; display: block;" id="ddowiseiprform">
+                                                                                                                                                                                                    <div class="form-group row" id="appntdeptdv">
+                                                                                                                                                                                                      <label for="staticEmail" class="col-sm-3 col-form-label">Posted Department</label>
+                                                                                                                                                                                                        <div class="col-sm-9">
+                                                                                                                                                                                                          <select class="form-control selectized" id="appdept2" tabindex="-1" style="display: none;"><option value="ADULT EDUCATION" selected="selected">ADULT EDUCATION</option></select><div class="selectize-control form-control single"><div class="selectize-input items has-options full has-items"><div class="item" data-value="ADULT EDUCATION">ADULT EDUCATION</div><input type="select-one" autocomplete="off" tabindex="" id="appdept2-selectized" style="width: 4px; opacity: 0; position: absolute; left: -10000px;"></div><div class="selectize-dropdown single form-control" style="display: none; visibility: visible; width: 296.094px; top: 34px; left: 0px;"><div class="selectize-dropdown-content"><div class="option" data-selectable="" data-value="ABHILEKHAGHAR">ABHILEKHAGHAR</div><div class="option" data-selectable="" data-value="ADB PROJECT">ADB PROJECT</div><div class="option" data-selectable="" data-value="ADMINISTRATIVE REFORMS AND COORDINATION">ADMINISTRATIVE REFORMS AND COORDINATION</div><div class="option selected active" data-selectable="" data-value="ADULT EDUCATION">ADULT EDUCATION</div><div class="option" data-selectable="" data-value="AERONAUTICS">AERONAUTICS</div><div class="option selected" data-selectable="" data-value="AGRICULTURE">AGRICULTURE</div><div class="option" data-selectable="" data-value="AGRICULTURE MARKETING">AGRICULTURE MARKETING</div><div class="option" data-selectable="" data-value="AJMER VIDYUT VITRAN NIGAM LTD.">AJMER VIDYUT VITRAN NIGAM LTD.</div><div class="option" data-selectable="" data-value="ANIMAL HUSBANDARY">ANIMAL HUSBANDARY</div><div class="option" data-selectable="" data-value="ANTI CORRUPTION">ANTI CORRUPTION</div><div class="option" data-selectable="" data-value="ARCHAEOLOGY AND MUSEUMS">ARCHAEOLOGY AND MUSEUMS</div><div class="option" data-selectable="" data-value="ART &amp; CULTURE">ART &amp; CULTURE</div><div class="option" data-selectable="" data-value="AYURVED DEPARTMENT">AYURVED DEPARTMENT</div><div class="option" data-selectable="" data-value="BAL ADHIKARITA">BAL ADHIKARITA</div><div class="option" data-selectable="" data-value="BHASHA &amp; PUSTAKALAY VIBHAG">BHASHA &amp; PUSTAKALAY VIBHAG</div><div class="option" data-selectable="" data-value="BIO FUEL AUTHORITY">BIO FUEL AUTHORITY</div><div class="option" data-selectable="" data-value="BORDER SECURITY FORCE(BSF), GOVERNMENT OF INDIA, NEW DELHI">BORDER SECURITY FORCE(BSF), GOVERNMENT OF INDIA, NEW DELHI </div><div class="option" data-selectable="" data-value="C.A.D.">C.A.D.</div><div class="option" data-selectable="" data-value="CENTRAL BUREAU OF INVESTIGATION(CBI)">CENTRAL BUREAU OF INVESTIGATION(CBI)</div><div class="option" data-selectable="" data-value="CENTRAL RESERVE POLICE FORCE(CRPF)">CENTRAL RESERVE POLICE FORCE(CRPF)</div><div class="option" data-selectable="" data-value="CHILD &amp; WOMEN DEVELOPMENT">CHILD &amp; WOMEN DEVELOPMENT</div><div class="option" data-selectable="" data-value="CHILD RIGHTS">CHILD RIGHTS </div><div class="option" data-selectable="" data-value="CIRCUIT HOUSE (DAK BANGLOW)">CIRCUIT HOUSE (DAK BANGLOW)</div><div class="option" data-selectable="" data-value="CIVIL AVIATION">CIVIL AVIATION</div><div class="option" data-selectable="" data-value="CIVIL DEFENCE &amp; HOME GUARD">CIVIL DEFENCE &amp; HOME GUARD</div><div class="option" data-selectable="" data-value="CO-OPERATIVE BANK">CO-OPERATIVE BANK</div><div class="option" data-selectable="" data-value="CO-OPERATIVE SOCIETIES">CO-OPERATIVE SOCIETIES</div><div class="option" data-selectable="" data-value="COLLECTORATE">COLLECTORATE</div><div class="option" data-selectable="" data-value="COLLEGE EDUCATION">COLLEGE EDUCATION</div><div class="option" data-selectable="" data-value="COLONISATION">COLONISATION</div><div class="option" data-selectable="" data-value="COMMERCIAL TAXES">COMMERCIAL TAXES</div><div class="option" data-selectable="" data-value="CONSUMER FORUM">CONSUMER FORUM</div><div class="option" data-selectable="" data-value="DEPARTMENT OF PERSONNEL">DEPARTMENT OF PERSONNEL</div><div class="option" data-selectable="" data-value="DEPARTMENT OF SPORTS &amp; YOUTH AFFAIRS">DEPARTMENT OF SPORTS &amp; YOUTH AFFAIRS</div><div class="option" data-selectable="" data-value="DEVASTHAN DEPARTMENT">DEVASTHAN DEPARTMENT</div><div class="option" data-selectable="" data-value="DISASTER MANAGEMENT &amp; RELIEF DEPARTMENT">DISASTER MANAGEMENT &amp; RELIEF DEPARTMENT</div><div class="option" data-selectable="" data-value="DIVISIONAL COMMISIONER">DIVISIONAL COMMISIONER</div><div class="option" data-selectable="" data-value="E.S.I. HOSPITAL">E.S.I. HOSPITAL</div><div class="option" data-selectable="" data-value="ECONOMICS &amp; STATISTICS">ECONOMICS &amp; STATISTICS</div><div class="option" data-selectable="" data-value="EDUCATION DEPARTMENT">EDUCATION DEPARTMENT</div><div class="option" data-selectable="" data-value="ELECTION DEPARTMENT">ELECTION DEPARTMENT</div><div class="option" data-selectable="" data-value="ELECTRICAL">ELECTRICAL</div><div class="option" data-selectable="" data-value="EMPLOYMENT">EMPLOYMENT</div><div class="option" data-selectable="" data-value="ENERGY DEPARTMENT">ENERGY DEPARTMENT</div><div class="option" data-selectable="" data-value="ENVIRONMENT">ENVIRONMENT</div><div class="option" data-selectable="" data-value="ESTATE">ESTATE</div><div class="option" data-selectable="" data-value="EVALUATION ORGANISATION">EVALUATION ORGANISATION</div><div class="option" data-selectable="" data-value="EXCISE DEPARTMENT">EXCISE DEPARTMENT</div><div class="option" data-selectable="" data-value="EXIM BANK">EXIM BANK</div><div class="option" data-selectable="" data-value="FACTORIES &amp; BOILERS">FACTORIES &amp; BOILERS</div><div class="option" data-selectable="" data-value="FINANCE DEPARTMENT">FINANCE DEPARTMENT</div><div class="option" data-selectable="" data-value="FISHERIES">FISHERIES</div><div class="option" data-selectable="" data-value="FOOD &amp; CIVIL SUPPLY">FOOD &amp; CIVIL SUPPLY</div><div class="option" data-selectable="" data-value="FOREST DEPARTMENT">FOREST DEPARTMENT</div><div class="option" data-selectable="" data-value="GENERAL ADMINISTRATION DEPARTMENT">GENERAL ADMINISTRATION DEPARTMENT</div><div class="option" data-selectable="" data-value="GOVERNOR SECTT.">GOVERNOR SECTT.</div><div class="option" data-selectable="" data-value="GROUND WATER">GROUND WATER</div><div class="option" data-selectable="" data-value="HCM RAJASTHAN STATE INSTITUTE OF PUBLIC ADMINSTRATION">HCM RAJASTHAN STATE INSTITUTE OF PUBLIC ADMINSTRATION</div><div class="option" data-selectable="" data-value="HOME">HOME</div><div class="option" data-selectable="" data-value="HOMEOPATHIK CHIKITSA VIBHAG">HOMEOPATHIK CHIKITSA VIBHAG</div><div class="option" data-selectable="" data-value="HORTICULTURE">HORTICULTURE</div><div class="option" data-selectable="" data-value="IGNP">IGNP</div><div class="option" data-selectable="" data-value="INDUSTRIES">INDUSTRIES</div><div class="option" data-selectable="" data-value="INFORMATION TECHNOLOGY &amp; COMMUNICATION">INFORMATION TECHNOLOGY &amp; COMMUNICATION</div><div class="option" data-selectable="" data-value="INSPECTION">INSPECTION</div><div class="option" data-selectable="" data-value="INTELLIGENCE BUREAU (IB), GOI">INTELLIGENCE BUREAU (IB), GOI</div><div class="option" data-selectable="" data-value="IRRIGATION">IRRIGATION</div><div class="option" data-selectable="" data-value="JAIL">JAIL</div><div class="option" data-selectable="" data-value="JAIPUR VIDYUT VITRAN NIGAM LTD(JVVNL)">JAIPUR VIDYUT VITRAN NIGAM LTD(JVVNL)</div><div class="option" data-selectable="" data-value="JAWAHAR KALA KENDRA">JAWAHAR KALA KENDRA</div><div class="option" data-selectable="" data-value="JUSTICE &amp; LAW DEPARTMENT">JUSTICE &amp; LAW DEPARTMENT</div><div class="option" data-selectable="" data-value="LABOUR DEPARTMENT">LABOUR DEPARTMENT</div><div class="option" data-selectable="" data-value="LAND &amp; BUILDING TAX DEPARTMENT">LAND &amp; BUILDING TAX DEPARTMENT</div><div class="option" data-selectable="" data-value="LBS NATIONAL ACADEMY OF ADMINISTRATION">LBS NATIONAL ACADEMY OF ADMINISTRATION</div><div class="option" data-selectable="" data-value="LOCAL BODIES">LOCAL BODIES</div><div class="option" data-selectable="" data-value="LOCAL FUND AUDIT">LOCAL FUND AUDIT</div><div class="option" data-selectable="" data-value="LOKAYUKT">LOKAYUKT</div><div class="option" data-selectable="" data-value="MEDICAL EDUCATION">MEDICAL EDUCATION</div><div class="option" data-selectable="" data-value="MEDICAL HEALTH &amp; FAMILY WELFARE">MEDICAL HEALTH &amp; FAMILY WELFARE</div><div class="option" data-selectable="" data-value="MINES &amp; GEOLOGY">MINES &amp; GEOLOGY</div><div class="option" data-selectable="" data-value="MINISTRY OF AGRICULTURE,GOI,NEW DELHI">MINISTRY OF AGRICULTURE,GOI,NEW DELHI</div><div class="option" data-selectable="" data-value="MINISTRY OF CHEMICALS AND FERTILIZERS,GOI">MINISTRY OF CHEMICALS AND FERTILIZERS,GOI</div><div class="option" data-selectable="" data-value="MINISTRY OF DEFENCE">MINISTRY OF DEFENCE</div><div class="option" data-selectable="" data-value="MINISTRY OF ENVIRONMENT &amp; FOREST, GOI">MINISTRY OF ENVIRONMENT &amp; FOREST, GOI</div><div class="option" data-selectable="" data-value="MINISTRY OF FINANCE">MINISTRY OF FINANCE</div><div class="option" data-selectable="" data-value="MINISTRY OF LABOUR &amp; EMPLOYMENT,GOI">MINISTRY OF LABOUR &amp; EMPLOYMENT,GOI</div><div class="option" data-selectable="" data-value="MINISTRY OF PETROLEUM &amp; NATURAL GAS, NEW DELHI">MINISTRY OF PETROLEUM &amp; NATURAL GAS, NEW DELHI </div><div class="option" data-selectable="" data-value="MINISTRY OF RURAL DEVELOPMENT, GOI">MINISTRY OF RURAL DEVELOPMENT, GOI</div><div class="option" data-selectable="" data-value="MINISTRY OF SHIPPING, GOI">MINISTRY OF SHIPPING, GOI</div><div class="option" data-selectable="" data-value="MINISTRY OF SOCIAL JUSTICE AND EMPOWERMENT">MINISTRY OF SOCIAL JUSTICE AND EMPOWERMENT</div><div class="option" data-selectable="" data-value="MINISTRY OF TOURISM">MINISTRY OF TOURISM</div><div class="option" data-selectable="" data-value="Minorities Affairs Department">Minorities Affairs Department</div><div class="option" data-selectable="" data-value="MOTOR GARAGE">MOTOR GARAGE</div><div class="option" data-selectable="" data-value="MUNICIPALITIES">MUNICIPALITIES</div><div class="option" data-selectable="" data-value="NATIONAL BUILDING CONSTRUCTION CORPORATION LIMITED">NATIONAL BUILDING CONSTRUCTION CORPORATION LIMITED</div><div class="option" data-selectable="" data-value="NATIONAL CADETS CORE">NATIONAL CADETS CORE</div><div class="option" data-selectable="" data-value="NATIONAL HIGHWAYS AUTHORITY OF INDIA">NATIONAL HIGHWAYS AUTHORITY OF INDIA</div><div class="option" data-selectable="" data-value="National Institute of Ayurveda">National Institute of Ayurveda</div><div class="option" data-selectable="" data-value="NAVODAYA VIDYALAYA SAMITI">NAVODAYA VIDYALAYA SAMITI</div><div class="option" data-selectable="" data-value="NORTH CENTRAL ZONE CULTURAL CENTRE(NCZCC), ALLAHBAD">NORTH CENTRAL ZONE CULTURAL CENTRE(NCZCC), ALLAHBAD</div><div class="option" data-selectable="" data-value="ORIENTAL REASEARCH INSTITUTE">ORIENTAL REASEARCH INSTITUTE</div><div class="option" data-selectable="" data-value="P.H.E.D.">P.H.E.D.</div><div class="option" data-selectable="" data-value="P.W.D.">P.W.D.</div><div class="option" data-selectable="" data-value="PANCHAYAT SAMITI">PANCHAYAT SAMITI</div><div class="option" data-selectable="" data-value="PENSION &amp; PENSIONERS WELFARE DEPARTMENT">PENSION &amp; PENSIONERS WELFARE DEPARTMENT</div><div class="option" data-selectable="" data-value="PETROLEUM">PETROLEUM</div><div class="option" data-selectable="" data-value="PLANNING (MAN POWER) DEPARTMENT">PLANNING (MAN POWER) DEPARTMENT</div><div class="option" data-selectable="" data-value="PLANNING DEPARTMENT">PLANNING DEPARTMENT</div><div class="option" data-selectable="" data-value="POLICE">POLICE</div><div class="option" data-selectable="" data-value="PRIMARY">PRIMARY</div><div class="option" data-selectable="" data-value="PRIMARY &amp; SECONDARY EDUCATION">PRIMARY &amp; SECONDARY EDUCATION</div><div class="option" data-selectable="" data-value="primary and secondary education">primary and secondary education</div><div class="option" data-selectable="" data-value="PRINTING &amp; STATIONARY">PRINTING &amp; STATIONARY</div><div class="option" data-selectable="" data-value="PROSECUTION">PROSECUTION</div><div class="option" data-selectable="" data-value="PUBLIC RELATION">PUBLIC RELATION</div><div class="option" data-selectable="" data-value="RAJ COMP">RAJ COMP</div><div class="option" data-selectable="" data-value="RAJ STATE ARCHIVES">RAJ STATE ARCHIVES</div><div class="option" data-selectable="" data-value="RAJ. HIGH COURT">RAJ. HIGH COURT</div><div class="option" data-selectable="" data-value="RAJ. STATE MOTOR GARAGE">RAJ. STATE MOTOR GARAGE</div><div class="option" data-selectable="" data-value="RAJ.CIVIL SERV.APP.&amp; TRIBUNAL">RAJ.CIVIL SERV.APP.&amp; TRIBUNAL</div><div class="option" data-selectable="" data-value="RAJASTHAN BOARD OF SECONDARY EDUCATION RESULT">RAJASTHAN BOARD OF SECONDARY EDUCATION RESULT</div><div class="option" data-selectable="" data-value="RAJASTHAN COOPERATIOVE DAIRY FEDERATION">RAJASTHAN COOPERATIOVE DAIRY FEDERATION</div><div class="option" data-selectable="" data-value="RAJASTHAN ELECTRICITY REGULATORY COMMISSION">RAJASTHAN ELECTRICITY REGULATORY COMMISSION</div><div class="option" data-selectable="" data-value="RAJASTHAN FINANCE CORPORATION">RAJASTHAN FINANCE CORPORATION</div><div class="option" data-selectable="" data-value="RAJASTHAN HOUSING BOARD">RAJASTHAN HOUSING BOARD</div><div class="option" data-selectable="" data-value="RAJASTHAN INFORMATION COMMISSION">RAJASTHAN INFORMATION COMMISSION</div><div class="option" data-selectable="" data-value="RAJASTHAN POLLUTION CONTROL BOARD">RAJASTHAN POLLUTION CONTROL BOARD </div><div class="option" data-selectable="" data-value="RAJASTHAN PUBLIC SERVICE COMMISSION">RAJASTHAN PUBLIC SERVICE COMMISSION</div><div class="option" data-selectable="" data-value="Rajasthan Rajya Vidyut Prasaran Nigam Ltd. (RRVPNL)">Rajasthan Rajya Vidyut Prasaran Nigam Ltd. (RRVPNL)</div><div class="option" data-selectable="" data-value="Rajasthan Rajya Vidyut Utpadan Nigam Ltd. (RRVUNL)">Rajasthan Rajya Vidyut Utpadan Nigam Ltd. (RRVUNL)</div><div class="option" data-selectable="" data-value="RAJASTHAN ROADWAYS">RAJASTHAN ROADWAYS</div><div class="option" data-selectable="" data-value="RAJASTHAN SMALL INDUSTRIES CORPORATION LTD.">RAJASTHAN SMALL INDUSTRIES CORPORATION LTD.</div><div class="option" data-selectable="" data-value="RAJASTHAN STATE AGRICULTURE MARKETING BOARD">RAJASTHAN STATE AGRICULTURE MARKETING BOARD</div><div class="option" data-selectable="" data-value="RAJASTHAN STATE AIDS CONTROL SOCIETY">RAJASTHAN STATE AIDS CONTROL SOCIETY</div><div class="option" data-selectable="" data-value="RAJASTHAN STATE COOPRATIVE MARKETING FED (RAJFED)">RAJASTHAN STATE COOPRATIVE MARKETING FED (RAJFED)</div><div class="option" data-selectable="" data-value="Rajasthan State Handoolm Development Corp. Ltd.">Rajasthan State Handoolm Development Corp. Ltd.</div><div class="option" data-selectable="" data-value="RAJASTHAN STATE HUMAN RIGHTS COMMISSION">RAJASTHAN STATE HUMAN RIGHTS COMMISSION</div><div class="option" data-selectable="" data-value="RAJASTHAN STATE OPEN SCHOOL">RAJASTHAN STATE OPEN SCHOOL</div><div class="option" data-selectable="" data-value="RAJASTHAN STATE ROAD DEVELOPMENT &amp; CONSTRUCTION">RAJASTHAN STATE ROAD DEVELOPMENT &amp; CONSTRUCTION</div><div class="option" data-selectable="" data-value="RAJASTHAN STATE SEEDS CORP. LTD">RAJASTHAN STATE SEEDS CORP. LTD</div><div class="option" data-selectable="" data-value="RAJASTHAN STATE SPORTS COUNCIL">RAJASTHAN STATE SPORTS COUNCIL</div><div class="option" data-selectable="" data-value="Rajasthan State Text Book Board Jaipur">Rajasthan State Text Book Board Jaipur</div><div class="option" data-selectable="" data-value="RAJASTHAN TAX BOARD - AJMER">RAJASTHAN TAX BOARD - AJMER</div><div class="option" data-selectable="" data-value="RAJASTHAN URBAN INFRASTRUCTURE DEVELOPMENT PROJECT (RUIDP)">RAJASTHAN URBAN INFRASTRUCTURE DEVELOPMENT PROJECT (RUIDP)</div><div class="option" data-selectable="" data-value="RAJASTHAN VIDHAN SABHA">RAJASTHAN VIDHAN SABHA</div><div class="option" data-selectable="" data-value="REGISTRATION &amp; STAMPS">REGISTRATION &amp; STAMPS</div><div class="option" data-selectable="" data-value="REHABILITATION">REHABILITATION</div><div class="option" data-selectable="" data-value="Retired Person's Special Maintenance Scheme">Retired Person's Special Maintenance Scheme</div><div class="option" data-selectable="" data-value="REVENUE">REVENUE</div><div class="option" data-selectable="" data-value="RIICO">RIICO</div><div class="option" data-selectable="" data-value="RSRTC (ROADWAYS)">RSRTC (ROADWAYS)</div><div class="option" data-selectable="" data-value="RTDC">RTDC</div><div class="option" data-selectable="" data-value="RURAL DEV. &amp; PANCHAYATI RAJ">RURAL DEV. &amp; PANCHAYATI RAJ</div><div class="option" data-selectable="" data-value="RURAL NON-FARM DEVELOPMENT AGENCY">RURAL NON-FARM DEVELOPMENT AGENCY</div><div class="option" data-selectable="" data-value="SANSKRIT EDUCATION">SANSKRIT EDUCATION</div><div class="option" data-selectable="" data-value="Sarva Shiksha Abhiyan (SSA)">Sarva Shiksha Abhiyan (SSA)</div><div class="option" data-selectable="" data-value="SCIENCE &amp; TECHNOLOGY DEPARTMENT">SCIENCE &amp; TECHNOLOGY DEPARTMENT</div><div class="option" data-selectable="" data-value="SETTLEMENT">SETTLEMENT</div><div class="option" data-selectable="" data-value="SHEEP &amp; WOOL">SHEEP &amp; WOOL</div><div class="option" data-selectable="" data-value="SMALL SAVING &amp; STATE LOTTERIES">SMALL SAVING &amp; STATE LOTTERIES</div><div class="option" data-selectable="" data-value="SOCIAL JUSTICE &amp; EMPOWERMENT">SOCIAL JUSTICE &amp; EMPOWERMENT</div><div class="option" data-selectable="" data-value="SOLDIER WELFARE BOARD">SOLDIER WELFARE BOARD</div><div class="option" data-selectable="" data-value="SPECIAL ABLE PERSONS">SPECIAL ABLE PERSONS</div><div class="option" data-selectable="" data-value="SPECIAL SCHEME (I.R.D.)">SPECIAL SCHEME (I.R.D.)</div><div class="option" data-selectable="" data-value="STAMP &amp; DUTY">STAMP &amp; DUTY</div><div class="option" data-selectable="" data-value="STATE DIRECTORATE OF REVENUE INTELLIGENCE">STATE DIRECTORATE OF REVENUE INTELLIGENCE</div><div class="option" data-selectable="" data-value="STATE ENTERPRISES">STATE ENTERPRISES</div><div class="option" data-selectable="" data-value="STATE INSURANCE &amp; PROVIDENT FUND">STATE INSURANCE &amp; PROVIDENT FUND</div><div class="option" data-selectable="" data-value="state insurance and provident fund department">state insurance and provident fund department</div><div class="option" data-selectable="" data-value="STATE WATER RESOURCES PLANNING DEPARTMENT">STATE WATER RESOURCES PLANNING DEPARTMENT</div><div class="option" data-selectable="" data-value="SURVEY &amp; RESEARCH">SURVEY &amp; RESEARCH</div><div class="option" data-selectable="" data-value="TAD">TAD</div><div class="option" data-selectable="" data-value="TECHNICAL EDUCATION">TECHNICAL EDUCATION</div><div class="option" data-selectable="" data-value="test">test</div><div class="option" data-selectable="" data-value="TOURISM DEPARTMENT">TOURISM DEPARTMENT</div><div class="option" data-selectable="" data-value="TOWN PLANNING">TOWN PLANNING</div><div class="option" data-selectable="" data-value="TRANSPORT">TRANSPORT</div><div class="option" data-selectable="" data-value="TREASURY &amp; ACCOUNT">TREASURY &amp; ACCOUNT</div><div class="option" data-selectable="" data-value="UNANI CHIKITSA VIBHAG">UNANI CHIKITSA VIBHAG</div><div class="option" data-selectable="" data-value="URBAN DEVELOPMENT">URBAN DEVELOPMENT</div><div class="option" data-selectable="" data-value="WAQFF BOARD">WAQFF BOARD</div><div class="option" data-selectable="" data-value="WATERSHED DEVELOPMENT &amp; SOIL CONSERVATION">WATERSHED DEVELOPMENT &amp; SOIL CONSERVATION</div><div class="option" data-selectable="" data-value="WOMEN EMPOWERMENT DEPARTMENT">WOMEN EMPOWERMENT DEPARTMENT</div><div class="option" data-selectable="" data-value="XXXX">XXXX</div><div class="option" data-selectable="" data-value="ZILA PARISHAD">ZILA PARISHAD</div></div></div></div>
+                                                                                                                                                                                                          </div>
+                                                                                                                                                                                                            </div>
+                                                                                                                                                                                                            <div class="form-group row" id="ddonamedv">
+                                                                                                                                                                                                              <label for="staticEmail" class="col-sm-3 col-form-label">DDO Name</label>
+                                                                                                                                                                                                                <div class="col-sm-9">
+                                                                                                                                                                                                                  <select class="form-control selectized" id="ddoname" style="display: none;" tabindex="-1"><option value="" selected="selected"></option></select><div class="selectize-control form-control single"><div class="selectize-input items not-full has-options"><input type="select-one" autocomplete="off" tabindex="" id="ddoname-selectized" placeholder="--Please Select--" style="width: 179.469px; opacity: 1; position: relative; left: 0px;"></div><div class="selectize-dropdown single form-control" style="display: none; visibility: visible; width: 296.094px; top: 47.5px; left: 0px;"><div class="selectize-dropdown-content"><div class="option" data-selectable="" data-value="1001">1001 - PROJ.OFFICER NON-FORMAL EDU. BILARA</div><div class="option" data-selectable="" data-value="1002">1002 - PROJ. OFFICER NON-FORMAL EDUCATION SHERGARH</div><div class="option" data-selectable="" data-value="1003">1003 - PROJ.OFFICER NON-FORMAL EDU. OSIAN</div><div class="option" data-selectable="" data-value="1004">1004 - ADDL.DIRECTOR-ADULT EDUCATION-JAIPUR</div><div class="option" data-selectable="" data-value="1005">1005 - EDU.OFFICER-COLECT.JAIPUR</div><div class="option" data-selectable="" data-value="1770">1770 - DIST LITERACY &amp; CONTINUE EDU. OFFICER ALW</div><div class="option" data-selectable="" data-value="1771">1771 - DIST.LITERACY OFFICER BANSWARA</div><div class="option" data-selectable="" data-value="1772">1772 - DISTT.LITERACY &amp; CON. EDU.OFF.BARAN</div><div class="option" data-selectable="" data-value="1773">1773 - ZILA SAKSHARTA &amp; SATAT SHIKSHA BARMER</div><div class="option" data-selectable="" data-value="1774">1774 - DISTT LITRACY &amp; CONTINUE EDU BTP 1001</div><div class="option" data-selectable="" data-value="1775">1775 - DISTRICT ADULT &amp; CONTINUES.Edu.Off.BHILWARA</div><div class="option" data-selectable="" data-value="1776">1776 - DIS.ADULT EDUCATION OFFICER BIKANER</div><div class="option" data-selectable="" data-value="1778">1778 - DISTT.LITTERCY &amp; CONT. EDU. OFFICER COR</div><div class="option" data-selectable="" data-value="1780">1780 - DISTT. ADULT EDUCATION OFFICER, DAUSA</div><div class="option" data-selectable="" data-value="1781">1781 - DISTT EDU &amp; REG EDU OFF DLP 1001</div><div class="option" data-selectable="" data-value="1782">1782 - DISTT. LITERACY&amp; CONTINUE EDU. OFFI.</div><div class="option" data-selectable="" data-value="1787">1787 - DISTT.LITERACY &amp;COMTI.EDU.OFFICER JALORE</div><div class="option" data-selectable="" data-value="1788">1788 - LITERACY &amp; STATE EDUCATION OFFICER -JLW</div><div class="option" data-selectable="" data-value="1790">1790 - DISTT. ADULT EDUCATION OFFICER</div><div class="option" data-selectable="" data-value="1793">1793 - DIST. LITERACR AND CONTL EDU.</div><div class="option" data-selectable="" data-value="1796">1796 - DIST. LITERACY &amp; CONT.EDU.OFFICER SWM</div><div class="option" data-selectable="" data-value="1800">1800 - DISTRICT ADULT EDUCATION OFFICER UDAIPUR</div><div class="option" data-selectable="" data-value="18200">18200 - H.M.GOVT.S.S.UMATHI</div><div class="option" data-selectable="" data-value="25288">25288 - PROJECT MANAGER DPIPPMU TONK</div></div></div></div>
+                                                                                                                                                                                                                    </div>
+                                                                                                                                                                                                                    </div>
+                                                                                                                                                                                                                    <div class="form-group row">
+                                                                                                                                                                                                                      <label for="inputPassword" class="col-sm-3 col-form-label">DDO Code</label>
+                                                                                                                                                                                                                        <div class="col-sm-9">
+                                                                                                                                                                                                                          <input type="text" class="form-control" id="ddocode">
+                                                                                                                                                                                                                            <div id="dntkddoid" class="dntkddo" hidden="hidden">Don't know DDO code ?</div>
+                           </div>
+                        </div>
+                        <div class="form-group row">
+                           <label for="staticEmail" class="col-sm-3 col-form-label">IPR Year</label>
+                           <div class="col-sm-9">
+                              <select class="form-control" id="ipryear2">
+				<option value="2024">2024</option><option value="2023">2023</option><option value="2022">2022</option><option value="2021">2021</option><option value="2020">2020</option><option value="2019">2019</option><option value="2018">2018</option>                              </select>
+                           </div>
+                        </div>
+                        <div class="form-group row">
+                           <label for="staticEmail" class="col-sm-3 col-form-label"></label>
+                           <div class="col-sm-9">
+                                <div class="form-check form-check-inline">
+                                  <input class="form-check-input" type="radio" name="IPRstatusel" value="2" id="IPRstatusall" checked="">
+                                  <label class="form-check-label" for="IPRstatusall">All</label>
+                                </div>
+                                <div class="form-check form-check-inline">
+                                  <input class="form-check-input" type="radio" name="IPRstatusel" value="1" id="IPRstatusSBTd">
+                                  <label class="form-check-label" for="IPRstatusSBTd">Submitted</label>
+                                </div>
+                                <div class="form-check form-check-inline">
+                                  <input class="form-check-input" type="radio" name="IPRstatusel" value="0" id="IPRstatusNSBTd">
+                                  <label class="form-check-label" for="IPRstatusNSBTd">Not Submitted</label>
+                                </div>
+                           </div>
+                        </div>
+                        <button style="float:right;margin-left: 10px;" id="viewipr2" type="button" class="btn btn-primary">SEARCH</button>
+                        <button type="button" style="float:right;" id="cleariprf" class="btn btn-secondary">RESET</button>
+                     </div>
+
+
+                     <div style="width: 90%; display: none;" id="empidwiseiprform">
+                        <div class="form-group row">
+                           <label for="inputPassword" class="col-sm-3 col-form-label">Employee Id</label>
+                           <div class="col-sm-9">
+                              <input type="text" class="form-control" name="empidipr" value="" onkeypress="if(event.key == 'Enter') {viewiprf3();}" id="EmployeeIdd">
+                           </div>
+                        </div>
+                        <button style="float:right;margin-left: 10px;" id="viewipr3" onclick="viewiprf3()" type="button" class="btn btn-primary">SEARCH</button>
+                        <button type="button" style="float:right;" id="cleariprf" class="btn btn-secondary">RESET</button>
+                     </div>
+
+
+                     <div style="width:90%;display:none;" id="empidwiselgcyiprform">
+                        <div class="form-group row">
+                           <label for="inputPassword" class="col-sm-3 col-form-label">Employee Id</label>
+                           <div class="col-sm-9">
+                              <input type="text" class="form-control" name="empidipr" onkeypress="if(event.key == 'Enter') {viewiprflgc();}" id="EmployeeIddlgcy">
+                           </div>
+                        </div>
+                        <button style="float:right;margin-left: 10px;" id="viewipr3" onclick="viewiprflgc()" type="button" class="btn btn-primary">SEARCH</button>
+                        <button type="button" style="float:right;" id="cleariprf" class="btn btn-secondary">RESET</button>
+                     </div>
+
+<span id="errormsg" style="color:red;">Please fill all fields.</span>
+
+                     </div>
+<div id="iprresult"><hr><div id="totalresult2">Total Result : 2</div><div id="iprsubtot2">Total IPR submitted : 0</div><table class="table table-hover"><thead><tr><th>S.No.</th><th>EMP ID</th><th>NAME</th><th>APPOINTING DEPT</th><th style="min-width:90px;">DATE OF BIRTH</th><th>DESIGNATION</th><th>IPR Year</th><th>IPR Status</th><th></th></tr></thead><tbody id="iprresult23"><tr style="background: #ffcccc;"><td>1</td><td><a target="_blank" href="/reports/ipr-details.php?autosubmit&amp;empid=RJPA199329016993">RJPA199329016993</a></td><td>CHENA RAM MEGHWAL</td><td>Not Available</td><td>07-Nov-1966</td><td>NOT AVAILABLE</td><td>2022 </td><td>NOT SUBMITTED </td><td><span style="color:blue;cursor: pointer;" id="dwnld" draft_id="null" hidden="">Download</span></td></tr><tr style="background: #ffcccc;"><td>2</td><td><a target="_blank" href="/reports/ipr-details.php?autosubmit&amp;empid=RJPA201529035966">RJPA201529035966</a></td><td>HARENDRA PAL SINGH</td><td>Not Available</td><td>24-Mar-1991</td><td>NOT AVAILABLE</td><td>2022 </td><td>NOT SUBMITTED </td><td><span style="color:blue;cursor: pointer;" id="dwnld" draft_id="null" hidden="">Download</span></td></tr></tbody></table></div>	
+		</div></section>
+	
+	</div>
+
+         <div id="helpModal" class="modal fade" tabindex="-1" role="dialog">
+            <div class="modal-dialog modal-lg">
+               <div class="modal-content">
+                  <div class="modal-header">
+                     <h5 class="modal-title">Help</h5>
+                     <button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
+                  </div>
+                  <div class="modal-body">
+                     <p>
+                        Some text........
+                     </p><ol style="list-style: decimal ;">
+                        <li>first item</li>
+                        <li>second item</li>
+                        <li>third item</li>
+                        <li>fourth item</li>
+                     </ol>
+                     <p></p>
+                  </div>
+                  <div class="modal-footer">
+                     <button type="button" class="btn btn-secondary" data-dismiss="modal">OK</button>
+                  </div>
+               </div>
+            </div>
+         </div>
+
+ 
+         <div id="ktbank" class="modal fade" tabindex="-1" role="dialog">
+            <div class="modal-dialog modal-lg">
+               <div class="modal-content">
+                  <div class="modal-header">
+                     <h5 class="modal-title">Knowledge Bank</h5>
+                     <button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
+                  </div>
+                  <div class="modal-body">
+                     <p id="ktbanktext">
+                     </p>
+                  </div>
+                  <div class="modal-footer">
+                     <button type="button" class="btn btn-secondary" data-dismiss="modal">OK</button>
+                  </div>
+               </div>
+            </div>
+         </div>
+
+
+         <div id="ViewReport" class="modal fade" tabindex="-1" role="dialog">
+            <div class="modal-dialog modal-lg" style="max-width:90% !important;">
+               <div class="modal-content">
+                  <div class="modal-header">
+                     <h5 class="modal-title" id="reportTitled">Report</h5>
+                     <button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
+                  </div>
+                  <div class="modal-body">
+                     <iframe id="viewrptifm" src="" onload="resizeIframe(this)" style="width:100%"></iframe>
+                  </div>
+                  <div class="modal-footer">
+                     <button type="button" class="btn btn-secondary" data-dismiss="modal">OK</button>
+                  </div>
+               </div>
+            </div>
+         </div>
+
+                    <div id="myModal15" class="modal fade" tabindex="-1">
+                        <div class="modal-dialog" style="max-width: 700px!important;">
+                            <div class="modal-content">
+                                <div class="modal-header">
+                                    <h5 class="modal-title">Send IPR to WhatsApp</h5>
+                                    <button type="button" class="close" data-dismiss="modal">×</button>
+                                </div>
+                                <div class="modal-body">
+                                      <div class="form-group row" id="modal15body">
+                                        <label for="orgnameid" class="col-sm-4 col-form-label">Mobile Number</label>
+                                        <div class="col-sm-8">
+                                          <input type="text" class="form-control" id="iprmobileno" name="iprmobileno" required="" readonly="">
+                                          <input type="text" class="form-control" id="dfidd" name="dfid" required="" hidden="">
+                                          <input type="text" class="form-control" id="filenameid" name="filename" required="" hidden="">
+                                          <input type="text" class="form-control" id="empidwa" name="empidwanm" required="" hidden="">
+                                        </div>
+                                      </div>
+					<input type="checkbox" id="WAconsentid" name="WAconsent" value="1">
+					<label for="WAconsentid" class="col-form-label">I give consent to Rajkaj to send WhatsApp message.</label>
+					<p style="font-size: 11px;font-style: italic;">If phone number shown is not correct, kindly update correct phone number in your RajKaj profile.</p>
+					<p style="color:red;" id="iprwamsg"></p>
+                                </div>
+                                <div class="modal-footer">
+                                    <button type="submit" id="sendtowaid" name="sentowanm" onclick="sendWAmsg()" class="btn btn-primary hide2" disabled="">SUBMIT</button>
+                                    <button type="button" class="btn btn-secondary hide" data-dismiss="modal">Cancel</button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+
+<div id="myModal222" class="modal fade" tabindex="-1">
+                        <div class="modal-dialog">
+                            <div class="modal-content">
+                                <div class="modal-body" style="text-align: center;"><br>
+                                    <a type="submit" href="https://sso.rajasthan.gov.in/signin?ru=RAJEOFFICE" class="btn btn-primary hide">RajKaj Portal Login</a>
+				    <br><br>
+                                    <a type="submit" href="https://sso.rajasthan.gov.in/signin?ru=EOFFICE" class="btn btn-primary hide">RajKaj Employee Login</a><br><br>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+<footer id="footerOuter" class="clearfix w-100 float-left">
+
+
+  <section style="background:#376da9;">
+    <div class="" style="padding-left: 10px;
+    padding-right: 10px;">
+      <div class="row">
+        <div class="col-md-2 col-12" style="height: 40px;padding-top: 5px;">
+          <p>
+		<a target="_blank" href="https://play.google.com/store/apps/details?id=com.gor.leave.rajkaj" style="font-size: 22px; margin: 10px;color: white;"><i class="fa fa-android" aria-hidden="true"></i>
+		</a><a target="_blank" href="https://apps.apple.com/in/app/rajkaj/id1599083047" style="font-size: 22px; margin: 10px;color: white;"><i class="fa fa-apple" aria-hidden="true"></i></a>
+	</p>
+        </div>
+        <div class="col-md-6 col-12" style="font-size: 13px;padding: 7px;height:30px;">
+        <a style="padding:12px;color:white;" target="_blank" href="http://www.rajasthan.gov.in/">Govt of Rajasthan</a>
+        <a style="padding:10px;color:white;" target="_blank" href="http://cmo.rajasthan.gov.in/">Chief Minister Office</a>
+        <a style="padding:10px;color:white;" target="_blank" href="http://dop.rajasthan.gov.in/">DOP</a>
+        <a style="padding:10px;color:white;" target="_blank" href="https://doitc.rajasthan.gov.in/">DoIT&amp;C</a>
+        <a style="padding:10px;color:white;" target="_blank" href="http://risl.rajasthan.gov.in/">RISL</a>
+        </div>
+        <div class="col-md-2 col-12" style="padding: 7px;height:30px;">
+          <p>
+			<a href="https://www.facebook.com/RajkajDoitc" target="_blank" style="font-size:20px;margin:0px 8px;color: white;" class="fa fa-facebook"></a>
+			<a href="https://twitter.com/RajKaj_DoITC" target="_blank" style="font-size:20px;margin:0px 8px;color: white;" class="fa fa-twitter"></a>
+			<a href="https://www.instagram.com/doitcraj/" target="_blank" style="font-size:20px;margin:0px 8px;color: white;" class="fa fa-instagram"></a>
+	</p>
+        </div>
+		
+		<div class="col-md-2 col-12" style="height: 40px;padding-top: 5px;">
+          <p style="
+    color: white;
+    font-size: 12px;
+">
+		Last Updated : 29/12/2024 11:50	</p>
+        </div>
+		
+      </div>
+    </div>
+  </section>
+		
+  <section class="footersection2">
+    <div style="padding:0px 15px;">
+      <div class="row">
+        <div class="col-md-3 col-12">
+          <p class="copyright">
+		<a href="/disclaimer-and-privacy-policy.php">Disclaimer</a> | <a href="/feedback.php">Feedback</a> <!-- | <a href="/developer-documents.php">Developer</a> -->
+	  </p>
+        </div>
+        <div class="col-md-4 col-12">
+          <p class="copyright"><span>Visitors Count : 37,766,097</span>
+			<span style="float:right;">Total Hit : 132,341,627</span>
+	   </p> 
+        </div>
+        <div class="col-md-5 col-12">
+          <p class="devlop">Website Designed, Developed &amp; Managed by <a href="http://doitc.rajasthan.gov.in/" target="_blank">DOIT&amp;C</a></p>
+        </div>
+      </div>
+    </div>
+  </section>
+<br>
+<hr>
+</footer>
+
+<div class="overlay"></div>
+
+
+<script src="/js/jquery.min.js"></script> 
+
+<script src="/js/popper.js"></script> 
+<script src="/static/selectize.min.js" integrity="sha256-+C0A5Ilqmu4QcSPxrlGpaZxJ04VjsRjKu+G82kl5UJk=" crossorigin="anonymous"></script>
+<link rel="stylesheet" href="/static/selectize.bootstrap3.min.css" integrity="sha256-ze/OEYGcFbPRmvCnrSeKbRTtjG4vGLHXgOqsyLFTRjg=" crossorigin="anonymous">
+
+
+
+<script src="/js/bootstrap.min.js"></script> 
+<script type="text/javascript" src="/js/mobile-nav.js"></script><nav class="mobile-nav d-lg-none">
+        <div class="p-1 p-md-0 d-none" id="logos"> <img src="/images/logo.jpg" style="max-height:180px;" alt="logo" class="img-fluid"> </div>
+        <ul class="d-lg-flex align-items-lg-center float-lg-left">
+          <li> <a id="navhome" href="/">Home</a></li>
+
+
+			<li> <a id="navabtus" href="/about-us.php">About Us</a></li>
+			
+		<li class="nav-item dropdown" style="margin-left: -10px; margin-right: 5px;" id="navkwhns">
+        <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+          Knowledge Bank
+        </a>
+        <div class="dropdown-menu" aria-labelledby="navbarDropdown" style="background-color: #376da9;">		
+			<a class="dropdown-item" href="/knowledge-bank/sop.php" style="background-color: #376da9;padding-left:10px;">SOP</a><br>
+			<a class="dropdown-item" href="/knowledge-bank/circulars-and-orders.php" style="background-color: #376da9;padding-left:10px;">Circulars</a><br>
+			<a class="dropdown-item" href="/knowledge-bank/help-manual.php" style="background-color: #376da9;padding-left:10px;">Help Manuals</a><br>
+			<!-- <a class="dropdown-item" href="/knowledge-bank/eKYC-help-manual.php" style="background-color: #376da9;padding-left:10px;">e-kyc Help Manual</a><br> -->
+			<a class="dropdown-item" href="/static_html/eKYC.php" style="background-color: #376da9;padding-left:10px;">e-kyc Help Manual</a><br>
+		</div>
+      </li>
+          
+		  <li> <a id="navrpts" href="/reports.php">Reports</a></li>
+          <li> <a id="navdwnlds" href="/downloads.php">Utilities</a></li>
+		  
+		  <li class="nav-item dropdown" style="margin-left: -10px; margin-right: 5px;" id="navkwhns">
+        <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+          Contact Us
+        </a>
+        <div class="dropdown-menu" aria-labelledby="navbarDropdown" style="background-color: #376da9;">		
+			<a class="dropdown-item" href="/nodal-officer.php" style="background-color: #376da9;padding-left:10px;">PMU &amp; Nodals</a><br>
+			<a class="dropdown-item" href="/contact-us.php" style="background-color: #376da9;padding-left:10px;">Key Officials</a><br>
+        </div>
+      </li>
+	  
+	  <li class="nav-item dropdown" style="margin-left: -10px; margin-right: 5px;" id="navkwhns">
+        <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+          Gallery
+        </a>
+        <div class="dropdown-menu" aria-labelledby="navbarDropdown" style="background-color: #376da9;">
+          <a class="dropdown-item" href="/gallery/news.php" style="background-color: #376da9;padding-left:10px;">News</a><br>
+          <a class="dropdown-item" href="/gallery/photos.php" style="background-color: #376da9;padding-left:10px;">Photos</a><br>
+          <a class="dropdown-item" href="/gallery/videos.php" style="background-color: #376da9;padding-left:10px;">Videos</a>
+        </div>
+      </li>
+	  
+	 <li class="nav-item dropdown" style="margin-left: -10px; margin-right: 5px;" id="navkwhns">
+        <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+          More
+        </a>
+        <div class="dropdown-menu" aria-labelledby="navbarDropdown" style="background-color: #376da9;">		
+			<a class="dropdown-item" href="/frequently-asked-questions.php" style="background-color: #376da9;padding-left:10px;">FAQ</a><br>
+			<a class="dropdown-item" href="/release-notes.php" style="background-color: #376da9;padding-left:10px;">Release Notes</a><br>
+        </div>
+      </li>
+	  
+	  
+		 
+		  
+		  	  
+		  
+		  <!--
+		  <li class="nav-item dropdown" style="margin-left: -10px; margin-right: 5px;">
+        <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+          Reports
+        </a>
+        <div class="dropdown-menu" aria-labelledby="navbarDropdown" style="background-color: #376da9;">
+          <a class="dropdown-item" href="/reports.php" style="background-color: #376da9;padding-left:10px;">General Reports</a>
+		  <br><a class="dropdown-item" href="/SASAuth.php?type=3" style="background-color: #376da9;padding-left:10px;">My Analytics</a>
+        </div>
+      </li>
+	  -->
+	    
+	  
+
+
+<li class="nav-item dropdown" style="margin-left: -10px; margin-right: 5px;" id="navkwhns">
+        <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+          Login
+        </a>
+        <div class="dropdown-menu" aria-labelledby="navbarDropdown" style="background-color: rgb(55, 109, 169); will-change: transform;">
+			<a class="dropdown-item" href="https://sso.rajasthan.gov.in/signin?ru=RAJKAJIPR" style="background-color: #376da9;padding-left:10px;">IPR</a><br>
+          <a class="dropdown-item" href="https://sso.rajasthan.gov.in/signin?ru=RAJKAJHRMS" style="background-color: #376da9;padding-left:10px;">HRMS</a><br>
+          <a class="dropdown-item" href="https://sso.rajasthan.gov.in/signin?ru=EOFFICE" style="background-color: #376da9;padding-left:10px;">eFile/DAK</a><br>
+		  <a class="dropdown-item" href="https://sso.rajasthan.gov.in/signin?ru=RAJKAJPAR" style="background-color: #376da9;padding-left:10px;">ACR/APAR</a><br>
+		  <a class="dropdown-item" href="https://sso.rajasthan.gov.in/signin?ru=RAJKAJAUDIT" style="background-color: #376da9;padding-left:10px;">e-File Audit</a><br>
+        </div>
+      </li>
+
+<!--
+    		<li class="nav-item" id="aacnt"> <a class="nav-link" href="https://sso.rajasthan.gov.in/signin?ru=EOFFICE">Go to RajKaj >></a></li> 
+-->
+      </ul></nav><div class="mobile-nav-overly"></div> 
+<script src="/js/owl.carousel.js"></script>
+<script src="/js/custom.js"></script> 
+<script src="/static/js96r234568.js?v=1.28"></script>
+
+<script src="/js/jquery.dataTables.min.js"></script>
+<script src="/js/dataTables.buttons.min.js"></script>
+<script src="/js/buttons.flash.min.js"></script>
+<script src="/js/jszip.min.js"></script>
+<script src="/js/pdfmake.min.js"></script>
+<script src="/js/vfs_fonts.js"></script>
+<script src="/js/buttons.html5.min.js"></script>
+<script src="/js/buttons.print.min.js"></script>
+
+
+<script>
+//window.onscroll = function() {myFunction()};
+
+//document.getElementById("iprtab").classList.add("active");
+
+var header = document.getElementById("header");
+var sticky = header.offsetTop;
+
+function myFunction() {
+  if (window.pageYOffset > sticky) {
+    header.classList.add("sticky");
+  } else {
+    header.classList.remove("sticky");
+  }
+}
+
+
+
+    $(document).on('click', '.ViewRptc', function() {
+        var title = $(this).text();
+        var tableaulink = $(this).attr("tableaulink");
+        $('#reportTitled').text(title);
+$('#viewrptifm').attr("src",tableaulink);
+
+
+});
+
+
+function resizeIframe(obj) {
+  obj.style.height = obj.contentWindow.document.documentElement.scrollHeight + 'px';
+}
+
+$('input[type=radio][name=iprtypewise]').change(function() {
+  if (this.value == 'ddo') {
+    $('#ddowiseiprform').css('display','block');
+    $('#deptwiseiprform').css('display','none');
+    $('#empidwiseiprform').css('display','none');
+    $('#empidwiselgcyiprform').css('display','none');
+    $('#iprresult').html('');
+    
+  }
+  else if (this.value == 'dept') {
+    $('#ddowiseiprform').css('display','none');
+    $('#deptwiseiprform').css('display','block');
+    $('#empidwiseiprform').css('display','none');
+    $('#empidwiselgcyiprform').css('display','none');
+    $('#iprresult').html('');
+  }
+  else if (this.value == 'emp') {
+    $('#ddowiseiprform').css('display','none');
+    $('#deptwiseiprform').css('display','none');
+    $('#empidwiseiprform').css('display','block');
+    $('#empidwiselgcyiprform').css('display','none');
+    $('#iprresult').html('');
+  }
+  else if (this.value == 'lgc_emp') {
+    $('#ddowiseiprform').css('display','none');
+    $('#deptwiseiprform').css('display','none');
+    $('#empidwiseiprform').css('display','none');
+    $('#empidwiselgcyiprform').css('display','block');
+    $('#iprresult').html('');
+  }
+});
+
+</script>
+  
+  
+  <script>
+  $(document).ready(function () {
+    $('#appdept').selectize({
+      sortField: 'text'
+    });
+  });
+</script>
+  
+  <script>
+  function sendonWA(dfid,mobile,empidwa)
+{
+  $('#iprmobileno').val(mobile);
+  $('#dfidd').val(dfid);
+  $('#empidwa').val(empidwa);
+  $('#WAconsentid').prop('checked', false);
+  $('#sendtowaid').attr('disabled','disabled');
+  $("#myModal15").modal('show');
+  $('#iprwamsg').html('');
+  
+  }
+
+function sendWAmsg()
+{
+  mobileno = $('#iprmobileno').val();
+  empid = $('#empidwa').val();
+  if(mobileno.length==10 && empid!="")
+  {
+    $.get("/api/GetIPRpdfOnWhatsapp.php?empid="+empid+"&mobno="+mobileno, {},
+          function(data, status) {
+            $('#iprwamsg').html('IPR sent on Whatsapp !');
+            if(data["msg"])
+            {
+              $('#iprwamsg').html(data["msg"]);
+              $('#iprwamsg').css('color', data["color"]);
+              $('#sendtowaid').attr('disabled','disabled');
+            }
+          });
+  }
+  else
+  {
+    $('#iprwamsg').html('Invalid input.');
+  }
+}
+
+$("#WAconsentid").on("click", function(){
+  WAcheck = $("#WAconsentid").is(":checked");
+  if(WAcheck) {
+    $("#sendtowaid").removeAttr("disabled");
+  } else {
+    $('#sendtowaid').attr('disabled','disabled');
+  }
+}); 
+
+</script>
+  
+  <script>
+  </script>
+  
+  
+  
+  <span style="position: absolute; top: -99999px; left: -99999px; width: auto; padding: 0px; white-space: pre; letter-spacing: 0px; font-size: 20px; font-family: poppinsregular; font-weight: 400; text-transform: none;">--Please Select--</span><iframe frameborder="0" scrolling="no" style="background-color: transparent; border: 0px; display: none;"></iframe><div id="GOOGLE_INPUT_CHEXT_FLAG" style="display: none;" input="" input_stat="{&quot;tlang&quot;:true,&quot;tsbc&quot;:true,&quot;pun&quot;:true,&quot;mk&quot;:true,&quot;ss&quot;:true}"></div><iframe id="YcSqWLDP" frameborder="0" src="chrome-extension://ekhagklcjbdpajgpjgmbionohlpdbjgc/translateSandbox/translateSandbox.html" style="width: 0px; height: 0px; display: none;"></iframe></body>

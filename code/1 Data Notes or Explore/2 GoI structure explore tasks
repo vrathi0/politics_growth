@@ -1,0 +1,32 @@
+
+
+# Notes while exploring LGD data
+source(https://ramseraph.github.io/opendata/lgd/)
+
+1. the admin_unit files are maybe useless (the one which has department). 
+  Different states have classified 
+  different things as "department" and therefore prolly not much meaning to 
+  cross sectional difference. For eg, in HR "Police Office" is also a dept. 
+  However, perhaps both the org_unit and admin_units can be combined to create the whole. 
+  
+  
+  
+  
+  
+  
+# Rajasthan State Govt Structure
+
+(source: https://rajkaj.rajasthan.gov.in/reports.php)
+
+1. RJ seem to have good digital record of a lot of things. (aside, using cgpt I have tried 
+to collate some links for all the other states that might have similar info available. 
+Look at the file: State Govt Structure.Rmd)
+
+2. For each district-dept, how many performance reviews were undertaken is available here
+(https://va.rajasthan.gov.in/views/PAR/DistrictWiseDetails?%3Aembed=y&%3AisGuestRedirectFromVizportal=y)
+This is just a count data, but it gives the strength of dept-district in terms of count. 
+Therefore this is exactly the intensity of govt at district-dept level. 
+
+
+
+

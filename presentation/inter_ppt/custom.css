@@ -1,0 +1,8 @@
+ul {
+  list-style-type: square; /* Change to square bullets */
+}
+
+li {
+  color: blue; /* Change bullet text color */
+  font-size: 1.2em; /* Adjust text size */
+}

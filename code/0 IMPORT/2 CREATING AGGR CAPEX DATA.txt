@@ -1,0 +1,12 @@
+
+
+1. In loc_df$location, 
+a lot of projects are multiple locations that would likely be not matched
+at the district level later on. These are likely bigger companies
+and I should look into them later on. 
+
+
+2 Also create an aggregated full panel
+qsave(time_geo_panel, 
++       file=here("data/2 CLEAN/capex_time_geo_full_panel.qs"))
+

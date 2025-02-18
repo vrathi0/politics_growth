@@ -1,0 +1,146 @@
+---
+title: "0 Intro"
+format: html
+---
+
+Last update: Feb 8, 2025
+
+
+# Abstract
+
+
+
+
+# Intro
+
+## Descriptive/Analytical points to fill:
+
+<!-- SPATIAL HETEROGENEITY -->
+<!-- Just average count of officers at district level -->
+<!-- across all time has moderate variation.  -->
+<!-- 80/20p ratio is around 4.  -->
+<!-- BUT CoV if around 1.6 (Cov for pop density if around 2.8-3)  -->
+<!-- Possible indication of floor in terms of state presence.  -->
+
+### 1. Prob of getting transferred ~ Election (both GE and AE)
+
+<!-- # AE: -->
+<!-- # for both start and end, the coeff is consistent -->
+<!-- # around 15% more churn right after election and decreasing  -->
+<!-- # monotonically -->
+
+In the above fact, can use pol X to indicate heterogeneity
+- When does the transfer happen, before or after election. 
+If after, then it should vary depending on if the incumbent returns. 
+What matters more? GE or AE and why?
+What Candidate X matters? 
+Cross sectional differences across states. 
+
+### 2. Understanding pol-IAS matching as a unit. 
+# A. How much variation is there between the length of the relationship
+after controlling for reasoable things
+# B. Does this variation correlate with some polX and/or IAS X. 
+# C. Does this variation correlate with some outcome for IAS down the line 
+# better posting or empannelbment prob. 
+
+The idea here is that to first here show that
+this matching is something that contains some relevant information. 
+I can not (as of yet) claim that it is exogenous. 
+
+### 3. Then having extablished #2. now the goal is to look for shock in 
+the length. 
+First correlationally, I can see if years with higher IAS churn predict slower
+rank1 speed?
+
+Then I can see if the 2008 shock can be used to generate an exogenous variation
+
+
+
+great no problem. For our purpose here, we are mostly going to work on old set of regulations. Now lets start and let me share a broad goal (which we will refine): 
+1. Lets keep three set of actors in mind: politicians, bureaucrats and private entities who are making investment.
+2. Private entities have to go through regulations (environment clearence is one of them). 
+3. First lets work on identifying two things :(a) which set of events from the rank1_event_list doc is likely to have most involvement from district level bureaucracy. (b) what are the kind of regulations where district bureaucracy have significant role to play. 
+
+
+P2:
+Now lets for a moment pull back and let me share with you some broader goals. I am trying to understand how does changes in politicians at the local level affect the speed or quality of district bureaucrats. One of the way I am trying to do that is using exogenous changes in politicians and seeing how does that affect the district level bureaucracy. One reservation I have is that how much importance district even has, or main decisions/actions happen at a higher level (state/centre). That being said, since there are more districts than states, it is somewhat easier to set up a causal analysis at district level.   That is my job to figure out .. but do you have anything to contribute that might be helpful here? 
+We will continue after that. 
+
+
+
+
+CahtGPt o3 mini
+Now lets do the following task. I want you to go slow and go in deep at every step. 
+(1) Use the events in rank1_event_list and the following events. There would be duplicates so first create a list of unique events after combining both. 
+new_events: 
+[1] "Industrial entrepreneurs memorandum (IEM) filed"                   
+ [2] "Letter of Intent (LoI) received"                                   
+ [3] "State government approval sought"                                  
+ [4] "Memorandum of Understanding (MoU) signed"                          
+ [5] "Central Electricity Authority (CEA) approval sought"               
+ [6] "Forest clearance sought"                                           
+ [7] "Environmental clearance sought"                                    
+ [8] "Expert Appraisal Committee (EAC) recommendation received"          
+ [9] "Coastal regulatory zone (CRZ) clearance received"                  
+[10] "Forest Advisory Committee (FAC) recommendation received"           
+[11] "Special Economic Zone (SEZ) Board in-principle approval received"  
+[12] "Central Electricity Authority (CEA) initial approval received"     
+[13] "Central Electricity Authority (CEA) in principle approval received"
+[14] "Planning Commission approval received"                             
+[15] "Public Investment Board (PIB) approval received"                   
+[16] "Foreign Investment Promotion Board (FIPB) approval received"       
+[17] "Forest clearance received"                                         
+[18] "Environmental clearance received"                                  
+[19] "State government approval received"                                
+[20] "Central Government approval received"                              
+[21] "Cabinet Committee on Economic Affairs (CCEA) approval received"    
+[22] "Special Economc Zone (SEZ) Board formal approval received"         
+[23] "Special Economic Zone (SEZ) Board notified"                        
+[24] "Land acquisition awaited"                                          
+[25] "Land acquisition problem"                                          
+[26] "Land acquisition problem resolved"                                 
+[27] "Land acquired"                                                     
+[28] "Land allotment cancelled"                                          
+[29] "Acquired land returned"                                            
+[30] "De-notification request approved by BoA/SEZ Board"                 
+[31] "Implementation stalled on"                                         
+[32] "Issues resolved by Cabinet Committee on Investment (CCI)"          
+[33] "Contract type changed"                                             
+[34] "Contract cancelled"                                                
+[35] "Contract termination revoked"                                      
+[36] "Project rejected/deferred by the SEZ Board"                        
+[37] "Rejected by central government"                                    
+[38] "Shelved on"                                                        
+[39] "Abandoned on" 
+
+(2) Then, at next stage. I want you to come up with an ordering in which they are likely to happen. These are markers for updates in an investment project regluleratory approval cycle .. so I want to understand the order in which these events are likely to happen. 
+
+You should use your knowledge and web. 
+
+
+
+# CLAUDE
+
+For now, ignore the documents and focus on this. I have the data with two kind of year variables
+
+> table(strong_mp_lose$year)
+
+1991 1992 1993 1994 1995 1996 1997 1998 1999 2000 2001 2002 
+  18   19   16   33   32  131   92  108   78   51   81  102 
+2003 2004 2005 2006 2007 2008 2009 2010 2011 2012 2013 2014 
+  83  127   67  142  160  116  296  180  187  177  184  302 
+2015 2016 2017 2018 2019 2020 2021 
+ 119  120  124  124  300  154  174 
+> table(strong_mp_lose$geyear)
+
+1991 1996 1998 1999 2004 2009 2014 2019 
+ 151  268   67  419  682 1079  726  505 
+ 
+Write R code. 
+geyear is election year, while other year is just a time marker. 
+We will focus on election year 2004,2009,2014 and 2019. construct a new time variable that is relative to the election year, so it can go from -2 to +2.  so 2006 would be +2 and 2007 would be -2 and so on. Essentially we want to pool some years at time relative to election. 
+Then write R code for a event study type regression equation using feols(), y variable is Y, and treat var. 
+
+
+
+

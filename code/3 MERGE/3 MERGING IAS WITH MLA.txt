@@ -1,0 +1,69 @@
+
+
+
+# LIST OF BUGS
+
+1. Right now, if the district changes state (like Adilabad from AP to TL)
+it continues to be matched for AP. For eg, adilabad is in AP after 2014 also
+but in reality Adilabad is not present in AP after 2014. 
+This happens as we are expanding on a unconditional grid at dist+st level
+and then merging with IAS data only on district level. 
+
+2. 18% of dist_name obs are missing from ae_win_nobypoll
+
+3. The matching of IAS collector records is far from good atm. Either it is because
+the Supremo data base had district info missing or my merge which is 
+just on "office" variable got messed up for some obs. 
+Either way the solution is to go down till district level website to pull out records
+For eg :
+View(matched_collector_df %>% filter(office=="bijapur"))
+This is in Chattisgarh, https://bijapur.gov.in/en/list-of-collectors/
+And the final merged data that I have contains only 3 of the 9 collectors. 
+
+
+4. Note on: filter(cadre_st==st_name)
+So, I finally bit the bullet and did the filter on matched_collector_df
+I think its mostly new states where this does not hold + Delhi. 
+For new states, it remains to be seen if this is an indicating of some 
+missclassification or merge fail that cadre and state are not alligned. 
+But for now, moving on. (Jan 2025)
+
+
+5. Comparison with ge_ias
+
+The time series at state+district is much sparse in ae_ias compared to ge_ias
+That is, there are large number of holes in the ae data, but not in the ge data for the 
+same state+district units. Ideally this should not be so. 
+
+# 1. THere are more districts_months for Karnataka in AE than in GE for years 
+# around 1998-2002 ish, most for 2000. 
+# 2. THere are more districts_months for Maha in AE than in GE for years 
+# around 2013-2017
+
+
+6. Might be a repeat. But the new state/district messes up the 
+district level year_month grid I create. This is because I just 
+create a common grid for whole time period. 
+
+
+7. AC-PC-DIST MAPPING
+Need to revisit. FOr eg, district=="Bahraich" only appears with delim 4
+but the distrist is old and its constituents appear in delim 3 with other district. 
+It might be that AC/PC moved around.. but there must be some AC/PC in this district 
+too in delim3. 
+All together the point being, need to revisit with fresh eyes. 
+There is significant prob that there is some bug in there. 
+
+
+8. Note about pc01_state_id and pc01_district_id
+
+Ideally it might have been good to use these variables, but perhaps 
+they are not ready yet. The problem might be that they are probably 
+indirectly through pc_id and since PC can cross district boundaries, 
+they often carry two districts with them and in merging through them
+you can get a situation that one ac is tagged with two pc01_districts. 
+"TECHNICALLY" this is not allowed as one AC is supposed to be contained
+within a district boundary. 
+Now, I dont know if this is an error on my part or some artificat of some 
+legal merge. 
+Regardless, best not to use these codes atm. 

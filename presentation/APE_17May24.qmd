@@ -1,0 +1,145 @@
+---
+title: "Politicians and Bureaucrats"
+author: "Vaibhav Rathi, Dept. of Economics"
+format: beamer
+editor: visual
+fonttheme: structuresmallcapsserif
+theme: Singapore
+colortheme: default
+---
+
+## Research Question
+
+1.  "Do the characteristics of politicians influence the state of the government or bureaucracy?"
+
+##### Next
+
+2.  Can economic shocks influence candidate selection?, OR/AND
+3.  Influence of politicians over economy through the bureaucracy.
+
+## Motivation
+
+-   Existing literature about firm-politician linkage (Ackigit et al., Khoban et. al.). Usually in these type of papers government is more or less absent. In reality, politicians have little to no executive power and there is a layer of bureaucracy that should in principal insulate the firms/economy from political intervention.
+
+-   Another angle in this space is how do bureaucrats respond to the institutional incentives.
+
+## 
+
+So two questions for next steps:
+
+-   What are the characteristics of politicians that are instrumental in influencing bureaucracy.
+-   What motivates politicians to engage in this behavior, assuming there is a cost of influencing bureaucracy as its not legally their mandate to do so.
+
+## Plan for today
+
+1.  Setting and data
+
+2.  Descriptive
+
+3.  Simple OLS result on close election sample making the case for channel.
+
+**Way forward**
+
+## Setting and data
+
+-   State Assembly elections. Data consists of covariates for all running candidates (pre and post election).
+-   Around 4200 election constituency, election every 5 years.
+-   Universe of bureaucracy for two states (Rajasthan and Uttar Pradesh). Posting orders, transfer dates, post description, etc.
+-   Data covers around 2500 officers serving for (\~) 7000 posts.
+-   High baseline churn, average officer-post link lasts around 13-15 months.
+
+## 
+
+![](images/govt_size.jpeg)
+
+## 
+
+(unexplored) Features:
+
+-   One officer can serve in unrelated departments/profiles simultaneously.
+
+-   Often ad-hoc posts are created for temporary purpose (with prefix like Spl. Add.) that have very short duration ( \~20-50 days).
+
+## Descriptive- Summary
+
+-   **Election**: Asset level of (winning) candidates seems to be increasing over time.
+-   **Bureaucracy**:
+    1.  There is a strong election effect, ie transfers spike up right after election.
+    2.  The effect of state assembly election is on average twice of that of national parliament election.
+    3.  Among the churn/shuffle, 60% are lateral, 30% are promotion and 10% are demotion.
+
+## Descriptive - Elections
+
+![](images/cand_X_assets_lvl.png)
+
+## 
+
+-   Around 40-45% of the candidate pool has a graduate degree or above, this share is higher in the winner pool.
+-   Most candidate list "agriculture" related profession, "business" related keywords come up in 17% of the sample.
+-   Elections are quite competitive, presence of "incumbency disadvantage".
+
+## Descriptives - Bureaucracy
+
+![](images/total_churn.png)
+
+## 
+
+![](images/ele_year_churn.png)
+
+## 
+
+![](images/churn_up_down.png)
+
+## Political Influence
+
+-   Administrative churn at the district level
+
+-   Elections at election constituency level.
+
+-   One administrative district comprises of several election constituency.
+
+-   Taking close election sample and mapping them to district level outcomes.
+
+## 
+
+### First Stage
+
+$$Cls\_Elec\_Shr_{ad}=  NetAsset_{ad } + Crime_{ad} + \delta_s + \epsilon$$
+
+
+### Second Stage
+
+$$Y_{ead}=  Pred\_CES + e +  \delta_s + \epsilon$$
+
+### Reduced Form/OLS
+
+$$Y_{ead}= e + Cls\_Elec\_Shr_{ad} +  X_{ad} + \epsilon_{ead}$$
+
+## Results
+
+- Throwing out the capital cities, there seems to be 12-14% higher churn from 1SD increase in share of close elections in a district. 
+
+
+
+
+<!-- ##  -->
+
+<!-- ![](images/net_asset_response.png) -->
+
+<!-- ##  -->
+
+<!-- ![](images/asset_diff_response.png) -->
+
+<!-- ##  -->
+
+<!-- -   Surprisingly, there seems to be consistently no effects of degree of alignment with the ruling state government on the bureaucratic churn. -->
+
+## Next Steps
+
+-   Whats really going on? Pining down what asset really is proxying for? And what departments are really getting affected.
+
+-   Two potential options: Economics Shock -\> Political Selection OR Political Shock -\> Economics Effect
+
+## Next Steps
+
+-   Moving to state level: Any state level aggregated political shock would be low resolution, but more states.

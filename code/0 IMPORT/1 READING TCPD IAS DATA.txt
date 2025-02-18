@@ -1,0 +1,41 @@
+
+
+# 1 Issues in the raw exp_df file
+ 1. 211 unique id have only one row with no information (NAs)
+ 2. Further/additional 1487 unique id have just one row and therefore
+ #. the max_lvl variable is 0. Looking at their level_eq for that one row
+    it looks like this are rows for officers that started quite recently 
+    and therefore as just in their first posting. The data does not have
+    enough details about recent cadres. 
+
+ 3. Alternatively, 4928 posts/records have level=="Not Available" for 2852 
+    officers. Previously I was throwing these posts away but perhaps, I can instead 
+    impute these in some way as throwing them away will just create holes in the 
+    career trajectory. Might be a solvable problem. 
+    
+    
+# 2. See the following snippet:
+
+bad_id1=ias_df %>% mutate(bad_rec=if_else(month_in_service<0, 1, 0)) %>% 
+  group_by(id) %>% mutate(bad_id=max(bad_rec)) %>% ungroup() %>%
+  filter(bad_id==1) %>% dplyr::select(id, recruit_type) %>% distinct()
+
+On looking into it now, I see no reason to drop these id. 
+   1. These are mostly state recruits, and possibly its their first record
+   in the IAS data. For some reason, their start_date is recorded from state data
+   base and join_date is created new (I think) and that basically creates
+   this situation where month_in_service is negative 
+   [median: -44 months, mean: -55 months, max:- months]
+   2. These were 2362 ids being removed for no good reason. 
+   
+   
+# 3. Identifying centre deputation
+This still remains a bit fuzzy. But thankfully, enough information available 
+to create a few diff measures. Key decision is where you mark the success. 
+Currently, I am marking being at centre at JS level to be the success. The next 
+option, I think is marking at the Director level (this would increase the count 
+of officers with success quite a lot). 
+
+
+
+

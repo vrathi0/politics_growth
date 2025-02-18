@@ -1,0 +1,167 @@
+---
+title: "Political Interference and Growth Effects"
+author: "Vaibhav Rathi"
+subtitle: "APE, Feb 2025"
+format: 
+  beamer:
+    theme: "Boadilla"
+    includes:
+      in-header: preamble.tex
+header-includes: |
+  \usepackage{FiraSans}
+  \renewcommand{\familydefault}{\sfdefault}  
+editor: visual
+---
+
+## 
+
+**Research Question**
+
+-   How does political shocks affect bureaucratic efficiency.
+
+-   What are the implication for this for capital formation through regulatory approval.
+
+## Motivation
+
+-   Most countries have various sets of regulations for firm entry, capital investment etc.
+-   Spirit is to curb any negative externalities.
+-   But, it gives control or discretion to politicians/bureaucrats.
+
+## 
+
+$$K_{t+1}=\delta K_t +\tilde{I_t} $$
+
+$$\tilde{I_t}=(1-\Theta(b_t))I_t$$
+
+($b_t$) is a measure of red tape. It also erodes away the value of investment due to bribe, delays etc.
+
+-   $b_t$ depends on how well the incentives of $P$ and $B$ are aligned.
+-   $B$ has much longer horizon, $P$ has shorter horizon but have power to push $B$ to change $b_t$
+
+## Framework
+
+-   **Elite Capture**: "Elites"/big businesses capture the political agenda using lobbying or bribes.
+-   **Red Tape-ism**:
+    -   It exists to discover information that firms do not have incentive to share.
+    -   However, bureaucrat may have incentive to misreport their discovery as most regulations are incomplete/not well designed.
+        -   Example: environmental impact assessment, etc
+
+## Existing Litt
+
+-   THE REGULATION OF ENTRY, Djankov 2002
+    -   Showed countries with more regulations have lower growth rate.
+-   Vishny and Shleifer 1993; Guriev 2004
+-   Allesina et al, 2007
+
+## 
+
+![](images/Screenshot%202025-02-14%20at%206.31.14%20AM.png){width="542"}
+
+## Today:
+
+-   Looks into mechanics of regulatory enforcement using detailed capital investment data.
+-   Lengthy regulatory approval process involving several levels of bureaucracy
+
+## Setting
+
+-   Legislative body: elected politicians; 5 year tenure.
+-   Administration
+    -   Staffed by career bureaucrats, can not be fired.
+    -   Famous Indian Administrative Services (carried over from British Raj)
+    -   Highly meritocratic; poor incentives; very centralized.
+
+## Data
+
+-   Data on elected representatives.
+-   Career trajectory data for bureaucrats: post, location, start and end date
+-   CapEx data: Investments aimed to increase prod. capacity.
+
+## CapEx data
+
+-   Investment data, of USD 100k or more.
+-   Contains rich time, place and stage of approval.
+-   Only available for recent years starting 2002.
+
+## 
+
+## ![](images/Screenshot%202025-02-14%20at%206.49.39%20AM.png){width="307"}
+
+## 
+
+-   Year and place information is useful as district bureaucrats are usually tasked with several core tasks like: community meeting/approval, land acquisition, etc
+-   No formal involvement of politicians.
+
+## Bureaucrats
+
+-   Levels: District \> State \| Center
+-   Start their career at the district level as the apex district administrator.
+-   Promotion along the ladder at a regular/"expected" frequency.
+-   **Glittering Prize**: After around 16-20 years of service select few are chosen to go work in central ministries in Delhi.
+
+## Bureaucrats
+
+-   Motivated by "good postings".
+-   Officers that have postings in "good" departments or who spend more time with senior politicians have higher chance of getting the glittering prize.
+-   I dont observe the decision process, only ex-post.
+
+**Iyer and Mani, 2012**: Evidence that caste affinity between politician and bureaucrat is a substitute to bureaucrat's ability.
+
+## Politicians
+
+-   Even though most politicians have limited terms, there is a set of politicians that are very stable and often serve several terms.
+-   Without any power to fire, politicians use transfers/less desirable roles.
+-   Bureaucratic Transfers: High, a popular policy/public conversation
+
+## 
+
+-   Most transfers happen right **after** elections.
+-   If an incumbent win, almost no transfers happen in their district.
+
+## District level descriptive \| Treatment: stable politician leaves the district
+
+-   **Outcome**: Count of all actions recorded in the data \[Mean: 5.6\]
+
+    ![](images/Screenshot%202025-02-14%20at%206.08.20%20AM.png){width="410"}
+
+## 
+
+-   **Outcome**: Count of land related actions \[Mean: 0.6\]
+
+    ![](images/Screenshot%202025-02-14%20at%206.10.16%20AM.png){width="414"}
+
+## Policy spotlight: new election map starting 2009
+
+-   In 2008, new election districts were drawn. As a result, some district changed their status from **Reserved** to **General** and vice-versa
+
+![](images/Screenshot%202025-02-14%20at%207.28.39%20AM.png){width="269" height="39"}
+
+## 
+
+-   All incumbent in these districts could not run in the 2009 election.
+-   Bureaucrats also know this atmost starting 2008 (or earlier?).
+
+## Treatment: Change of reservation status
+
+$$ y_{dt} = \alpha_{dt} + \sum_{t \neq -1} \beta_t \cdot \mathbb{1}(\text{time} = t) \cdot \text{Treatment}_{d} + \text{Treatment}_{d} + \xi_t+ \gamma X_{dt} + \delta_{s} +  \epsilon_{dt} $$
+
+unit: district-year
+
+## Y=Count of all actions
+
+![](images/Screenshot%202025-02-14%20at%205.52.12%20AM.png){width="470"}
+
+\[Mean Y: 4.3\]
+
+## Y= Land related actions
+
+![](images/Screenshot%202025-02-14%20at%205.55.43%20AM.png){width="478"}
+
+\[Mean Y: 0.75\]
+
+## Y: Project interrupted
+
+![](images/Screenshot%202025-02-14%20at%205.58.06%20AM.png){width="467"}
+
+## Y: Project completed
+
+![](images/Screenshot%202025-02-14%20at%205.56.57%20AM.png){width="466"}

@@ -1,0 +1,311 @@
+---
+title: "Politicians, Bureaucrats and Firms"
+format: beamer
+editor: visual
+fonttheme: structuresmallcapsserif
+theme: Singapore
+colortheme: default
+---
+
+## Motivation
+
+```{r eval=FALSE, include=FALSE}
+So, I have had a few course correction in this project as some things I was trying didnt really seemed that they are going to work (data limitations) or it turned out that perhaps its not that interesting. So, any comments and feedback on the direction I am currently on would be very useful. 
+```
+
+-   We know about political distortion, but we usually see it in a very reduced form. Ex: measuring politician-firm connection.
+
+-   However, this give us a very little clue about the exact mechanisms that politicians use to create these distortions.
+
+-   This is a bit unsatisfactory because of two previously unaddressed reasons:
+
+    -   Current state of knowledge requires active effort either on part of politician or firm owners to connect, or uses socio-ethnic identifiers
+    -   Politicians have no executive power.
+
+```{r eval=FALSE, include=FALSE}
+If we combine both points, it jsut really means that politicians have limnited power because there is a layer of bereocracy that has actual executive power, and the methods that we have identified requires politicians to be lot active and directed. 
+
+
+```
+
+## Plan for today
+
+-   **Stylized facts** that will hopefully convince you that the project is interesting.
+-   **Methodology**: centers around estimating politician's span of control using insights from previous research, a few new pretty cool data sources.
+-   The end goal is to shock politician's span of control using a new instrument, that will allow me to identify *cost of political overreach*.
+
+## Setting/Context:
+
+-   Formally, Indian bureaucracy is supposed to be apolitical. Bureaucrats can not be hired or fired by politicians. However, they can be shuffled around and transferred to other geographical locations or less desirable postings (Iyer and Mani 2012).
+
+-   Bureaucrats have career incentives, which includes having good postings on their ER sheet (resume).
+
+-   Political interference was becoming a serious issue. So in 2013, Supreme court mandated that all bureaucratic postings should have a fixed term of at least 2 years.
+
+-   Even after 10 years, its rare for a bureaucrat to last 2 years, average duration is around 13-15 months in one posting.
+
+-   Bureaucrats that are assigned to important posts experience an asset growth at 10% higher compared to similar candidates without transfer (Yuan et. el 2022).
+
+## Research Question:
+
+-   Investigating effects of politician's span of control on firm level outcomes.
+
+    -   Using an instrument to generate variation in the "political span of control" to identify effects on variable of interests on the firms side.
+
+```{r eval=FALSE, include=FALSE}
+Mostly here it is assumed that higher churn is bad, but it can also be argued that higher term duration can increase rent seeking capacity of the beurocrat itself. 
+
+Other thing that you can ask here is what do I mean by political span of control. This is something I picked up in some other PE talk and I dont have a formal definition here. However, in a sense I am measuring a politician's ability to exert their will and how effective they are at it. This can be that if they are aligned with the ruling party, they have a stronger span of control or if they have higher incentives in terms of higher opportunity to seek corruption rent. 
+
+```
+
+```{r eval=FALSE, include=FALSE}
+I am going to stop here for a few moments, next is details of the data that I have or in the process of collecting. 
+
+```
+
+## Data :
+
+```{r eval=FALSE, include=FALSE}
+Broadly I have 4 main types of data that I am currently working with. 
+```
+
+**Election data**
+
+-   Candidate level voting data for state assembly elections (1990-)
+-   Candidate biographical covariates: education, assets (movable and immovable), liabilities, pending judicial charges, etc (from 2003-)
+
+Data consisting of 4200 assembly constituencies with 5-7 election rounds per constituency.
+
+## 
+
+**Data mapping most of Bureaucracy**
+
+-   **Post level**: This involves past and present history of each bureaucratic post, list of people occupying it.
+-   **Officer Level**: Past and present occupied posts for each officer, including their bio details.
+-   **Asset Data**: Asset disclosure of IAS level officers (unbalanced, yearly).
+
+Data for around 3500 IAS officers in service, with 180 officers joining every year. Additional data would come from individual state's administrative services, that staffs lower level posts (around 10x of center cadre in size).
+
+Includes measurement of officer's ability (education, training) and transfer patterns.
+
+## 
+
+**Firm Data**
+
+-   Universe of around 1.25 million new firms registration from 1990 onwards.
+-   A good measure of near future expectation as registration is mostly cost less and online.
+-   Minimum bureaucratic involvement.
+
+Several other firm series also available, routinely used in prior research (Hsieh and Olken, 2014; Peters, 2023).
+
+## Facts
+
+1.  More firms are registered in aligned constituencies vs non-aligned constituencies.
+
+![](firm_flow_election_aligned.png)
+
+## 
+
+2.  Political assets grow at 35% yoy
+
+![](winner_asset_growth.png){width="80%"}\
+Each election cycle (5 years), contesting candidates are around 2.7 times richer in terms of their disclosed assets.
+
+**Sample**: Cross sectional sample. Picking top 3 candidates in each election.
+
+## 
+
+-   **Fixed Sample**: Keeping same candidates across two consecutive elections. Assets of winners grow to 4 times their previous values in 5 years, similar number for runner up in around 3.5x.
+
+-   MLAs that are aligned with the ruling state party also grow at a rate higher than (winning) MLAs that are not aligned.
+
+## 
+
+**Elected representatives should not have much hope for re-election**
+
+-   Elections are quite competitive. Even after wining an election round, the probability of winning the next election is only around 0.33.
+-   Candidate often drop out of the pool (does not contest, even after winning). High churn.
+-   Anti-incumbency bias, both at candidate and party level.
+
+## 
+
+![](new_cand_mobility.png){width="80%"}\
+
+## 
+
+**Most bureaucratic posts have frequent churn**
+
+-   Average term duration is around 14 months.
+-   Supreme court mandated a minimum of 2 years term duration in 2013, but no effect yet.
+-   For RJ, half of the post were created after 2009 (expansion of state).
+-   Bureaucrats that are assigned to important posts experience an asset growth at 10% higher compared to similar candidates without transfer (Yuan et. el 2022).
+
+## So Far
+
+-   High amount of political and bureaucratic churn.
+-   Evidence of political and bureaucratic rent seeking.
+-   Political alignment creates meaningful effects.
+
+```{r eval=FALSE, include=FALSE}
+I am going to pause here for a second, if people have comments.
+```
+
+## Methods
+
+-   Borrowing structure from misallocation literature
+
+$$\pi_{i} = (1 - \tau_{i})P_{i}Y_{i} - w_{i}L_{i} $$ $$\frac{(1 - \tau_i)}{(1 - \tau_j)} = \frac{P_jY_j / L_j}{P_iY_i / L_i}$$
+
+-   Basic idea is that a differential tax creates wedge across industries/sector that shows up as "misallocation".
+
+-   My setting potentially allows a time-varying "tax" in terms of variation in "political span of control".
+
+## 
+
+**Political Span of Control**
+
+-   **Hypothesis**: Presence/absence of "crony" sectors would motivate politician to increase/decrease their span of control.
+
+-   Illegal sand mining is rampant in many parts of India.
+
+## 
+
+```{r eval=FALSE, include=FALSE}
+This is an infograh that shows how sand mining is prevalant in almost all of the states. 
+The data here comes from a response to a question asked in central parliament.  
+
+```
+
+![](sand_mine.png)
+
+## 
+
+**Data Source**
+
+-   Currently collecting data for legal sand mining licenses and fine data.\
+-   Satellite based measures.
+-   Price indexes from construction industries can also contain some information.
+
+## Summary so far
+
+-   crony sector \> political/bureaucratic span of control \> effects on wider economy in terms of temporal misallocation.
+
+```{r eval=FALSE, include=FALSE}
+## 
+
+####################### 
+
+-   **Sand Mining Data**: ( Instrument)
+    -   Known to be an industry with high level of corruption.
+    -   Potentially an instrument that can select "bad" quality of politicians.
+
+## Various Metrics of interest
+
+-   **Politician's quality (intent)**: I dont think the usual metrics of education is a reliable one. Better options: Residual Variation that is left after controlling for potential corruption ( ex: difference between potential and real corruption).
+
+-   **Bureaucratic resilience**: Deviation from baseline transfer frequency for the post.
+
+-   **Politicians**: Vary in the level/degree of corruption
+
+    -   *Payoff*: Preference over extracted rent amount ( corruption gains).
+
+    -   *Cost* : Preference over getting elected.
+
+    -   *Action*: Influence bureaucrat to be his/her accomplish. Can threaten with a bad posting, can not fire.
+
+-   **Bureaucrats**: Have career incentives.
+
+    -   *Payoff*: Does not want to be transferred to a bad posting.
+
+    -   *Cost*: If caught complicit in corrupt practices, severe bad consequences(?).
+
+    -   *Action*: Cooperate with the politician
+
+-   **Firms**: Takes the political eq as a given state variables.
+
+However we have limited understanding of the specific mechanisms through which these political distortions operates. Specially in the presence of a bureaucracy which is the actual executive body.
+
+In many (most?) papers about political distortions, politicians tend to have very high degree of agency. However, in reality they often have limited executive power when there is a dense layer of bureaucracy present.
+
+## Setting/Context:
+
+-   **Politicians**: Vary in the level/degree of corruption
+
+    -   *Payoff*: Preference over extracted rent amount ( corruption gains).
+
+    -   *Cost* : Preference over getting elected.
+
+    -   *Action*: Influence bureaucrat to be his/her accomplish. Can threaten with a bad posting, can not fire.
+
+-   **Bureaucrats**: Have career incentives.
+
+    -   *Payoff*: Does not want to be transferred to a bad posting.
+
+    -   *Cost*: If caught complicit in corrupt practices, severe bad consequences(?).
+
+    -   *Action*: Cooperate with the politician
+
+-   **Firms**: Takes the political eq as a given state variables.
+
+## **Research Question**
+
+1.  Is higher churn at the bureaucratic level associated with higher level of political distortion.
+
+2.  Does a SC ruling to fix the bureaucratic term limit, have any effect on reducing political distortions.
+
+## Data :
+
+-   **Election data**: MLA level data. Used to construct measure of "characteristic of a politician" metric. Currently using: individual assets, education and criminal charges.
+
+-   **Bureaucracy data**: Likely to be map of entire govt. For each post, history of people occupying the post and the tenure duration. This can be merged with a relevant politician.
+
+## 
+
+-   **Firm level data**: Several firm series: - New entrants. - Small units ( less than 10 or 20 employees). - Bigger Firms ( unlisted). - Bigger Firms ( listed). - Economic Indicators.
+
+## 
+
+-   **Economic Investment Data**:
+    -   This has detailed variables for a variety of economic investment projects undertaken both by private as well as public firms. This involves, project start date, finish date, cost of the project, geo location, type of project, etc.
+-   **Sand Mining Data**: ( Instrument)
+    -   Known to be an industry with high level of corruption.
+    -   Potentially an instrument that can select "bad" quality of politicians.
+
+## Various Metrics of interest
+
+-   **Politician's quality (intent)**: I dont think the usual metrics of education is a reliable one. Better options: Residual Variation that is left after controlling for potential corruption ( ex: difference between potential and real corruption).
+
+-   **Bureaucratic resilience**: Deviation from baseline transfer frequency for the post.
+
+## 
+
+Using election data from all states ( election every 4-5 years) and yearly new firm flow, I can estimate the within state-within election cycle trend in firm flow, illustrated in this event-time type plot.
+
+$$f_{st}=t  | state + year$$
+
+## 
+
+![](firmflow_etim.png)
+
+{r, include=FALSE}
+## Election winners that starts lower in the asset distribution grow at a much higher rate
+
+# Taking a pool of election winners in the first election and then tracking them across elections. Winners that fall in first quartile of asset distribution, experience a growth rate that is 7%, 12% and 20% higher than second, third and fourth quartile respectively.
+
+## Incidently, share of criminals in politics is falling preciptiously
+
+# ![](crime_mob.jpg){width="75%"}
+# 
+# ## Data- Firms
+# 
+# Multiple sources processed and merged. Summary stats and broad correlation next on agenda list.
+# 
+# ## Basic Theoritical Structure
+# 
+# There is a version of this project that is estimating elasticity of private investment ( or some measure of it) wrt asset growth of political class.
+# 
+# A priori, it should depends how interlinked political assets are with the local economy ( vs how extractive it it)
+```
+
+\`\`\`

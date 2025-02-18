@@ -1,0 +1,62 @@
+---
+title: "Delim"
+format:
+  beamer:
+    theme: metropolis
+editor: visual
+---
+
+## 2008 Delimination
+
+-   Redistricting of both Parliament constituencies and State Assembly constituencies.
+-   1 PC contains a discrete number of AC.
+-   1 administrative district contains a district number of AC.
+-   1 AC can only be part of 1 PC or district.
+-   **Focusing on just PC today**.
+
+## 
+
+-   A constituency falls under one of three cat: General, SC and ST. SC and ST are reserved categories, meaning in these constituencies only members from those social reserved group can contest in election.
+-   Reservation.
+
+## 
+
+-   In 2007-08, the boundaries were redrawn using data from latest census (2001). It means:
+    -   Old boundaries might not perfectly align with the new boundaries, ie AC moving from one PC to other.
+    -   Based on change in demographics, a PC can change status from GEN to SC/ST (Reserved).
+-   There are specific formulas and rules that are followed here: total number state wide PCs for reserved categories are fixed as before but they can be assigned to a new PC depending on how reserved cat pop has changed wrt to other parts of the state.
+
+## 
+
+![](images/Screenshot%202024-11-18%20at%203.50.02%20AM.png)
+
+## Re-election rate (baseline)
+
+![](images/Screenshot%202024-11-18%20at%203.55.15%20AM.png)
+
+## Re-election rate (First Stage)
+
+![](images/Screenshot 2024-11-18 at 3.56.45 AM.png)
+
+
+
+
+## Next/Few open thread
+
+- System-wide shock to incumbent re-election. First impression is that there is a significant spatial variation in overlap between old and new PCs (same with AC), and spatial variation in overlap between PC and main admin district. This may or may not be correlated with the re-election rate. But should I care (my sense: not as an outcome but probably can serve as a instrument in some form but not clear). 
+
+- Two main way forward
+
+## One
+
+- Anusha et al use this exact event to measure responsiveness of bureaucracy using one particular govt scheme. Either can use that or look up some other meaningful measure that makes the point that this made bureaucracy more or less responsive depending on the type of mobility. This is First Stage in the paper. 
+
+## Two
+
+- Given that we already have some evidence of FS. Should directly move to firm level or private investment measures. Can always come back to fill in blanks later on. 
+
+
+## Labor Project
+
+Next week on Friday after APE (instead of following Monday). 
+

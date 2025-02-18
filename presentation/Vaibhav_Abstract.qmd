@@ -1,0 +1,23 @@
+---
+title: "Politician, Bureaucrats, and Firms"
+author:
+  - Vaibhav Rathi
+format:
+  pdf:
+    toc: false
+    number-sections: true
+    fontsize: 16pt
+    includes:
+      in-header: |
+        \usepackage{xcolor}
+        \setcounter{secnumdepth}{0}  % Temporarily disable section numbering
+# bibliography: ref.bib
+---
+
+
+\section*{Abstract}
+
+\textcolor{red}{This is a very early stage incomplete work.}
+
+
+Market distortion caused by political overreach is a severe issue in many developing countries. Even though the effect is empirically identified in previous research, insight into specific mechanism through which politicians can exert effect is not clear, considering often they do not have any executive power. I construct measures of politician's span of control using bureaucratic incentives and transfer patterns to estimate bureaucratic compliance with politician's agenda. I use it to identify the effect of the politician's span of control on firm dynamics. I use shocks in informal economy prone to cronyism as an instrument to generate exogenous variation in politician's span of control. 

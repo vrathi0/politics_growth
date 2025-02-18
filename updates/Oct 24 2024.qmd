@@ -1,0 +1,63 @@
+---
+title: "Oct 24 2024"
+format: pdf
+editor: visual
+---
+
+
+## Research Question
+
+1. What is the affect of local market events that have potential to generate rents on political selection and state of bureaucracy. 
+
+2. Other way around
+
+
+One issue right away is that its hard to argue for random market events. Need a framework for this.
+
+
+## Political Data
+
+There are two sub-state/district level political entities: AC and PC. We have rich election outcome as well as candidate characteristic data for both. 
+
+Usually people have used this data in a RD framework to detect effect arising from a random candidate characteristics (like gender, corrupt cand etc). 
+
+
+
+## Beaurocracy Data
+
+Fully processed data, with levels assigned. Have accumulated a variety of institutional details, but still not clear how might they be useful. 
+
+Some facts:
+
+1. Its likely that promotion exact time is random conditioned on the promotion rules. Meaning, if the promotion is supposed to happen after Y years of service, then the spread around Y is serially uncorrelated.
+
+2. Department of early postings, state cadre and a few other variables seems to have a lot of predictive power when it comes to getting deputed later in the career. 
+
+
+**Next Steps:**
+
+1. Including budget numbers in the mix. 
+2. Identifying a key activity/scheme that can provide a comparable metric for bureaucrat characteristic?
+3. Prepare a list of questions to learn more (and to talk to Shalini)
+
+
+
+## Market/Private Investment/Firm Entry
+
+Nothing here atm. 
+
+
+
+## Possible research design
+
+1. Dynamic RD
+
+Set up a RD framework and process the descriptive stats through that lens. 
+
+2. Bartik Shocks 
+
+This is for other way around. Figure out a potential bartik framework (see Mushwiq's paper)
+
+
+
+

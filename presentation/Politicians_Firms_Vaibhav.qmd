@@ -1,0 +1,260 @@
+---
+title: "Politician, Bureaucrats, and Firms"
+author:
+  - Vaibhav Rathi
+format:
+  pdf:
+    toc: false
+    number-sections: true
+    fontsize: 16pt
+    includes:
+      in-header: |
+        \usepackage{xcolor}
+        \setcounter{secnumdepth}{0}  % Temporarily disable section numbering
+# bibliography: ref.bib
+---
+
+
+\section*{Abstract}
+
+\textcolor{red}{This is a very early stage incomplete work.}
+
+
+Market distortion caused by political overreach is a severe issue in many developing countries. Even though the effect is empirically identified in previous research, insight into specific mechanism through which politicians can exert effect is not clear, considering often they do not have any executive power. I construct measures of politician's span of control using bureaucratic incentives and transfer patterns to estimate bureaucratic compliance with politician's agenda. I use it to identify the effect of the politician's span of control on firm dynamics. I use shocks in informal economy prone to cronyism as an instrument to generate exogenous variation in politician's span of control. 
+
+\setcounter{section}{0}  
+\setcounter{secnumdepth}{2} 
+
+
+\newpage
+
+## Introduction
+
+Political favoritism and corruption is deemed to be prevalent in many countries, specially in developing countries that tend to have weaker regulating institution.  This is driven by the fact that for both individual politicians and firms, it may be beneficial to indulge in corruption. For politicians, it is a way to extract rent from the firms, while for firms it maybe a way to "grease the wheels" of a slow moving state apparatus or simply get an unfair advantage over its competitors. 
+
+A number of previous papers have documented both the positive value of political connections ( for firms and politicians) and economic cost in terms of miss allocation, lost productivity or innovation. However, its not clear what specific mechanism is instrumental in enabling politicians to create these effects. This paper adds to the literature by including bureaucracy in the analysis and specify channels through which politicians can overreach. 
+
+I consider Indian setting that has federal structure of government, with each state having their own legislative assembly whose members are elected through state-level elections. I start with two simple observations: (1) Looking at firm densities even at local level, it seems unlikely that politicians can select or favor some firms from a pool of thousands of firms, specially in sectors where there is less public procurement. (2) As its true in most forms of government, politicians do not actually have any executive power and there is often a thick layer of bureaucracy between them and the firms.
+
+Utilizing a unique dataset that chronicles the career trajectories of bureaucrats, alongside detailed asset information for both politicians and bureaucrats, I first establish bureaucrat's compliance as a means of career progression. Even though, politicians do not have any ability to hire or terminate bureaucratic officials, they can shuffle officers around among different postings. Different posts differ in their lucrativeness as some departments are more useful for career progression than others. Iyer and Mani (2012) find that politician do use transfers as a means of control and the effect is more salient with lower ability bureaucrat.   
+
+I use this insight to create a measure of politician's span of control political span of control which is meant to capture how effectively politician's exert their will or how resilient is the local bureaucracy. I generate exogenous variation in this measure using a novel instrument that uses shocks in illegal sand mining industry. The logic behind this instrument is that in this setting, certain sectors ( like illegal sand mining operations) are much more likely to contribute to corruption gains. Politicians/bureaucrats are likely to be motivated to response to shocks in these sector by substituting their rent seeking to other sectors. 
+
+This rent substitution behavior from politicians or bureaucracy creates a time varying "regulatory tax". I estimate its effect on firm revenue factory productivity and gross investment patterns. 
+
+The rest of the paper is structured as follows. I present contextual details about Indian political system and its bureaucracy in Section 2. Section 3 gives details about data sources. Section 4 presents key stylized facts that are relevant as motivation for research question addressed in this paper. Section 5 lays down the research method. 
+
+\textcolor{red}{This is a very early stage incomplete work.}
+
+
+
+```{r eval=FALSE, message=FALSE, include=FALSE}
+### I.2
+
+I consider a simple model where politicians vary in how corrupt they are. More corrupt politicians have a higher preference for corruption gains ( or risk taking capacity). However, they lack any executive capacities, that is, they can not extract corruption rent on their own without the help of a beurocratic agent.
+
+Beorocratic agent is embedded in local beureocracy whihc may have a degree of resiliance that vary spatially. beurocrat have career incentives that are controlled by politicians.
+
+Firms take the equilibirum outcome of this game as a state variable and respond accordingly in terms of their entry or investment.
+
+### I.3 ( Research question)
+
+This setting allows me to answer following two questions: 1. Is beurocratic transfer ( premature) is a predictor of distortions in firm dynamics ( in terms of firm selections, investment, etc). 2. Does the SC mandate result in strengthening of beurcracy.
+
+### I.4 Descriptive Facts
+
+### I.4 ( Identification Strategy)
+
+My identification strategy involves
+
+### Sumamry
+
+See Shaoda Wang paper. also.
+
+We know from Hsieh and Klenow, ways to measure miss allocation or TFP( check).
+
+How does random change in political tax for a firm ( in geo-time) change its TFP, investment behaviour etc.
+
+Here, Political Tax: Change in expected profits because of increase/decrease in corruption.
+
+Here, Randomly: Random variation in actual corruption because of change in ability of indulging in corruption.
+
+## List of Discriptives:
+
+1.  Rate of new entrant Firm Flow
+
+2.  Rate of Growth of Industry units
+
+3.  Split of new entrants between rural/urban or excluding big cities.
+
+4.  Election effect both at national and state level data.
+
+5.  Rate of growth of politicians assets
+
+6.  Trend in Criminality
+
+7.  Do first time representative gain more or less in terms of asset growth compared to incumbant?
+  
+```
+
+
+
+
+## Institutional Context
+
+Here I will detail Institutional context for both Indian Political System and the Indian Administrative services, the bureaucratic arm of the Indian state.
+
+### Indian Political System
+
+India operates as a parliamentary democracy with elections every five years for both the national government and its 28 states. The state's executive is helmed by the Governor, advised by the Chief Minister and the cabinet. The Chief Minister, typically the majority party's leader in the state assembly, parallels the Prime Minister at the federal level. Political shifts within parties or coalition breakdowns can prompt the formation of a new government or the invocation of "President's Rule," where the central government assumes state administration until new elections. This can result in staggered election cycles among the states, independent of the national election timetable. For example, while national elections took place in 2004, five states held their elections in 2006.
+
+Each state government mirrors the central government's structure, with its own legislature, executive headed by the Governor as the ceremonial head, and the Chief Minister as the head of the government, and an independent judiciary.
+
+The Member of the Legislative Assembly (MLA) is elected directly by the people to the state legislature. MLAs play a critical role as they are responsible for passing laws and policies at the state level, reflecting the local needs and issues. They are vital in shaping governance that is closer to the grassroots and can cater to specific regional contexts and challenges. Their importance lies in their ability to influence state legislation, budget allocations, and policy development, which directly impacts the daily lives of the citizens.
+
+#### Corruption in Indian Politics
+
+The political framework of India is underpinned by a multi-tiered structure involving the central government and state governments, with each state having its own legislative assembly where Members of the Legislative Assembly (MLAs) are elected. MLAs hold significant sway in shaping policies, regional governance, and have the power to elect the Chief Minister of the state, paralleling the election of the Prime Minister at the national level.
+
+Corruption has been a persistent issue within this system. Recent data disclosed to the Supreme Court of India indicated that around half of elected representatives from 22 states were embroiled in criminal cases. Notably, cases against 174 sitting MPs and MLAs were so serious that they carried potential life sentences, with offences ranging from corruption and money laundering to defamation and cheating
+
+The prevalence of corruption varies by region, with Uttar Pradesh leading in the number of legislators facing criminal charges, followed by Bihar, Kerala, Odisha, Maharashtra, and Tamil Nadu. This data highlights the gravity of the issue within Indian politics, especially at the state level where MLAs operate. It underscores the urgent need for policy interventions to address the criminalization of politics and uphold the integrity of India's democratic institutions. The role of MLAs is paramount not only in governance but also in maintaining the democratic ethos of the nation. Their integrity is essential for the health of the polity and the efficacy of administrative systems at both state and central levels.
+
+One of the outcomes of corruption is publicly visible in disproportionate growth in candidate's self disclosed assets. In recent years, this has been one of the main metric that has captured attention. Every election cycle, the number of candidate with assets worth INR 10 million seems to be growing.
+
+### Indian Administrative Service
+
+The Indian Administrative Service (IAS), India's premier civil service, is a direct evolution of the colonial-era Indian Civil Service (ICS). It maintains its predecessor's structure and ethos, providing lifelong, politically neutral careers for its members. IAS officers, barred from political affiliations and activities, play pivotal roles in civil administration and policy-making, occupying key positions across Indian government departments and ministries. As of 2019, the service comprised 5,205 officers, leading central and state government secretariats, managing district administrations, heading public enterprises, and representing India in global organizations.
+
+Recruitment into the IAS is predominantly through a rigorous nationwide exam conducted by the Union Public Service Commission, with a success rate below 0.1%. In 2019, about 71.4% of officers were directly recruited through this exam. These officers, following a two-year training program at the Lal Bahadur Shastri National Academy of Administration, are assigned to various states based on a complex set of criteria. Typically, IAS officers spend most of their career in their initial state cadre, with interstate transfers being rare.
+
+IAS careers begin at the district level, with officers taking on increasingly significant roles, culminating in district leadership positions after 4-9 years. Career progression involves alternating stints in district, state, and central government roles. About two decades into their service, officers undergo a review to determine their eligibility for top-tier positions in the central government.
+
+Frequent transfers are a hallmark of IAS careers, often influenced by administrative needs, vacancies, promotions, or political considerations. To safeguard against undue political influence and ensure tenure stability, reforms such as fixed tenures and the establishment of Civil Services Boards for transfer recommendations have been implemented.
+
+To maintain accountability, IAS officers are subject to stringent regulations regarding economic activities, gift acceptance, and asset declaration. They are prohibited from engaging in business or speculative investments. Annual asset declaration is mandatory, scrutinized for accuracy by relevant government departments.
+
+In summary, the IAS represents a blend of historical legacy and modern governance, playing a crucial role in the Indian administrative machinery while upholding standards of neutrality, accountability, and service.
+
+#### Transfers
+
+In the Indian Administrative Service (IAS), officer mobility is a norm rather than an exception, with career trajectories characterized by regular transfers. These relocations, occurring on average every sixteen months, are an integral part of the service, involving assignments across various districts and departments, and sometimes between state and central government roles. Although interstate transfers happen less frequently, they are strictly governed by established rules.
+
+The authority to transfer IAS officers lies primarily with state governments and is exercised irrespective of an officer's tenure. Factors influencing these decisions include administrative needs, vacancy fulfillment, alignment of officers' skills with the roles, promotion prospects, or deputations outside the state. Although IAS officers can express preferences for specific postings, their influence over the final decision is minimal. Political figures at the state level, while not empowered to hire or dismiss IAS officers, do hold significant sway over their transfers. This power has sometimes been used strategically, particularly with more senior officers, as a means of exerting control or influence.
+
+Recognizing the potential for political interference in these transfers, reforms have been instituted to safeguard the integrity of the IAS. In a landmark move in 2013, the Supreme Court of India mandated a minimum tenure of two years for IAS officers, aiming to provide stability and continuity in administration. Building on this, in 2014, a directive from the central government required the establishment of Civil Services Boards (CSBs) in each state. These boards, comprising senior administrative officials, are tasked with the responsibility of overseeing the appointments and transfers of cadre officers. They review and provide justifications in instances where officers are nominated for transfers before completing the minimum tenure. While the recommendations of the CSBs can be overridden by political leaders like the chief minister, this process has been designed to foster a higher degree of transparency and accountability in bureaucratic appointments and movements. By implementing these reforms, the system aims to diminish the role of political influence or favoritism in the transfer process, thereby reinforcing the principles of merit and impartiality in the IAS.
+
+#### Assets
+
+To uphold the integrity and accountability of its officials, the Indian Administrative Service (IAS) enforces stringent regulations on the economic pursuits of its officers. These rules explicitly forbid officers from engaging in any form of business or taking up additional employment. Moreover, IAS officials must not use their influence to secure employment for family members in either the public or private sectors. Acceptance of gifts from friends or relatives unaffiliated with their official duties is permissible, but any gift exceeding the value of 5,000 Rupees (approximately US\$100) must be reported to the government. The practice of giving or receiving dowry is strictly prohibited. Investment activities of IAS officers are limited to infrequent transactions in stocks or shares through authorized brokers, with prohibitions on regular trading, speculation in the stock market, or having others invest on their behalf. These restrictions underscore the principle that an officer's salary is the primary source of income.
+
+In the interest of fostering transparency within the public sector, IAS officers are required to disclose their assets and liabilities from the time of their service commencement. This includes both immovable assets, like land and houses, and movable assets. They are also obligated to report similar details regarding the immovable assets of their family members, defined as spouses, children, and any other economically dependent relatives by blood or marriage. These declarations are mandatory on an annual basis. The Department of Personnel and Training (DoPT) rigorously reviews these asset declarations, comparing the reported values against market prices to ensure accuracy. The Income Tax Department further scrutinizes these reports for any discrepancies or underreporting. In 2017, to streamline this process, the DoPT introduced an online system for filing immovable asset reports. Officers who fail to submit their asset declarations by the specified deadline face serious repercussions, including disqualification from consideration for higher positions, empanelment, or participation in training programs.
+
+## Data Description
+
+The data construction has three main parts. I explain different datasets in detail below along with the details of how various metrics are constructed.
+
+### Politician characteristics:
+
+Supreme court 2003 mandated any individuals contesting election to disclose detailed biographic data which includes education details, their assets and liabilities and any pending criminal charges against them. Next, I use detailed voting data maintained by Election commission for all elections. Lastly, I also observe performance for elected representatives through the actions they take while in office in terms of activities undertaken during the legislative assembly sessions.
+
+I merge the all data sets to create a candidate level measure of "propensity to indulge in corruption". This includes both prior links to specific sectors; criminal charges, asset and liability levels and previous behavior as an elected representative.
+
+### Beurocratic Resilience
+
+I collect detailed on Indian bureaucratic apparatus: both at IAS level and state administrative service level. 
+
+This involve detailed career trajectory of civil servants and their biographical details. This allow me to construct patterns in bureaucratic transfers and map it to political motives.
+
+
+### Firm Series
+
+I use several available series of Industrial activity and private investment. 
+
+- **Annual Survey of India**: This contains census of all industrial units with 100 or more employees and a sampled survey of industrial units with less than 100 employees. This collects details cost and revenue information about the annual operations. 
+
+- **Enterprise Survey**: This is a survey of very small informal units with less than 10 employes with or without any industrtial production capacity. 
+
+- **New Firm registration**: I use universe of 1.25 million newly registered firms. This allow me to construct rate of firm flow at local assemly constituency level. 
+
+
+## Descriptive Facts
+
+I present several key descriptive facts below. 
+
+
+### More firms are registered in constituencies that are politically aligned with the ruling state party
+
+
+I merge data of newly registered firms to create a measure of firm flow at fine assembly constituency level. I then merge this with election data that allow me to both :(1) Collapse time at election-event time, meaning the time relative to 5-year election cycle and, (2) Compare the rate of firm creation between constituencies that are politically aligned vs constituency that are not aligned with the state ruling party.  
+
+
+
+![](firm_flow_election_aligned.png)
+
+
+
+This figure has election-time on x-axis and average firm flow on the y-axis. The figure illustrates that rate of firm creation is consistently higher in aligned constituencies vs non-aligned constituencies. 
+
+This is an example of distortion that has political roots. 
+
+
+###  Candidates are richer by around 2.7 times each subsiquent election cycle
+
+
+![](winner_asset_growth.png){width="80%"}\
+
+The graph plots a asset across a cross sectional sample. I pick top 3 candidates in every election (they may be different candidates each election cycle) and plot their asset levels. The plot illustrates a very high level of asset growth among the pool of political candidates. 
+
+We can fix the sample here and compare candidates that compete in two consecutive elections. The pattern here is similar where winner in first election on an average growing their assets by around 4x over 5 years slightly higher than the runner up. 
+
+WE can also compare two winning candidates, one of which is politically aligned and other is not. Even here the growth is large with a premium for politically aligned. 
+
+
+### Proportion of elected representatives with criminal status is increasing. 
+
+![](crime_distr.png){width="80%"}\
+
+
+Above figure plots data from 4 states to illustrates how criminal candidates consistently are over represented among winner at all level of criminality. 
+
+Looking at the aggregate statistics, the share of elected representative with serious criminal charge against them was around 11% towards the start of the same where the same number increases upto 34% after 3 election cycles. 
+
+### Elected representatives should not have much hope for re-election
+
+-   Elections are quite competitive. Even after wining an election round, the probability of winning the next election is only around 0.33.
+-   Candidate often drop out of the pool (does not contest, even after winning). High churn.
+-   Anti-incumbency bias, both at candidate and party level.
+
+
+
+### Most bureaucratic posts have frequent churn
+
+-   Average term duration is around 14 months.
+-   Supreme court mandated a minimum of 2 years term duration in 2013, but no effect yet.
+-   Bureaucrats that are assigned to important posts experience an asset growth at 10% higher compared to similar candidates without transfer (Yuan et. el 2022).
+
+
+<!-- ## Research Method -->
+
+<!-- The main research strategy can be summarized as follows: -->
+
+<!-- 1. Using bureaucratic transfer patterns identify political determinants and characterize stronger or weaker "political span of control". "Political span of control" is a measure of how able or willing is a politician to exert their will on the bureaucracy.  -->
+
+<!-- 2. Using an instrument ( see below) generate exogenous variation in political span of control.  -->
+
+<!-- 3. Estimate the effect of variation in political span of control on downstream outcome of interest. Here the relevant variable of interest are firm level outcomes such as entry and investment behavior.  -->
+
+
+<!-- ### Instrument -->
+
+<!-- I use presence or absence of a crony sector in the local economy. The logic behind this instrument is that in this setting, certain sectors ( like illegal sand mining operations) are much more likely to contribute to corruption gains. Politicians/bureaucrats are likely to be motivated to response to shocks in these sector by substituting their rent seeking to other sectors.  -->
+
+<!-- This rent substitution behavior from politicians or bureaucracy creates a time varying "regulatory tax". I estimate its effect on firm revenue factory productivity and gross investment patterns.  -->
+
+<!-- Illegal sand mining is quite prevalent in India. Recently the issue came up in parliamentary session also but government is unable to do anything owing to strong nexus between local politicians and illegal operatives. This is further exacerbated by strong growth in construction industry that uses contributes to strong demand for sand.  -->
+
+<!-- I use time variation in sand mining activities to generate variation in incentive of politician to exert their control over bureaucracy. This control, in turn, changes behavior of bureaucratic agent and creates a regulatory tax on the local firm set irrespective of their sector.  -->
+
+<!-- The exercise in this paper is to estimate the final effect on firm dynamics.  -->
+

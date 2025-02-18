@@ -1,0 +1,93 @@
+---
+title: "Politics, Bureaucracy and Firms"
+format: beamer
+editor: visual
+---
+
+## Motivation:
+
+Prior research have established the pernicious role of political distortions in generating missallocation in the economy and specifically distorting incentives for firms to grow.
+
+However we have limited understanding of the specific mechanisms through which these political distortions operates. Specially in the presence of a bureaucracy which is the actual executive body.
+
+In many (most?) papers about political distortions, politicians tend to have very high degree of agency. However, in reality they often have limited executive power when there is a dense layer of bureaucracy present.
+
+## Setting/Context:
+
+-   **Politicians**: Vary in the level/degree of corruption
+
+    -   *Payoff*: Preference over extracted rent amount ( corruption gains).
+
+    -   *Cost* : Preference over getting elected.
+
+    -   *Action*: Influence bureaucrat to be his/her accomplish. Can threaten with a bad posting, can not fire.
+
+-   **Bureaucrats**: Have career incentives.
+
+    -   *Payoff*: Does not want to be transferred to a bad posting.
+
+    -   *Cost*: If caught complicit in corrupt practices, severe bad consequences(?).
+
+    -   *Action*: Cooperate with the politician
+
+-   **Firms**: Takes the political eq as a given state variables.
+
+## **Research Question**
+
+1.  Is higher churn at the bureaucratic level associated with higher level of political distortion.
+
+2.  Does a SC ruling to fix the bureaucratic term limit, have any effect on reducing political distortions.
+
+## Data :
+
+-   **Election data**: MLA level data. Used to construct measure of "characteristic of a politician" metric. Currently using: individual assets, education and criminal charges.
+
+-   **Bureaucracy data**: Likely to be map of entire govt. For each post, history of people occupying the post and the tenure duration. This can be merged with a relevant politician.
+
+## 
+
+-   **Firm level data**: Several firm series: - New entrants. - Small units ( less than 10 or 20 employees). - Bigger Firms ( unlisted). - Bigger Firms ( listed). - Economic Indicators.
+
+## 
+
+-   **Economic Investment Data**:
+    -   This has detailed variables for a variety of economic investment projects undertaken both by private as well as public firms. This involves, project start date, finish date, cost of the project, geo location, type of project, etc.
+-   **Sand Mining Data**: ( Instrument)
+    -   Known to be an industry with high level of corruption.
+    -   Potentially an instrument that can select "bad" quality of politicians.
+
+## Various Metrics of interest
+
+-   **Politician's quality (intent)**: I dont think the usual metrics of education is a reliable one. Better options: Residual Variation that is left after controlling for potential corruption ( ex: difference between potential and real corruption).
+
+-   **Bureaucratic resilience**: Deviation from baseline transfer frequency for the post.
+
+## 
+
+Using election data from all states ( election every 4-5 years) and yearly new firm flow, I can estimate the within state-within election cycle trend in firm flow, illustrated in this event-time type plot. 
+
+$$f_{st}=t  | state + year$$
+
+##
+
+![](firmflow_etim.png)
+
+```{r, include=FALSE}
+## Election winners that starts lower in the asset distribution grow at a much higher rate
+
+# Taking a pool of election winners in the first election and then tracking them across elections. Winners that fall in first quartile of asset distribution, experience a growth rate that is 7%, 12% and 20% higher than second, third and fourth quartile respectively.
+
+## Incidently, share of criminals in politics is falling preciptiously
+
+# ![](crime_mob.jpg){width="75%"}
+# 
+# ## Data- Firms
+# 
+# Multiple sources processed and merged. Summary stats and broad correlation next on agenda list.
+# 
+# ## Basic Theoritical Structure
+# 
+# There is a version of this project that is estimating elasticity of private investment ( or some measure of it) wrt asset growth of political class.
+# 
+# A priori, it should depends how interlinked political assets are with the local economy ( vs how extractive it it)
+```

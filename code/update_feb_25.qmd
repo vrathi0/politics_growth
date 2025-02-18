@@ -1,0 +1,11 @@
+---
+title: "Update_Feb_2025"
+format: beamer
+editor: visual
+---
+
+## 
+
+$$ y_{icts} = \alpha_{cts} + \sum_{k \neq -1} \beta_k \cdot \mathbb{1}(\text{time} = k) \cdot \text{Treatment}_{cts} + \gamma X_{cts} + \delta_{s} +  \epsilon_{icts} $$
+
+## 
